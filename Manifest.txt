@@ -1,0 +1,8 @@
+.autotest
+History.txt
+Manifest.txt
+README.txt
+Rakefile
+bin/kiwi
+lib/kiwi.rb
+test/test_kiwi.rb
