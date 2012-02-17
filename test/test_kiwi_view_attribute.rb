@@ -6,17 +6,22 @@ class TestKiwiViewAttribute < Test::Unit::TestCase
     @req_attr         = Kiwi::View::Attribute.new :foo, Integer
     @req_default_attr = Kiwi::View::Attribute.new :foo, Integer,
                           :default => 456
+    @req_coll_attr    = Kiwi::View::Attribute.new :foo, Integer,
+                          :collection => true
 
     @opt_attr         = Kiwi::View::Attribute.new :foo, String,
                           :optional => true
     @opt_default_attr = Kiwi::View::Attribute.new :foo, String,
                           :default => "foo", :optional => true
 
-    @view_attr = Kiwi::View::Attribute.new :foo, Kiwi::View
+    @view_attr      = Kiwi::View::Attribute.new :foo, Kiwi::View
+    @view_coll_attr = Kiwi::View::Attribute.new :foo, Kiwi::View,
+                        :collection => true
 
     @bool_attr         = Kiwi::View::Attribute.new :foo, Boolean
     @bool_default_attr = Kiwi::View::Attribute.new :foo, Boolean,
                           :default => false
+
 
     @obj_true  = Struct.new(:foo).new true
     @obj_false = Struct.new(:foo).new false
@@ -28,6 +33,13 @@ class TestKiwiViewAttribute < Test::Unit::TestCase
   def test_invalid_default
     assert_raises Kiwi::InvalidTypeError, 'Default "Hi" isn\'t a Integer' do
       Kiwi::View::Attribute.new :foo, Integer, :default => "Hi"
+    end
+  end
+
+
+  def test_invalid_type
+    assert_raises ArgumentError, 'Type nil must be a Class' do
+      Kiwi::View::Attribute.new :foo, nil
     end
   end
 
@@ -53,6 +65,23 @@ class TestKiwiViewAttribute < Test::Unit::TestCase
     assert_equal 123, @req_default_attr.value_from(@sym_hash)
     assert_equal 456, @req_default_attr.value_from(:blah => 123)
     assert_equal 456, @req_default_attr.value_from(Struct.new(:blah).new(123))
+  end
+
+
+  def test_req_coll_attr
+    assert_equal [1,2,3], @req_coll_attr.value_from(:foo => [1,2,3])
+
+    assert_raises(Kiwi::InvalidTypeError) do
+      @req_coll_attr.value_from(:foo => [1,:bar,3])
+    end
+
+    assert_raises(Kiwi::InvalidTypeError, "Collection must respond to `map'") do
+      @req_coll_attr.value_from(:foo => 123)
+    end
+
+    assert_raises(Kiwi::RequiredValueError) do
+      @req_coll_attr.value_from(:bar => 123)
+    end
   end
 
 
@@ -109,6 +138,6 @@ class TestKiwiViewAttribute < Test::Unit::TestCase
 
   def test_view_attr
     # TODO: Implement
-    skip
+    skip "Implement View.build first"
   end
 end
