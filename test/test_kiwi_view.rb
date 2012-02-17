@@ -52,5 +52,11 @@ class TestKiwiView < Test::Unit::TestCase
     assert_equal false,                 sub_attribute.collection
     assert_equal true,                  sub_attribute.optional
     assert_equal false,                 sub_attribute.default
+
+    sub_attribute = v_attribute.type.v_attributes['awake']
+    assert_equal Kiwi::View::Attribute, sub_attribute.class
+    assert_equal false,                 sub_attribute.collection
+    assert_equal false,                 sub_attribute.optional
+    assert_equal false,                 sub_attribute.default
   end
 end
