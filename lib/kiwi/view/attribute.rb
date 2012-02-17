@@ -4,7 +4,18 @@
 
 class Kiwi::View::Attribute
 
-  attr_reader :name, :type, :collection, :optional, :default
+  # Value when nothing was found or returned.
+  module NONE; end
+
+  attr_reader :name, :collection, :optional, :default
+
+
+  ##
+  # Create a new attribute with a name and data type.
+  # Supported options are:
+  # :collection:: Bool - Is this an Array of attributes.
+  # :default::    VALUE - The default value to use if none is set.
+  # :optional::   Bool - Required or not.
 
   def initialize name, type, opts={}
     @name        = name.to_s
@@ -15,14 +26,19 @@ class Kiwi::View::Attribute
     @has_default = opts.has_key?(:default)
     @default     = opts[:default]
 
-    raise ArgumentError, "Type #{@type.inspect} must be a Class" unless
-      Module === @type
+    raise ArgumentError, "Invalid type #{@type.inspect} must be a Class" unless
+      Module === @type || String === @type
 
     raise Kiwi::InvalidTypeError,
       "Default #{@default.inspect} isn't a #{@type}" if
-        @default && !(@type === @default)
+        @default && Module === @type && !(@type === @default)
   end
 
+
+  ##
+  # Retrieve the attribute value from the passed object. If a hash is given,
+  # will look for a key with the same name as the attribute, otherwise will
+  # try calling a method with the attribute name.
 
   def value_from obj
     value, found = retrieve_value obj
@@ -30,6 +46,18 @@ class Kiwi::View::Attribute
 
     value
   end
+
+
+  ##
+  # The class the value should be.
+
+  def type
+    @type = Kiwi.find_const @type if String === @type
+    @type
+  end
+
+
+  private
 
 
   def retrieve_value obj
@@ -60,19 +88,19 @@ class Kiwi::View::Attribute
 
   def validate val, skip_collection=false
     if @collection && !skip_collection
-      raise Kiwi::InvalidTypeError, "Collection must respond to `map'" if
-        !val.respond_to?(:map)
+      raise Kiwi::InvalidTypeError,
+        "Collection #{val.inspect} must be an Array" unless Array === val
 
       return val.map{|v| validate v, true}
     end
 
-    if @type
-      if @type.ancestors.include?(Kiwi::View)
-       val = @type.build val
+    if type
+      if type.ancestors.include?(Kiwi::View)
+       val = type.build val
 
       else
-        raise Kiwi::InvalidTypeError, "#{val.inspect} is not a #{@type}" unless
-          @type === val
+        raise Kiwi::InvalidTypeError, "#{val.inspect} is not a #{type}" unless
+          type === val
       end
     end
 

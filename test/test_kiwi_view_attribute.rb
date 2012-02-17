@@ -87,7 +87,7 @@ class TestKiwiViewAttribute < Test::Unit::TestCase
 
   def test_opt_attr
     assert_equal "string", @opt_attr.value_from(@str_hash)
-    assert_nil @opt_attr.value_from(Struct.new(:blah).new(123))
+    assert_nil   @opt_attr.value_from(Struct.new(:blah).new(123))
 
     assert_raises(Kiwi::InvalidTypeError) do
       @opt_attr.value_from(@sym_hash)
@@ -136,8 +136,29 @@ class TestKiwiViewAttribute < Test::Unit::TestCase
   end
 
 
+  def test_later_type
+    attrib = Kiwi::View::Attribute.new :foo, "Integer"
+
+    assert_equal 123, attrib.value_from(:foo => 123)
+
+    assert_raises(Kiwi::InvalidTypeError) do
+      attrib.value_from(:foo => "bar")
+    end
+
+    assert_equal Integer, attrib.type
+  end
+
+
   def test_view_attr
-    # TODO: Implement
-    skip "Implement View.build first"
+    view = Class.new Kiwi::View
+    view.string  :name
+    view.integer :age
+
+    attrib = Kiwi::View::Attribute.new 'thing', view
+
+    val = attrib.value_from :thing => {:name => "George", :age => 34}
+    expected = {"name" => "George", "age" => 34}
+
+    assert_equal expected, val
   end
 end
