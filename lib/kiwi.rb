@@ -15,6 +15,15 @@ class Kiwi
   # Value was missing or nil.
   class RequiredValueError < Error; end
 
+  # Something bad happenned with the request.
+  class HTTPError < Error;               STATUS = 500; end
+
+  # The route requested does not exist.
+  class RouteNotFound < HTTPError;       STATUS = 404; end
+
+  # The route requested exists but has no controller.
+  class RouteNotImplemented < HTTPError; STATUS = 501; end
+
 
   ##
   # Assign any constant with a value.
