@@ -5,7 +5,7 @@ class Kiwi::App
 
   #TODO: before, after, and error hooks
 
-  attr_reader :endpoints
+  attr_reader :endpoints, :hooks
 
 
   def initialize

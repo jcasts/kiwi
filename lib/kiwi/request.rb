@@ -3,43 +3,97 @@
 
 class Kiwi::Request
 
-  attr_reader :env, :app
+  attr_reader :app, :env, :response
 
-  def initialize app, env
+  ##
+  # Create a request instance of the app.
+
+  def initialize app
     @app = app
+    @response = [200, {'Content-Type' => "application/json"}]
+  end
+
+
+  ##
+  # Make the request.
+
+  def call env
     @env = env
-    @http_method = env['HTTP_METHOD']
-  end
 
+    trigger :before
 
-  def call
-    endpoint = @app.endpoints[@http_method].find{|ept| ept.routes? @env }
+    begin
+      endpoint = find_endpoint! @env
+      endpoint.validate! @env
+      data = trigger endpoint.action
 
-    raise RouteNotFound,
-      "No route for #{@env['REQUEST_PATH']}" unless endpoint
+    rescue HTTPError => err
+      @response[0] = err.class::STATUS
 
-    raise RouteNotImplemented,
-      "#{endpoint.path_name} isn't implemented" unless endpoint.controller
-
-    endpoint.validate! @env
-
-    data = instance_eval(&endpoint.controller)
-    render data
-
-  rescue => err
-    render err
-  end
-
-
-  def render data, status=nil
-    if Exception === data
-      err      = data
-      data     = {"error" => data.class, "message" => data.message}
-      status ||= data.class.const_defined?("STATUS") ? data.class::STATUS : 500
+    rescue => err
+      data = trigger(err.class) || err
     end
 
-    # TODO: call status/error hooks
+    trigger @response[0]
+    trigger :after
 
-    [(status || 200), {"Content-Type" => "application/json"}, [data.to_json]]
+    render data
+  end
+
+
+  ##
+  # Trigger any application hook.
+
+  def trigger hook
+    return unless @app.hooks[hook]
+    instance_eval(&@app.hooks[hook])
+  end
+
+
+  ##
+  # Creates a Rack response array from the given data.
+
+  def render data
+    if Exception === data
+      data = {"error" => data.class, "message" => data.message}
+      data['trace'] = data.backtrace if Kiwi.trace
+    end
+
+    @response[2] = [data.to_json]
+    @response
+  end
+
+
+  ##
+  # Returns an endpoint object if it exists.
+  # Raises RouteNotFound if no endpoint is found.
+  # Raises RouteNotImplemented if no action exists for the route.
+
+  def find_endpoint! env
+    @app.endpoints[env['HTTP_METHOD']].find{|ept| ept.routes? env }
+
+    raise RouteNotFound,
+      "No route for #{env['REQUEST_PATH']}" unless endpoint
+
+    raise RouteNotImplemented,
+      "#{endpoint.path_name} isn't implemented" unless endpoint.action
+
+    endpoint
+  end
+
+
+  ##
+  # Assign the status code of the response.
+
+  def status num
+    @response[0] = num
+  end
+
+
+  ##
+  # Assign the response headers.
+
+  def headers hash
+    @response[1].merge! hash
   end
 end

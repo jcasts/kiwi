@@ -25,6 +25,12 @@ class Kiwi
   class RouteNotImplemented < HTTPError; STATUS = 501; end
 
 
+  class << self
+    attr_accessor :trace
+    attr_accessor :hooks
+  end
+
+
   ##
   # Assign any constant with a value.
 
@@ -53,4 +59,23 @@ class Kiwi
 
     curr
   end
+
+
+  ##
+  # Assign a hook for error or status handling.
+  #   hook(404){ "OH NOES" }
+  #   hook(502..504, 599){ "EVIL GATEWAY" }
+  #   hook(MyException){ "do something special" }
+
+  def self.hook *names, &block
+    names.each do |name|
+      if Range === name
+        name.each{|n| @hooks[n] = block }
+      else
+        @hooks[name] = block
+      end
+    end
+  end
 end
+
+Kiwi.trace = true if ENV['RACK_ENV'] =~ /^dev/

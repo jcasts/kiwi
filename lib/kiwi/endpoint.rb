@@ -3,18 +3,21 @@
 
 class Kiwi::Endpoint
 
-  attr_reader :controller, :http_method, :path, :path_name
-              :params, :view, :description
+  attr_accessor :action, :http_method, :path, :path_name
+                :params, :view, :description
 
-  def initialize http_method, path, view, desc=nil, &action
+  def initialize http_method, path
     @http_method = http_method.to_s.upcase
     @path_name   = path
     @path        = parse_path path
     @info_path   = parse_info_path path
-    @view        = view
-    @controller  = action
-    @description = desc
+    @action      = action
+
+    @view        = nil
+    @description = nil
     @params      = {}
+
+    yield self if block_given?
   end
 
 
