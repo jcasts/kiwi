@@ -17,12 +17,4 @@ class Kiwi::App
   def call env
     Kiwi::Request.new(self, env).call
   end
-
-
-  ##
-  # Accessor for all endpoints.
-
-  def self.endpoints
-    @@endpoints ||= {}
-  end
 end
