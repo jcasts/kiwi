@@ -11,8 +11,9 @@
 
 class Kiwi::Endpoint
 
-  attr_accessor :http_method, :path, :path_name
-                :params, :view, :description
+  attr_reader :http_method, :path, :path_name
+
+  attr_accessor :action, :params, :view, :description
 
   def initialize http_method, path, &action
     @http_method = http_method.to_s.upcase
@@ -30,22 +31,6 @@ class Kiwi::Endpoint
 
 
   ##
-  # Assign a description.
-
-  def desc value
-    @description = value
-  end
-
-
-  ##
-  # Access the param definition object.
-
-  def param
-    @params
-  end
-
-
-  ##
   # Check that this endpoint supports the request of the given env.
 
   def routes? env
@@ -54,6 +39,17 @@ class Kiwi::Endpoint
 
 
   def validate! env
+  end
+
+
+  def http_method= new_meth
+    @http_method = new_meth.to_s.upcase
+  end
+
+
+  def path= new_path
+    @path_name = new_path
+    @path = parse_path new_path
   end
 
 
