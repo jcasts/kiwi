@@ -4,14 +4,6 @@
 module Kiwi::DSL
 
   ##
-  # Accessor for all endpoints.
-
-  def endpoints
-    @@endpoints ||= {}
-  end
-
-
-  ##
   # Assign a hook for error or status handling.
   #   hook(404){ "OH NOES" }
   #   hook(502..504, 599){ "EVIL GATEWAY" }
