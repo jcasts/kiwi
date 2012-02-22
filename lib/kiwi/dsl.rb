@@ -7,7 +7,7 @@ module Kiwi::DSL
   # Accessor for all endpoints.
 
   def endpoints
-    @endpoints ||= {}
+    @@endpoints ||= {}
   end
 
 
