@@ -39,6 +39,7 @@ class Kiwi::Endpoint
 
 
   def validate! env
+    # raise BadRequest on failure
   end
 
 

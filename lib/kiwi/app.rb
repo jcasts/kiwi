@@ -9,8 +9,8 @@ class Kiwi::App
 
 
   def initialize
-    @endpoints = {}
-    @hooks = self.class.hooks
+    @endpoints = self.class.endpoints
+    @hooks     = self.class.hooks
   end
 
 

@@ -24,7 +24,7 @@ class Kiwi::Request
 
     begin
       endpoint = find_endpoint! @env
-      endpoint.validate! @env
+      endpoint.validate! @env if Kiwi.param_validation
       data = trigger endpoint.action
 
     rescue HTTPError => err

@@ -49,6 +49,7 @@ module Kiwi::DSL
   # Describe params for an endpoint.
 
   def param
+    future_ept.params
   end
 
 
@@ -114,7 +115,6 @@ module Kiwi::DSL
     (endpoints[http_method] ||= []) << future_ept
 
     ept, @future_endpoint = @future_endpoint, nil
-
     return ept
   end
 

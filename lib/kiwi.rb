@@ -18,6 +18,9 @@ class Kiwi
   # Something bad happenned with the request.
   class HTTPError < Error;               STATUS = 500; end
 
+  # The request made to the endpoint was invalid.
+  class BadRequest < HTTPError;          STATUS = 400; end
+
   # The route requested does not exist.
   class RouteNotFound < HTTPError;       STATUS = 404; end
 
@@ -27,6 +30,9 @@ class Kiwi
 
   class << self
     attr_accessor :trace
+    attr_accessor :enforce_view
+    attr_accessor :enforce_desc
+    attr_accessor :param_validation
   end
 
 
@@ -60,4 +66,5 @@ class Kiwi
   end
 end
 
-Kiwi.trace = true if ENV['RACK_ENV'] =~ /^dev/
+Kiwi.trace            = true if ENV['RACK_ENV'] =~ /^dev/
+Kiwi.param_validation = true
