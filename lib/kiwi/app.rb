@@ -11,7 +11,11 @@ class Kiwi::App
   def initialize
     @endpoints = self.class.endpoints
     @hooks     = self.class.hooks
-    @apps      = @@apps.map{|app| app.new } if self.class == Kiwi::App
+    @apps      = {}
+
+    if self.class == Kiwi::App
+      @@apps.each{|app| @apps[app] = app.new }
+    end
   end
 
 
