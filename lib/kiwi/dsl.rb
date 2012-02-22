@@ -111,7 +111,11 @@ module Kiwi::DSL
     future_ept.path        = path
     future_ept.action      = action
 
-    endpoints[http_method]
+    (endpoints[http_method] ||= []) << future_ept
+
+    ept, @future_endpoint = @future_endpoint, nil
+
+    return ept
   end
 
 
