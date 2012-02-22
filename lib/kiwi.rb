@@ -27,7 +27,6 @@ class Kiwi
 
   class << self
     attr_accessor :trace
-    attr_accessor :hooks
   end
 
 
@@ -58,23 +57,6 @@ class Kiwi
     end
 
     curr
-  end
-
-
-  ##
-  # Assign a hook for error or status handling.
-  #   hook(404){ "OH NOES" }
-  #   hook(502..504, 599){ "EVIL GATEWAY" }
-  #   hook(MyException){ "do something special" }
-
-  def self.hook *names, &block
-    names.each do |name|
-      if Range === name
-        name.each{|n| @hooks[n] = block }
-      else
-        @hooks[name] = block
-      end
-    end
   end
 end
 

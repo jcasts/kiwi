@@ -11,10 +11,10 @@
 
 class Kiwi::Endpoint
 
-  attr_reader :http_method, :path, :path_name
-              :params, :view, :description
+  attr_accessor :http_method, :path, :path_name
+                :params, :view, :description
 
-  def initialize http_method, path, action=nil
+  def initialize http_method, path, &action
     @http_method = http_method.to_s.upcase
     @path_name   = path
     @path        = parse_path path
@@ -26,14 +26,6 @@ class Kiwi::Endpoint
     @params      = {} # Replace with API validator instance
 
     yield self if block_given?
-  end
-
-
-  ##
-  # Assign an action proc.
-
-  def action &block
-    @action = block
   end
 
 
