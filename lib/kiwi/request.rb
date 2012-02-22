@@ -1,6 +1,9 @@
 ##
 # Instance of a request made to the App. All requests run in this context.
 
+# TODO:
+# * Handle redirect and reroute
+
 class Kiwi::Request
 
   attr_reader :app, :env, :response
@@ -23,15 +26,17 @@ class Kiwi::Request
     trigger :before
 
     begin
-      endpoint = find_endpoint! @env
+      endpoint, @app = find_endpoint! @env
       endpoint.validate! @env if Kiwi.param_validation
-      data = trigger endpoint.action
+      data = instance_eval endpoint.action
 
     rescue HTTPError => err
-      @response[0] = err.class::STATUS
+      status err.class::STATUS
 
     rescue => err
-      data = trigger(err.class) || err
+      status 500
+      data = err
+      trigger err.class, err
     end
 
     trigger @response[0]
@@ -44,9 +49,9 @@ class Kiwi::Request
   ##
   # Trigger any application hook.
 
-  def trigger hook
+  def trigger hook, *args
     return unless @app.hooks[hook]
-    instance_eval(&@app.hooks[hook])
+    instance_exec(*args, &@app.hooks[hook])
   end
 
 
@@ -70,7 +75,8 @@ class Kiwi::Request
   # Raises RouteNotImplemented if no action exists for the route.
 
   def find_endpoint! env
-    @app.endpoints[env['HTTP_METHOD']].find{|ept| ept.routes? env }
+    endpoint, context_app = @app.endpoints[env['HTTP_METHOD']].
+                      find{|(ept, app)| ept.routes? env }
 
     raise RouteNotFound,
       "No route for #{env['REQUEST_PATH']}" unless endpoint
@@ -78,7 +84,7 @@ class Kiwi::Request
     raise RouteNotImplemented,
       "#{endpoint.path_name} isn't implemented" unless endpoint.action
 
-    endpoint
+    endpoint, context_app
   end
 
 

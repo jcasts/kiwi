@@ -3,33 +3,51 @@
 
 class Kiwi::App
 
+
+  def self.apps
+    @apps ||= []
+  end
+
+
+  def self.descendants
+    child_apps = @apps.dup
+    @apps.each do |app|
+      child_apps.concat  app.descendants
+    end
+    child_apps
+  end
+
+
+  def self.inherited subclass
+    apps << subclass
+  end
+
+
   extend Kiwi::DSL
+
 
   attr_reader :endpoints, :hooks
 
 
   def initialize
-    @endpoints = self.class.endpoints
     @hooks     = self.class.hooks
-    @apps      = {}
+    @endpoints = {}
 
-    if self.class == Kiwi::App
-      @@apps.each{|app| @apps[app] = app.new }
+    self.class.endpoints.each do |verb, epts|
+      @endpoints[verb] = epts.map{|ept| [ept, self] }
+    end
+
+    unless self.class.apps.empty?
+      self.class.apps.each do |app_klass|
+        next if app_klass.endpoints.empty?
+        app = app_klass.new
+        @endpoints.concat app.endpoints
+      end
     end
   end
 
 
   def call env
     Kiwi::Request.new(self, env).call
-  end
-
-
-  def self.apps
-    @@apps ||= []
-  end
-
-
-  def self.inherited subclass
-    (@@apps ||= []) << subclass
   end
 end
