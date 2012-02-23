@@ -1,5 +1,10 @@
 class Kiwi
   require 'kiwi/core_ext'
+  require 'kiwi/hooks'
+  require 'kiwi/dsl'
+  require 'kiwi/endpoint'
+  require 'kiwi/request'
+  require 'kiwi/app'
   require 'kiwi/view'
   require 'kiwi/view/attribute'
 
