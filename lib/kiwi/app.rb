@@ -19,6 +19,7 @@ class Kiwi::App
 
 
   def self.inherited subclass
+    hooks.merge! subclass.hooks
     apps << subclass
   end
 

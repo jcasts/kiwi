@@ -6,7 +6,7 @@
 
 class Kiwi::Request
 
-  attr_reader :app, :env, :response
+  attr_reader :app, :env, :endpoint, :response
 
   ##
   # Create a request instance of the app.
@@ -23,26 +23,34 @@ class Kiwi::Request
   def call env
     @env = env
 
-    trigger :before
+    ept, @app = find_endpoint! @env
+    @endpoint = ept if Kiwi::Endpoint === ept
 
-    begin
-      endpoint, @app = find_endpoint! @env
-      endpoint.validate! @env if Kiwi.param_validation
-      data = instance_eval endpoint.action
+      begin
+        body = catch(:render) do
+          trigger :before
 
-    rescue HTTPError => err
-      status err.class::STATUS
+          raise ept if Exception === ept
 
-    rescue => err
-      status 500
-      data = err
-      trigger err.class, err
-    end
+          @endpoint.validate! @env if Kiwi.param_validation
+          instance_eval @endpoint.action
+        end
+
+        body = @endpoint.view.new(body).to_hash if @endpoint.view
+
+      rescue HTTPError => err
+        status err.class::STATUS
+
+      rescue => err
+        status 500
+        data = err
+        trigger err.class, err
+      end
 
     trigger @response[0]
     trigger :after
 
-    render data
+    finalize_response body
   end
 
 
@@ -56,33 +64,70 @@ class Kiwi::Request
 
 
   ##
+  # Exit the current code path and render the response.
+
+  def render body=nil
+    throw :render, body
+  end
+
+
+  ##
   # Creates a Rack response array from the given data.
 
-  def render data
+  def finalize_response data
     if Exception === data
       data = {"error" => data.class, "message" => data.message}
       data['trace'] = data.backtrace if Kiwi.trace
     end
 
-    @response[2] = [data.to_json]
+    data = data.to_json unless
+      String === data || Numeric === data || data.respond_to?(:read)
+
+    data = [data.to_s] unless data.respond_to?(:each) && !(String === data)
+
+    @response[2] = data
     @response
   end
 
 
   ##
+  # Respond with a 301, 302, 303, or 307 redirect. Defaults to 302.
+  # Calling this method will exit the current code path.
+  #
+  #   redirect "/new_location/123"
+  #   #=> 302 redirect
+  #
+  #   redirect 307, "/new_location/123"
+  #   #=> client must redirect with same http method
+  #
+  #   redirect "/new_location/123", "Go seomwhere else"
+  #   #=> 302 redirect with response body
+
+  def redirect code, location=nil, body=nil
+    code, location, body = 302, code, location if String === code
+
+    status  code
+    headers 'Location' => location
+    render  body
+  end
+
+
+  ##
   # Returns an endpoint object if it exists.
-  # Raises RouteNotFound if no endpoint is found.
-  # Raises RouteNotImplemented if no action exists for the route.
+  # Returns RouteNotFound if no endpoint is found.
+  # Returns RouteNotImplemented if no action exists for the route.
 
   def find_endpoint! env
     endpoint, context_app = @app.endpoints[env['HTTP_METHOD']].
                       find{|(ept, app)| ept.routes? env }
 
-    raise RouteNotFound,
-      "No route for #{env['REQUEST_PATH']}" unless endpoint
+    context_app ||= @app
 
-    raise RouteNotImplemented,
-      "#{endpoint.path_name} isn't implemented" unless endpoint.action
+    endpoint =
+      RouteNotImplemented.new "#{endpoint.path_name} not implemented" unless
+        endpoint && endpoint.action
+
+    endpoint ||= RouteNotFound.new "No route for #{env['REQUEST_PATH']}"
 
     endpoint, context_app
   end

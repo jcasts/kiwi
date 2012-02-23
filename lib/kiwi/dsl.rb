@@ -3,29 +3,13 @@
 
 module Kiwi::DSL
 
+  include Kiwi::Hooks
+
   ##
   # Accessor for all endpoints.
 
   def endpoints
     @endpoints ||= {}
-  end
-
-
-  ##
-  # Assign a hook for error or status handling.
-  #   hook(404){ "OH NOES" }
-  #   hook(502..504, 599){ "EVIL GATEWAY" }
-  #   hook(MyException){ "do something special" }
-
-  def hook *names, &block
-    @hooks ||= {}
-    names.each do |name|
-      if Range === name
-        name.each{|n| @hooks[n] = block }
-      else
-        @hooks[name] = block
-      end
-    end
   end
 
 
@@ -71,6 +55,14 @@ module Kiwi::DSL
 
 
   ##
+  # Define a PATCH endpoint.
+
+  def patch path, &action
+    finalize_ept "PATCH", path, &action
+  end
+
+
+  ##
   # Define a POST endpoint.
 
   def post path, &action
@@ -79,7 +71,7 @@ module Kiwi::DSL
 
 
   ##
-  # Define a POST endpoint.
+  # Define a PUT endpoint.
 
   def put path, &action
     finalize_ept "PUT", path, &action
@@ -95,6 +87,14 @@ module Kiwi::DSL
 
 
   ##
+  # Define a OPTIONS endpoint.
+
+  def options path, &action
+    finalize_ept "OPTIONS", path, &action
+  end
+
+
+  ##
   # Create an endpoint with a custom http verb.
 
   def route http_method, path, &action
@@ -105,7 +105,7 @@ module Kiwi::DSL
   private
 
   def finalize_ept http_method, path, &action # :nodoc:
-    # TODO: Allow raising an error if no description or view is given?
+    # TODO: Allow raising an error if no description is given?
     http_method = http_method.to_s.upcase
 
     future_ept.http_method = http_method
