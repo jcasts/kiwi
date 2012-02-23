@@ -1,9 +1,6 @@
 ##
 # Instance of a request made to the App. All requests run in this context.
 
-# TODO:
-# * Handle redirect and reroute
-
 class Kiwi::Request
 
   attr_reader :app, :env, :endpoint, :response
