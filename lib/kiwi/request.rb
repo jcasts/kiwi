@@ -3,13 +3,20 @@
 
 class Kiwi::Request
 
-  attr_reader :app, :env, :endpoint, :response
+  attr_reader :app, :env, :endpoint, :params, :request, :response
 
   ##
   # Create a request instance of the app.
 
-  def initialize app
+  def initialize app, env
     @app = app
+    @env = env
+
+    @request = Rack::Request.new env
+
+    @params = @req.params
+    @body   = nil
+
     @response = [200, {'Content-Type' => "application/json"}]
   end
 
@@ -18,9 +25,6 @@ class Kiwi::Request
   # Make the request.
 
   def call env
-    @env  = env
-    @body = nil
-
     ept, @app = find_endpoint! @env
     @endpoint = ept if Kiwi::Endpoint === ept
 
@@ -29,8 +33,6 @@ class Kiwi::Request
         trigger :before
 
         raise ept if Exception === ept
-
-        @endpoint.validate! self if Kiwi.param_validation
         @endpoint.call self
       end
 

@@ -3,7 +3,7 @@
 #
 # Support this:
 #  desc "Get a specific foo"
-#  string :id, "The id of the foo"
+#  params.string :id, "The id of the foo"
 #
 #  get "/foo/:id" do
 #    # do something
@@ -33,7 +33,9 @@ class Kiwi::Endpoint
   # Call the endpoint with the given Kiwi::Request instance.
 
   def call kreq
-    yield_params = keys.map{|key| kreq.params[key]}
+    kreq.params = validate! kreq if Kiwi.param_validation
+    yield_params = @keys.map{|key| kreq.params[key]}
+
     kreq.instance_exec(*yield_params, &@action)
   end
 
@@ -50,7 +52,9 @@ class Kiwi::Endpoint
   # Validate the given Kiwi::Request instance.
 
   def validate! kreq
-    # raise BadRequest on failure
+    @params.build kreq.params
+  rescue => err
+    raise Kiwi::BadRequest, err.message
   end
 
 

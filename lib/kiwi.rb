@@ -1,3 +1,5 @@
+require 'rack'
+
 class Kiwi
   require 'kiwi/validator'
   require 'kiwi/validator/attribute'
