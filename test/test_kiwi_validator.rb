@@ -1,8 +1,8 @@
 require 'test/helper'
 
-class TestKiwiView < Test::Unit::TestCase
+class TestKiwiValidator < Test::Unit::TestCase
 
-  class PersonView < Kiwi::View
+  class PersonValidator < Kiwi::Validator
     v_attribute :name,  String
     v_attribute :gender, String, :optional => true
 
@@ -13,7 +13,7 @@ class TestKiwiView < Test::Unit::TestCase
   end
 
 
-  class CatView < Kiwi::View
+  class CatValidator < Kiwi::Validator
     string  :name
     integer :age
     string  :colors, :collection => true
@@ -21,9 +21,9 @@ class TestKiwiView < Test::Unit::TestCase
 
 
   def test_v_attribute_name
-    v_attribute = PersonView.v_attributes['name']
+    v_attribute = PersonValidator.v_attributes['name']
 
-    assert_equal Kiwi::View::Attribute, v_attribute.class
+    assert_equal Kiwi::Validator::Attribute, v_attribute.class
     assert_equal String,                v_attribute.type
     assert_equal false,                 v_attribute.collection
     assert_equal false,                 v_attribute.optional
@@ -32,9 +32,9 @@ class TestKiwiView < Test::Unit::TestCase
 
 
   def test_v_attribute_gender
-    v_attribute = PersonView.v_attributes['gender']
+    v_attribute = PersonValidator.v_attributes['gender']
 
-    assert_equal Kiwi::View::Attribute, v_attribute.class
+    assert_equal Kiwi::Validator::Attribute, v_attribute.class
     assert_equal String,                v_attribute.type
     assert_equal false,                 v_attribute.collection
     assert_equal true,                  v_attribute.optional
@@ -44,23 +44,23 @@ class TestKiwiView < Test::Unit::TestCase
 
 
   def test_v_attribute_attributes
-    v_attribute = PersonView.v_attributes['attributes']
+    v_attribute = PersonValidator.v_attributes['attributes']
 
-    assert_equal Kiwi::View::Attribute, v_attribute.class
-    assert       v_attribute.type.ancestors.include?(Kiwi::View)
+    assert_equal Kiwi::Validator::Attribute, v_attribute.class
+    assert       v_attribute.type.ancestors.include?(Kiwi::Validator)
 
     assert_equal true,                  v_attribute.collection
     assert_equal true,                  v_attribute.optional
     assert_nil                          v_attribute.default
 
     sub_attribute = v_attribute.type.v_attributes['awesome']
-    assert_equal Kiwi::View::Attribute, sub_attribute.class
+    assert_equal Kiwi::Validator::Attribute, sub_attribute.class
     assert_equal false,                 sub_attribute.collection
     assert_equal true,                  sub_attribute.optional
     assert_equal false,                 sub_attribute.default
 
     sub_attribute = v_attribute.type.v_attributes['awake']
-    assert_equal Kiwi::View::Attribute, sub_attribute.class
+    assert_equal Kiwi::Validator::Attribute, sub_attribute.class
     assert_equal false,                 sub_attribute.collection
     assert_equal false,                 sub_attribute.optional
     assert_equal false,                 sub_attribute.default
@@ -68,10 +68,10 @@ class TestKiwiView < Test::Unit::TestCase
 
 
   def test_string_attribute
-    PersonView.string :foo, :optional => true
-    v_attribute = PersonView.v_attributes['foo']
+    PersonValidator.string :foo, :optional => true
+    v_attribute = PersonValidator.v_attributes['foo']
 
-    assert_equal Kiwi::View::Attribute, v_attribute.class
+    assert_equal Kiwi::Validator::Attribute, v_attribute.class
     assert_equal String,                v_attribute.type
     assert_equal false,                 v_attribute.collection
     assert_equal true,                  v_attribute.optional
@@ -80,10 +80,10 @@ class TestKiwiView < Test::Unit::TestCase
 
 
   def test_integer_attribute
-    PersonView.integer :foo, :optional => true
-    v_attribute = PersonView.v_attributes['foo']
+    PersonValidator.integer :foo, :optional => true
+    v_attribute = PersonValidator.v_attributes['foo']
 
-    assert_equal Kiwi::View::Attribute, v_attribute.class
+    assert_equal Kiwi::Validator::Attribute, v_attribute.class
     assert_equal Integer,               v_attribute.type
     assert_equal false,                 v_attribute.collection
     assert_equal true,                  v_attribute.optional
@@ -92,10 +92,10 @@ class TestKiwiView < Test::Unit::TestCase
 
 
   def test_boolean_attribute
-    PersonView.boolean :foo, :optional => true
-    v_attribute = PersonView.v_attributes['foo']
+    PersonValidator.boolean :foo, :optional => true
+    v_attribute = PersonValidator.v_attributes['foo']
 
-    assert_equal Kiwi::View::Attribute, v_attribute.class
+    assert_equal Kiwi::Validator::Attribute, v_attribute.class
     assert_equal Boolean,               v_attribute.type
     assert_equal false,                 v_attribute.collection
     assert_equal true,                  v_attribute.optional
@@ -103,12 +103,14 @@ class TestKiwiView < Test::Unit::TestCase
   end
 
 
-  def test_view_attribute
-    PersonView.view :cats, CatView, :optional => true, :collection => true
-    v_attribute = PersonView.v_attributes['cats']
+  def test_validator_attribute
+    PersonValidator.validator :cats, CatValidator,
+      :optional => true, :collection => true
 
-    assert_equal Kiwi::View::Attribute, v_attribute.class
-    assert_equal CatView,               v_attribute.type
+    v_attribute = PersonValidator.v_attributes['cats']
+
+    assert_equal Kiwi::Validator::Attribute, v_attribute.class
+    assert_equal CatValidator,               v_attribute.type
     assert_equal true,                  v_attribute.collection
     assert_equal true,                  v_attribute.optional
     assert_nil                          v_attribute.default
@@ -116,15 +118,15 @@ class TestKiwiView < Test::Unit::TestCase
 
 
   def test_collection_attribute
-    PersonView.collection :cats, :optional => true do |cat|
+    PersonValidator.collection :cats, :optional => true do |cat|
       cat.string  :name
       cat.integer :age
     end
 
-    v_attribute = PersonView.v_attributes['cats']
+    v_attribute = PersonValidator.v_attributes['cats']
 
-    assert_equal Kiwi::View::Attribute, v_attribute.class
-    assert       v_attribute.type.ancestors.include?(Kiwi::View)
+    assert_equal Kiwi::Validator::Attribute, v_attribute.class
+    assert       v_attribute.type.ancestors.include?(Kiwi::Validator)
     assert_equal true,                  v_attribute.collection
     assert_equal true,                  v_attribute.optional
     assert_nil                          v_attribute.default
@@ -132,15 +134,15 @@ class TestKiwiView < Test::Unit::TestCase
 
 
   def test_subset_attribute
-    PersonView.collection :cats, :optional => true do |cat|
+    PersonValidator.collection :cats, :optional => true do |cat|
       cat.string  :name
       cat.integer :age
     end
 
-    v_attribute = PersonView.v_attributes['cats']
+    v_attribute = PersonValidator.v_attributes['cats']
 
-    assert_equal Kiwi::View::Attribute, v_attribute.class
-    assert       v_attribute.type.ancestors.include?(Kiwi::View)
+    assert_equal Kiwi::Validator::Attribute, v_attribute.class
+    assert       v_attribute.type.ancestors.include?(Kiwi::Validator)
     assert_equal true,                  v_attribute.collection
     assert_equal true,                  v_attribute.optional
     assert_nil                          v_attribute.default
@@ -148,7 +150,7 @@ class TestKiwiView < Test::Unit::TestCase
 
 
   def test_build_basic
-    res = PersonView.build :name => "John"
+    res = PersonValidator.build :name => "John"
     expected = {"name" => "John"}
 
     assert_equal expected, res
@@ -156,7 +158,9 @@ class TestKiwiView < Test::Unit::TestCase
 
 
   def test_build_basic_subs
-    res = PersonView.build :name => "John", :attributes => [{:awake => true}]
+    res = PersonValidator.build :name => "John",
+                                :attributes => [{:awake => true}]
+
     expected = {"name" => "John",
         "attributes" => [{"awake" => true, "awesome" => false}]}
 
@@ -166,17 +170,17 @@ class TestKiwiView < Test::Unit::TestCase
 
   def test_build_wrong_type
     assert_raises Kiwi::InvalidTypeError do
-      PersonView.build :name => 123
+      PersonValidator.build :name => 123
     end
 
     assert_raises Kiwi::InvalidTypeError do
-      PersonView.build :name => "John", :attributes => [{:awake => 'foo'}]
+      PersonValidator.build :name => "John", :attributes => [{:awake => 'foo'}]
     end
   end
 
 
   def test_to_hash_basic
-    res = PersonView.new(:name => "John").to_hash
+    res = PersonValidator.new(:name => "John").to_hash
     expected = {"name" => "John"}
 
     assert_equal expected, res
@@ -184,7 +188,7 @@ class TestKiwiView < Test::Unit::TestCase
 
 
   def test_to_hash_basic_subs
-    res = PersonView.
+    res = PersonValidator.
       new(:name => "John", :attributes => [{:awake => true}]).to_hash
 
     expected = {"name" => "John",
@@ -196,19 +200,21 @@ class TestKiwiView < Test::Unit::TestCase
 
   def test_to_hash_wrong_type
     assert_raises Kiwi::InvalidTypeError do
-      PersonView.new(:name => 123).to_hash
+      PersonValidator.new(:name => 123).to_hash
     end
 
     assert_raises Kiwi::InvalidTypeError do
-      PersonView.
+      PersonValidator.
         new(:name => "John", :attributes => [{:awake => 'foo'}]).to_hash
     end
   end
 
 
-  def test_to_hash_view
-    PersonView.view :cats, CatView, :optional => true, :collection => true
-    view = PersonView.new :name => "Jack",
+  def test_to_hash_validator
+    PersonValidator.validator :cats, CatValidator,
+      :optional => true, :collection => true
+
+    validator = PersonValidator.new :name => "Jack",
             :cats => [
               {:name => "daisy",  :age => 2, :colors => ["black"]},
               {:name => "bandit", :age => 1, :colors => ["white", "black"]}
@@ -218,6 +224,6 @@ class TestKiwiView < Test::Unit::TestCase
       [{"name" => "daisy",  "age" => 2, "colors" => ["black"]},
        {"name" => "bandit", "age" => 1, "colors" => ["white", "black"]}]}
 
-    assert_equal expected, view.to_hash
+    assert_equal expected, validator.to_hash
   end
 end

@@ -23,7 +23,7 @@ class Kiwi::Endpoint
 
     @view        = nil
     @description = nil
-    @params      = {} # Replace with API validator instance
+    @params      = Class.new Kiwi::Validator
 
     yield self if block_given?
   end

@@ -1,8 +1,8 @@
 ##
-# Single attribute node in a view.
+# Single attribute node in a validator.
 # Handles validation and value retrieval from objects.
 
-class Kiwi::View::Attribute
+class Kiwi::Validator::Attribute
 
   attr_reader :name, :collection, :optional, :default
 
@@ -91,7 +91,7 @@ class Kiwi::View::Attribute
     end
 
     if type
-      if type.ancestors.include?(Kiwi::View)
+      if type.ancestors.include?(Kiwi::Validator)
        val = type.build val
 
       else

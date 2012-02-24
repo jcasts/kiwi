@@ -129,7 +129,7 @@ class Kiwi::Request
 
     endpoint ||= RouteNotFound.new "No route for #{env['REQUEST_PATH']}"
 
-    endpoint, context_app
+    [endpoint, context_app]
   end
 
 

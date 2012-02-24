@@ -1,25 +1,25 @@
 require 'test/helper'
 
-class TestKiwiViewAttribute < Test::Unit::TestCase
+class TestKiwiValidatorAttribute < Test::Unit::TestCase
 
   def setup
-    @req_attr         = Kiwi::View::Attribute.new :foo, Integer
-    @req_default_attr = Kiwi::View::Attribute.new :foo, Integer,
+    @req_attr         = Kiwi::Validator::Attribute.new :foo, Integer
+    @req_default_attr = Kiwi::Validator::Attribute.new :foo, Integer,
                           :default => 456
-    @req_coll_attr    = Kiwi::View::Attribute.new :foo, Integer,
+    @req_coll_attr    = Kiwi::Validator::Attribute.new :foo, Integer,
                           :collection => true
 
-    @opt_attr         = Kiwi::View::Attribute.new :foo, String,
+    @opt_attr         = Kiwi::Validator::Attribute.new :foo, String,
                           :optional => true
-    @opt_default_attr = Kiwi::View::Attribute.new :foo, String,
+    @opt_default_attr = Kiwi::Validator::Attribute.new :foo, String,
                           :default => "foo", :optional => true
 
-    @view_attr      = Kiwi::View::Attribute.new :foo, Kiwi::View
-    @view_coll_attr = Kiwi::View::Attribute.new :foo, Kiwi::View,
+    @validator_attr      = Kiwi::Validator::Attribute.new :foo, Kiwi::Validator
+    @validator_coll_attr = Kiwi::Validator::Attribute.new :foo, Kiwi::Validator,
                         :collection => true
 
-    @bool_attr         = Kiwi::View::Attribute.new :foo, Boolean
-    @bool_default_attr = Kiwi::View::Attribute.new :foo, Boolean,
+    @bool_attr         = Kiwi::Validator::Attribute.new :foo, Boolean
+    @bool_default_attr = Kiwi::Validator::Attribute.new :foo, Boolean,
                           :default => false
 
 
@@ -32,14 +32,14 @@ class TestKiwiViewAttribute < Test::Unit::TestCase
 
   def test_invalid_default
     assert_raises Kiwi::InvalidTypeError, 'Default "Hi" isn\'t a Integer' do
-      Kiwi::View::Attribute.new :foo, Integer, :default => "Hi"
+      Kiwi::Validator::Attribute.new :foo, Integer, :default => "Hi"
     end
   end
 
 
   def test_invalid_type
     assert_raises ArgumentError, 'Type nil must be a Class' do
-      Kiwi::View::Attribute.new :foo, nil
+      Kiwi::Validator::Attribute.new :foo, nil
     end
   end
 
@@ -137,7 +137,7 @@ class TestKiwiViewAttribute < Test::Unit::TestCase
 
 
   def test_later_type
-    attrib = Kiwi::View::Attribute.new :foo, "Integer"
+    attrib = Kiwi::Validator::Attribute.new :foo, "Integer"
 
     assert_equal 123, attrib.value_from(:foo => 123)
 
@@ -149,12 +149,12 @@ class TestKiwiViewAttribute < Test::Unit::TestCase
   end
 
 
-  def test_view_attr
-    view = Class.new Kiwi::View
-    view.string  :name
-    view.integer :age
+  def test_validator_attr
+    validator = Class.new Kiwi::Validator
+    validator.string  :name
+    validator.integer :age
 
-    attrib = Kiwi::View::Attribute.new 'thing', view
+    attrib = Kiwi::Validator::Attribute.new 'thing', validator
 
     val = attrib.value_from :thing => {:name => "George", :age => 34}
     expected = {"name" => "George", "age" => 34}
