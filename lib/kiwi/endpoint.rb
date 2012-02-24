@@ -18,8 +18,7 @@ class Kiwi::Endpoint
   def initialize http_method, path, &action
     @http_method = http_method.to_s.upcase
     @path_name   = path
-    @path        = parse_path path
-    @info_path   = parse_info_path path
+    @path, @keys = parse_path path
     @action      = action
 
     @view        = nil
@@ -31,6 +30,15 @@ class Kiwi::Endpoint
 
 
   ##
+  # Call the endpoint with the given Kiwi::Request instance.
+
+  def call kreq
+    yield_params = keys.map{|key| kreq.params[key]}
+    kreq.instance_exec(*yield_params, &@action)
+  end
+
+
+  ##
   # Check that this endpoint supports the request of the given env.
 
   def routes? env
@@ -38,7 +46,10 @@ class Kiwi::Endpoint
   end
 
 
-  def validate! env
+  ##
+  # Validate the given Kiwi::Request instance.
+
+  def validate! kreq
     # raise BadRequest on failure
   end
 
@@ -54,7 +65,31 @@ class Kiwi::Endpoint
   end
 
 
+  ##
+  # Converts an endpoint path to its regex matcher.
+  # (Thanks Sinatra!)
+
   def parse_path path
+    return [path, []] if Regexp === path
+
+    keys = []
+    special_chars = %w{. + ( )}
+
+    pattern =
+      path.to_str.gsub(/((:\w+)|[\*#{special_chars.join}])/) do |match|
+        case match
+        when "*"
+          keys << 'splat'
+          "(.*?)"
+        when *special_chars
+          Regexp.escape(match)
+        else
+          keys << $2[1..-1]
+          "([^/?#]+)"
+        end
+      end
+
+    [/^#{pattern}$/, keys]
   end
 
 

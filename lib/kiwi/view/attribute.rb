@@ -4,11 +4,7 @@
 
 class Kiwi::View::Attribute
 
-  # Value when nothing was found or returned.
-  module NONE; end
-
   attr_reader :name, :collection, :optional, :default
-
 
   ##
   # Create a new attribute with a name and data type.

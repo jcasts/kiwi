@@ -18,36 +18,38 @@ class Kiwi::Request
   # Make the request.
 
   def call env
-    @env = env
+    @env  = env
+    @body = nil
 
     ept, @app = find_endpoint! @env
     @endpoint = ept if Kiwi::Endpoint === ept
 
-      begin
-        body = catch(:render) do
-          trigger :before
+    begin
+      @body = catch(:render) do
+        trigger :before
 
-          raise ept if Exception === ept
+        raise ept if Exception === ept
 
-          @endpoint.validate! @env if Kiwi.param_validation
-          instance_eval @endpoint.action
-        end
-
-        body = @endpoint.view.new(body).to_hash if @endpoint.view
-
-      rescue HTTPError => err
-        status err.class::STATUS
-
-      rescue => err
-        status 500
-        data = err
-        trigger err.class, err
+        @endpoint.validate! self if Kiwi.param_validation
+        @endpoint.call self
       end
 
-    trigger @response[0]
-    trigger :after
+      @body = @endpoint.view.new(@body).to_hash if @endpoint.view
 
-    finalize_response body
+    rescue HTTPError => err
+      status err.class::STATUS
+
+    rescue => err
+      status 500
+      @body = catch(:render){ trigger err.class, err } || err
+    end
+
+    catch(:render) do
+      @body = trigger(@response[0]) || @body
+      trigger :after
+    end
+
+    finalize_response @body
   end
 
 
@@ -64,6 +66,7 @@ class Kiwi::Request
   # Exit the current code path and render the response.
 
   def render body=nil
+    @body = body if body
     throw :render, body
   end
 
