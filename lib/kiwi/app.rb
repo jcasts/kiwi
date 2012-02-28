@@ -99,9 +99,37 @@ class Kiwi::App
 
 
   def call env
-    #Kiwi::Request.new(self, env).call
-    @app = find_app @env unless self.class.apps.empty?
-    @app.dup.request! env
+    response = try_call(env)
+    raise RouteNotFound, "No route for #{env['REQUEST_PATH']}" unless response
+
+  rescue HTTPError => err
+    status err.class::STATUS
+
+  rescue => err
+    status 500
+    @body = may_respond{ trigger err.class, err } || err
+
+  ensure
+    may_respond{ trigger :after }
+  end
+
+
+  def try_call env
+    may_respond do
+      trigger :before
+
+      resource, path_params = find_resource env
+
+      raise RouteNotImplemented,
+        "#{env['HTTP_METHOD']} not implemented on #{resource}" unless
+          resource.implements? env['HTTP_METHOD']
+
+      if !resource
+        child_apps.each{|app| app.call(env) }
+      else
+        resource.new(self).call env
+      end
+    end
   end
 
 
@@ -135,7 +163,7 @@ class Kiwi::App
 
   def render body=nil
     @body = body if body
-    throw :render, body
+    throw :respond, body
   end
 
 
@@ -166,6 +194,11 @@ class Kiwi::App
   private
 
 
+  def may_respond &block
+    catch(:respond, &block)
+  end
+
+
   ##
   # Make the request.
 
@@ -185,7 +218,7 @@ class Kiwi::App
     @endpoint = ept if Kiwi::Endpoint === ept
 
     begin
-      @body = catch(:render) do
+      @body = catch(:respond) do
         trigger :before
 
         raise ept if Exception === ept
@@ -199,10 +232,10 @@ class Kiwi::App
 
     rescue => err
       status 500
-      @body = catch(:render){ trigger err.class, err } || err
+      @body = catch(:respond){ trigger err.class, err } || err
     end
 
-    catch(:render) do
+    catch(:respond) do
       @body = trigger(@response[0]) || @body
       trigger :after
     end
@@ -240,12 +273,6 @@ class Kiwi::App
       env['REQUEST_PATH'] =~ matcher
     end
 
-    raise RouteNotFound, "No route for #{env['REQUEST_PATH']}" unless resource
-
-    raise RouteNotImplemented,
-      "#{env['HTTP_METHOD']} not implemented on #{resource}" unless
-        resource.implements? env['HTTP_METHOD']
-
-    resouce.new
+    [resource, matches]
   end
 end
