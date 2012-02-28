@@ -19,38 +19,88 @@ class Kiwi::App
 
 
   def self.inherited subclass
-    hooks.merge! subclass.hooks
     apps << subclass
   end
 
 
-  extend Kiwi::DSL
+  ##
+  # Read or set the name of this app's api.
+  # Used for api versionning:
+  #  api_name "company.myapp.v1"
+
+  def self.api_name name=nil
+    @api_name ||= self.class.name
+    @api_name   = name if name
+    @api_name
+  end
 
 
-  attr_reader :endpoints, :hooks
+  ##
+  # Accessor for all resources.
+
+  def self.resources
+    @resources ||= {}
+  end
+
+
+  ##
+  # Define a single resource path.
+
+  def self.resource path, resource_klass, &block
+    path = [@curr_path, path].join("/") if @curr_path
+
+    matcher_and_keys = parse_path path
+    resources[matcher_and_keys] = resource_klass
+
+    if block_given?
+      @curr_path, old_curr_path = path, @curr_path
+      instance_eval &block
+      @curr_path = old_curr_path
+    end
+
+    resource_klass
+  end
+
+
+  ##
+  # Parse a path into a matcher with key params.
+
+  def self.parse_path path
+    return [path, []] if Regexp === path
+
+    keys = []
+    special_chars = %w{. + ( )}
+
+    pattern =
+      path.to_str.gsub(/((:\w+)|[\*#{special_chars.join}])/) do |match|
+        case match
+        when "*"
+          keys << 'splat'
+          "(.*?)"
+        when *special_chars
+          Regexp.escape(match)
+        else
+          keys << $2[1..-1]
+          "([^/?#]+)"
+        end
+      end
+
+    [/^#{pattern}$/, keys]
+  end
+
+
+  extend Kiwi::Hooks
 
 
   def initialize
+    @app       = self
     @hooks     = self.class.hooks
-    @endpoints = {}
-
-    self.class.endpoints.each do |verb, epts|
-      @endpoints[verb] = epts.map{|ept| [ept, self] }
-    end
-
-    unless self.class.apps.empty?
-      self.class.apps.each do |app_klass|
-        next if app_klass.endpoints.empty?
-        app = app_klass.new
-        @endpoints.concat app.endpoints
-      end
-    end
   end
 
 
   def call env
     #Kiwi::Request.new(self, env).call
-    ept, @app = find_endpoint @env
+    @app = find_app @env unless self.class.apps.empty?
     @app.dup.request! env
   end
 
@@ -111,13 +161,16 @@ class Kiwi::App
   end
 
 
-  attr_accessor :app, :env, :endpoint, :params, :request, :response
+  attr_accessor :app, :env, :request, :response
 
   private
 
 
+  ##
+  # Make the request.
+
   def request! env
-    @app = app
+    @app = self
     @env = env
 
     @request = Rack::Request.new env
@@ -127,14 +180,8 @@ class Kiwi::App
 
     @response = [200, {'Content-Type' => "application/json"}]
 
-  end
 
-
-  ##
-  # Make the request.
-
-  def call env
-    ept, @app = find_endpoint! @env
+    ept, @app = find_endpoint @env unless ept
     @endpoint = ept if Kiwi::Endpoint === ept
 
     begin
@@ -184,22 +231,21 @@ class Kiwi::App
 
 
   ##
-  # Returns an endpoint object if it exists.
-  # Returns RouteNotFound if no endpoint is found.
-  # Returns RouteNotImplemented if no action exists for the route.
+  # Returns a resource object if it exists.
+  # Returns RouteNotFound if no resource is found.
+  # Returns RouteNotImplemented if no action exists for the http verb.
 
-  def find_endpoint env
-    endpoint, context_app = endpoints[env['HTTP_METHOD']].
-                      find{|(ept, app)| ept.routes? env }
+  def find_resource env
+    (matcher, keys), resource = resources.find do |(matcher, keys), r|
+      env['REQUEST_PATH'] =~ matcher
+    end
 
-    context_app ||= self
+    raise RouteNotFound, "No route for #{env['REQUEST_PATH']}" unless resource
 
-    endpoint =
-      RouteNotImplemented.new "#{endpoint.path_name} not implemented" unless
-        endpoint && endpoint.action
+    raise RouteNotImplemented,
+      "#{env['HTTP_METHOD']} not implemented on #{resource}" unless
+        resource.implements? env['HTTP_METHOD']
 
-    endpoint ||= RouteNotFound.new "No route for #{env['REQUEST_PATH']}"
-
-    [endpoint, context_app]
+    resouce.new
   end
 end

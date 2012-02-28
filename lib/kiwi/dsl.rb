@@ -3,16 +3,6 @@
 
 module Kiwi::DSL
 
-  include Kiwi::Hooks
-
-  ##
-  # Accessor for all endpoints.
-
-  def endpoints
-    @endpoints ||= {}
-  end
-
-
   ##
   # Assign a prefix to all endpoint paths.
 
