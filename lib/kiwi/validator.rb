@@ -73,6 +73,8 @@ class Kiwi::Validator
   def self.v_attribute name, type, opts={}
     opts, type = type, nil if Hash === type
 
+    opts = {:optional => @optional}.merge opts if @optional
+
     if block_given?
       type = Class.new Kiwi::Validator
       yield type
@@ -88,6 +90,37 @@ class Kiwi::Validator
 
   def self.v_attributes
     @validator_attributes ||= {}
+  end
+
+
+  ##
+  # Everything after calling this method is an optional attribute.
+  #   class MyValidator < Kiwi::Validator
+  #     string :required_key
+  #
+  #     optional
+  #     string :optional_key
+  #   end
+
+  def self.optional
+    @optional = true
+  end
+
+
+  ##
+  # Everything after calling this method is a required attribute.
+  #   class MyValidator < Kiwi::Validator
+  #     string :required_key
+  #
+  #     optional
+  #     string :optional_key
+  #
+  #     required
+  #     string :other_required_key
+  #   end
+
+  def self.required
+    @optional = false
   end
 
 
