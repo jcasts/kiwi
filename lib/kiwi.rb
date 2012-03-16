@@ -5,8 +5,7 @@ class Kiwi
   require 'kiwi/validator/attribute'
   require 'kiwi/core_ext'
   require 'kiwi/hooks'
-  require 'kiwi/dsl'
-  require 'kiwi/endpoint'
+  require 'kiwi/resource'
   require 'kiwi/request'
   require 'kiwi/app'
 
