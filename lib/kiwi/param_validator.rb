@@ -9,11 +9,27 @@ class Kiwi::ParamValidator
   end
 
 
+  def for_method mname
+    params = {}
+
+    @validators.each do |name, attr|
+      next if table[:except].include?(mname) ||
+        !table[:only].empty? && !table[:only].include?(mname)
+
+      params[name] = attr
+    end
+
+    params
+  end
+
+
   def validate! mname, params
     mname = mname.to_s
     value = {}
 
     params.each do |name, value|
+      name = name.to_s
+
       table = @validators[name]
 
       if !table || table[:except].include?(mname) ||
@@ -24,7 +40,7 @@ class Kiwi::ParamValidator
       end
 
       val = table[:attr].value_from params
-      value[name.to_s] = val unless val.nil? && table[:attr].optional
+      value[name] = val unless val.nil? && table[:attr].optional
     end
 
     value
