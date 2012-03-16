@@ -31,36 +31,7 @@ class Kiwi::Resource
 
   def self.route string=nil
     return @route unless string
-    @route = parse_path string
-  end
-
-
-  ##
-  # Parse a path into a matcher with key params.
-
-  def self.parse_path path
-    return [path, []] if Regexp === path
-
-    path = path.sub(/^\/?/, "/").sub(/\/?$/, "")
-
-    keys = []
-    special_chars = %w{. + ( )}
-
-    pattern =
-      path.to_str.gsub(/((:\w+)|[\*#{special_chars.join}])/) do |match|
-        case match
-        when "*"
-          keys << 'splat'
-          "(.*?)"
-        when *special_chars
-          Regexp.escape(match)
-        else
-          keys << $2[1..-1]
-          "([^/?#]+)"
-        end
-      end
-
-    [/^#{pattern}$/, keys]
+    @route = string.sub(/^\/?/, "/").sub(/\/?$/, "")
   end
 
 
@@ -84,28 +55,33 @@ class Kiwi::Resource
   end
 
 
+  attr_reader :app
+
   ##
   # Create a new resource instance for the request.
 
-  def initialize app=nil
+  def initialize app
     @app = app
   end
 
 
   ##
-  # Call the resource with a Rack env hash.
+  # Call the resource with a method name and params.
 
-  def call env
-    mname, @params = validate! env
-    #return 510 unless self.respond_to? mname
-    self.__send__(mname)
+  def call mname, params
+    meth    = public_method mname
+    @params = validate! mname, params
+    args    = meth.parameters.map{|(type, name)| @params[name]}
+    data    = __send__(mname, *args)
+
+    self.class.view.build data if data
   end
 
 
   ##
   # Validate the incoming request.
-  # Returns the method name to call and the parsed params.
 
-  def validate! env
+  def validate! mname, params
+    self.class.params(mname).validate! params
   end
 end

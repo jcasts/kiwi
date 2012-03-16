@@ -159,6 +159,24 @@ class Kiwi::App
 
 
   ##
+  # End the HTTP request and send the response.
+  # Throws :respond.
+
+  def respond *args
+    args[0..2].each do |arg|
+      case arg
+      when Fixnum then  @response[0] = arg
+      when Hash   then  (@response[1] ||= {}).merge! arg
+      else
+        @response[2] = arg.respond_to?(:each) ? arg : [arg]
+      end
+    end
+
+    throw :respond
+  end
+
+
+  ##
   # Exit the current code path and render the response.
 
   def render body=nil
