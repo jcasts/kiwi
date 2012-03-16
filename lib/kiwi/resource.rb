@@ -68,6 +68,7 @@ class Kiwi::Resource
 
   def call env
     mname = validate! env
+    #return 510 unless self.respond_to? mname
     self.__send__(mname)
   end
 
