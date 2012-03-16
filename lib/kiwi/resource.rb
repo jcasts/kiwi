@@ -77,8 +77,14 @@ class Kiwi::Resource
 
     return unless data
 
-    self.class.view.build data if self.class.view
-    # TODO add resource links
+    if self.class.view
+      if Array === data
+        data = data.map{|item| self.class.view.build item }
+      else
+        data = self.class.view.build data
+      end
+    end
+    # TODO: add resource links
 
     data
   end
