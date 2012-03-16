@@ -72,25 +72,28 @@ class Kiwi::Resource
   # Call the resource with a method name and params.
 
   def call mname, params
-    meth    = public_method mname
-    @params = validate! mname, params
-    args    = meth.parameters.map{|(type, name)| @params[name.to_s]}
-    data    = __send__(mname, *args)
+    @params, args = validate! mname, params
+    data = __send__(mname, *args)
 
     return unless data
 
     self.class.view.build data if self.class.view
-    # TODO add link key
+    # TODO add resource links
 
     data
   end
 
 
   ##
-  # Validate the incoming request.
+  # Validate the incoming request. Returns the validated params hash
+  # and the arguments for the method.
 
   def validate! mname, params
-    #self.class.param[mname].validate! params
+    meth   = public_method mname
+    params = self.class.param.validate! mname, params
+    args   = meth.parameters.map{|(type, name)| params[name.to_s]}
+
+    [params, args]
   end
 
 
