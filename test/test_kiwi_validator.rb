@@ -2,7 +2,7 @@ require 'test/helper'
 
 class TestKiwiValidator < Test::Unit::TestCase
 
-  class PersonValidator < Kiwi::Validator
+  class PersonValidator < Kiwi::View
     v_attribute :name,  String
     v_attribute :gender, String, :optional => true
 
@@ -13,7 +13,7 @@ class TestKiwiValidator < Test::Unit::TestCase
   end
 
 
-  class CatValidator < Kiwi::Validator
+  class CatValidator < Kiwi::View
     string  :name
     integer :age
     string  :colors, :collection => true
@@ -47,7 +47,7 @@ class TestKiwiValidator < Test::Unit::TestCase
     v_attribute = PersonValidator.v_attributes['attributes']
 
     assert_equal Kiwi::Validator::Attribute, v_attribute.class
-    assert       v_attribute.type.ancestors.include?(Kiwi::Validator)
+    assert       v_attribute.type.is_a?(Kiwi::Validator)
 
     assert_equal true,                  v_attribute.collection
     assert_equal true,                  v_attribute.optional
@@ -126,7 +126,7 @@ class TestKiwiValidator < Test::Unit::TestCase
     v_attribute = PersonValidator.v_attributes['cats']
 
     assert_equal Kiwi::Validator::Attribute, v_attribute.class
-    assert       v_attribute.type.ancestors.include?(Kiwi::Validator)
+    assert       v_attribute.type.is_a?(Kiwi::Validator)
     assert_equal true,                  v_attribute.collection
     assert_equal true,                  v_attribute.optional
     assert_nil                          v_attribute.default
@@ -142,7 +142,7 @@ class TestKiwiValidator < Test::Unit::TestCase
     v_attribute = PersonValidator.v_attributes['cats']
 
     assert_equal Kiwi::Validator::Attribute, v_attribute.class
-    assert       v_attribute.type.ancestors.include?(Kiwi::Validator)
+    assert       v_attribute.type.is_a?(Kiwi::Validator)
     assert_equal true,                  v_attribute.collection
     assert_equal true,                  v_attribute.optional
     assert_nil                          v_attribute.default

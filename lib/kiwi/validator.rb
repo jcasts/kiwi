@@ -1,12 +1,12 @@
 ##
 # Validates sets and nested sets of data.
 
-class Kiwi::Validator
+module Kiwi::Validator
 
   ##
   # Define an Boolean validator attribute.
 
-  def self.boolean name, opts={}
+  def boolean name, opts={}
     v_attribute name, Boolean, opts
   end
 
@@ -20,15 +20,15 @@ class Kiwi::Validator
   #     foo.string  :name
   #   end
 
-  def self.collection name, opts={}, &block
-    subset name, {:collection => true}.merge(opts), &block
+  def collection name, opts={}, &block
+    subset name, opts.merge(:collection => true), &block
   end
 
 
   ##
   # Define an Integer validator attribute.
 
-  def self.integer name, opts={}
+  def integer name, opts={}
     v_attribute name, Integer, opts
   end
 
@@ -36,7 +36,7 @@ class Kiwi::Validator
   ##
   # Define a String validator attribute.
 
-  def self.string name, opts={}
+  def string name, opts={}
     v_attribute name, String, opts
   end
 
@@ -51,7 +51,7 @@ class Kiwi::Validator
   #     addr.string :street
   #   end
 
-  def self.subset name, opts={}
+  def subset name, opts={}
     v_attribute name, opts do |validator_klass|
       yield validator_klass
     end
@@ -61,7 +61,7 @@ class Kiwi::Validator
   ##
   # Reference another validator.
 
-  def self.validator name, klass, opts={}
+  def validator name, klass, opts={}
     v_attribute name, klass, opts
   end
 
@@ -70,13 +70,13 @@ class Kiwi::Validator
   # Assign an attribute name with a type
   # Supports any option of Kiwi::Validator::Attribute.new
 
-  def self.v_attribute name, type, opts={}
+  def v_attribute name, type, opts={}
     opts, type = type, nil if Hash === type
 
     opts = {:optional => @optional}.merge opts if @optional
 
     if block_given?
-      type = Class.new Kiwi::Validator
+      type = subvalidator
       yield type
     end
 
@@ -88,7 +88,7 @@ class Kiwi::Validator
   ##
   # Returns a hash of name/attr pairs for all validator attributes.
 
-  def self.v_attributes
+  def v_attributes
     @validator_attributes ||= {}
   end
 
@@ -102,7 +102,7 @@ class Kiwi::Validator
   #     string :optional_key
   #   end
 
-  def self.optional
+  def optional
     @optional = true
   end
 
@@ -119,7 +119,7 @@ class Kiwi::Validator
   #     string :other_required_key
   #   end
 
-  def self.required
+  def required
     @optional = false
   end
 
@@ -127,33 +127,14 @@ class Kiwi::Validator
   ##
   # Build the validator from an object or hash.
 
-  def self.build obj
-    new(obj).to_hash
-  end
+  def build obj
+    value = {}
 
-
-  ##
-  # Create an validator instance for a given object or hash.
-
-  def initialize obj
-    @obj   = obj
-    @value = nil
-  end
-
-
-  ##
-  # Build or returned the memoized hash output of the validator.
-
-  def to_hash rebuild=false
-    return @value if @value && !rebuild
-
-    @value = {}
-
-    self.class.v_attributes.each do |name, attrib|
-      val = attrib.value_from @obj
-      @value[name.to_s] = val unless val.nil? && attrib.optional
+    v_attributes.each do |name, attrib|
+      val = attrib.value_from obj
+      value[name.to_s] = val unless val.nil? && attrib.optional
     end
 
-    @value
+    value
   end
 end

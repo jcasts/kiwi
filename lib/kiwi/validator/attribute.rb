@@ -91,7 +91,7 @@ class Kiwi::Validator::Attribute
     end
 
     if type
-      if type.ancestors.include?(Kiwi::Validator)
+      if Kiwi::Validator === type
        val = type.build val
 
       else

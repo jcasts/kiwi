@@ -5,6 +5,9 @@ class Kiwi::Resource
     new_route = subclass.name.split("::").last
     new_route.gsub!(/(.)([A-Z])/,'\1_\2').downcase!
     subclass.route new_route
+
+    param.string :id, :desc => "Id of the resource",
+                      :only => [:get, :put, :patch, :delete]
   end
 
 
@@ -21,7 +24,7 @@ class Kiwi::Resource
   # The param description and validator accessor.
 
   def self.param
-    @params ||= Class.new Kiwi::Validator
+    @params ||= Kiwi::ParamValidator.new(self)
   end
 
 
@@ -71,10 +74,11 @@ class Kiwi::Resource
   def call mname, params
     meth    = public_method mname
     @params = validate! mname, params
-    args    = meth.parameters.map{|(type, name)| @params[name]}
+    args    = meth.parameters.map{|(type, name)| @params[name.to_s]}
     data    = __send__(mname, *args)
 
-    self.class.view.build data if data
+    self.class.view.build data if self.class.view && data
+    data
   end
 
 
@@ -82,6 +86,6 @@ class Kiwi::Resource
   # Validate the incoming request.
 
   def validate! mname, params
-    self.class.params(mname).validate! params
+    #self.class.param[mname].validate! params
   end
 end

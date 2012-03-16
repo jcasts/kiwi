@@ -150,7 +150,7 @@ class TestKiwiValidatorAttribute < Test::Unit::TestCase
 
 
   def test_validator_attr
-    validator = Class.new Kiwi::Validator
+    validator = Class.new Kiwi::View
     validator.string  :name
     validator.integer :age
 
