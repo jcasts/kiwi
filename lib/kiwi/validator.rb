@@ -81,23 +81,7 @@ module Kiwi::Validator
     end
 
     name = name.to_s
-    assign_attribute name, type, opts
-  end
-
-
-  ##
-  # Takes care of assignment only. May be overridden in child includer.
-
-  def assign_attribute name, type, opts
-    v_attributes[name] = Attribute.new name, type, opts
-  end
-
-
-  ##
-  # Returns a hash of name/attr pairs for all validator attributes.
-
-  def v_attributes
-    @validator_attributes ||= {}
+    assign_attribute Attribute.new(name, type, opts), opts
   end
 
 
@@ -129,20 +113,5 @@ module Kiwi::Validator
 
   def required
     @optional = false
-  end
-
-
-  ##
-  # Build the validator from an object or hash.
-
-  def build obj
-    value = {}
-
-    v_attributes.each do |name, attrib|
-      val = attrib.value_from obj
-      value[name.to_s] = val unless val.nil? && attrib.optional
-    end
-
-    value
   end
 end
