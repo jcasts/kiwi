@@ -81,6 +81,14 @@ module Kiwi::Validator
     end
 
     name = name.to_s
+    assign_attribute name, type, opts
+  end
+
+
+  ##
+  # Takes care of assignment only. May be overridden in child includer.
+
+  def assign_attribute name, type, opts
     v_attributes[name] = Attribute.new name, type, opts
   end
 

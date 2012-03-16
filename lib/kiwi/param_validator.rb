@@ -2,6 +2,7 @@ class Kiwi::ParamValidator
 
   include Kiwi::Validator
 
+
   def initialize resource_class
     @resource_class   = resource_class
     @global_validator = Class.new Kiwi::Validator
@@ -19,10 +20,11 @@ class Kiwi::ParamValidator
 
 
   def v_attributes mname
-    @validator_attributes ||= {}
+    
   end
 
 
-  def v_attribute name, type, opts={}
+  def assign_attribute name, type, opts={}
+    
   end
 end

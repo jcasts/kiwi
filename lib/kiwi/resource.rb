@@ -77,7 +77,11 @@ class Kiwi::Resource
     args    = meth.parameters.map{|(type, name)| @params[name.to_s]}
     data    = __send__(mname, *args)
 
-    self.class.view.build data if self.class.view && data
+    return unless data
+
+    self.class.view.build data if self.class.view
+    # TODO add link key
+
     data
   end
 
@@ -87,5 +91,21 @@ class Kiwi::Resource
 
   def validate! mname, params
     #self.class.param[mname].validate! params
+  end
+
+
+  ##
+  # Pre-implemented options method.
+
+  def options
+    links
+  end
+
+
+  ##
+  # Hash of links for this resource.
+
+  def links
+    # TODO: implement
   end
 end
