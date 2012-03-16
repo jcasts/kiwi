@@ -36,6 +36,16 @@ class Kiwi::Resource
 
 
   ##
+  # Define the short version of the view for this resource.
+  # Used by default on the list method.
+
+  def self.preview view_class=nil
+    return @preview unless view_class
+    @preview = view_class
+  end
+
+
+  ##
   # Define the view to render for this resource.
   # Used by default on all methods but list.
 
@@ -46,11 +56,25 @@ class Kiwi::Resource
 
 
   ##
-  # Define the short version of the view for this resource.
-  # Used by default on the list method.
+  # Create a new resource instance for the request.
 
-  def self.preview view_class=nil
-    return @preview unless view_class
-    @preview = view_class
+  def initialize app=nil
+    @app = app
+  end
+
+
+  ##
+  # Call the resource with a Rack env hash.
+
+  def call env
+    mname = validate! env
+    self.__send__(mname)
+  end
+
+
+  ##
+  # Validate the incoming request.
+
+  def validate! env
   end
 end
