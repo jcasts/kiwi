@@ -74,6 +74,7 @@ class Kiwi::Resource
 
   def self.preview_from data
     out = preview ? preview.build(data) : data
+    # TODO: find id
     out.merge links_for(id)
   end
 
@@ -83,6 +84,7 @@ class Kiwi::Resource
 
   def self.view_from data
     out = view ? view.build(data) : data
+    # TODO: find id
     out.merge links_for(id)
   end
 
