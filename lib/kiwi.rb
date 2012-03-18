@@ -3,6 +3,7 @@ require 'rack'
 class Kiwi
   require 'kiwi/validator'
   require 'kiwi/validator/attribute'
+  require 'kiwi/param_validator'
   require 'kiwi/view'
   require 'kiwi/core_ext'
   require 'kiwi/hooks'

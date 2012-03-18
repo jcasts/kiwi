@@ -2,14 +2,19 @@
 class Kiwi::Resource
 
   def self.inherited subclass
-    new_route = subclass.name.split("::").last
-    new_route.gsub!(/(.)([A-Z])/,'\1_\2').downcase!
-    subclass.route new_route
+    unless subclass.route
+      new_route = subclass.name.split("::").last
+      new_route = new_route.gsub(/(.)([A-Z])/,'\1_\2').downcase
+      subclass.route new_route
+    end
 
-    param.string :id, :desc => "Id of the resource",
-                      :only => [:get, :put, :patch, :delete]
+    subclass.identifier :id unless subclass.identifier
 
-    identifier :id
+    unless subclass.param[subclass.identifier]
+      subclass.param.string subclass.identifier,
+        :desc => "Id of the resource",
+        :only => [:get, :put, :patch, :delete]
+    end
   end
 
 

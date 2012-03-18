@@ -5,14 +5,19 @@ class Kiwi::ParamValidator
 
   def initialize resource_class
     @resource_class = resource_class
-    @validators     = {}
+    @params         = {}
+  end
+
+
+  def [] key
+    @params[key]
   end
 
 
   def for_method mname
     params = {}
 
-    @validators.each do |name, attr|
+    @params.each do |name, attr|
       next if table[:except].include?(mname) ||
         !table[:only].empty? && !table[:only].include?(mname)
 
@@ -30,7 +35,7 @@ class Kiwi::ParamValidator
     params.each do |name, value|
       name = name.to_s
 
-      table = @validators[name]
+      table = @params[name]
 
       if !table || table[:except].include?(mname) ||
         !table[:only].empty? && !table[:only].include?(mname)
@@ -53,7 +58,7 @@ class Kiwi::ParamValidator
 
 
   def assign_attribute attr, opts={}
-    @validators[attr.name] = {
+    @params[attr.name] = {
       :attr   => attr,
       :only   => Array(opts[:only]),
       :except => Array(opts[:except])
