@@ -18,11 +18,11 @@ class Kiwi::ParamValidator
   def for_method mname
     params = {}
 
-    @params.each do |name, attr|
+    @params.each do |name, table|
       next if table[:except].include?(mname) ||
         !table[:only].empty? && !table[:only].include?(mname)
 
-      params[name] = attr
+      params[name] = table[:attr]
     end
 
     params

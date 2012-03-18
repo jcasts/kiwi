@@ -127,11 +127,19 @@ class Kiwi::Resource
 
   def call mname, params
     @params, args = validate! mname, params
-
     data = __send__(mname, *args)
+
     return unless data
 
-    render data, self.class.view
+    if self.class.view
+      if Array === data
+        data = data.map{|item| self.class.view_from item }
+      else
+        data = self.class.view_from data
+      end
+    end
+
+    data
   end
 
 
@@ -149,26 +157,9 @@ class Kiwi::Resource
 
 
   ##
-  # Render data with a specific view. Calling this from a resource
-  # method will skip the default view.
-
-  def render data, view=nil
-    if view
-      if Array === data
-        data = data.map{|item| self.class.view_from item, view }
-      else
-        data = self.class.view_from data, view
-      end
-    end
-
-    throw :respond, data
-  end
-
-
-  ##
   # Pre-implemented options method.
 
   def options
-    render self.class.links_for(@params[self.class.identifier])
+    self.class.links_for @params[self.class.identifier]
   end
 end
