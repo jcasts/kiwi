@@ -83,18 +83,24 @@ class Kiwi::Resource
   # Create a resource preview from the given data.
 
   def self.preview_from data
-    out = preview ? preview.build(data) : data
-    # TODO: find id
-    out.merge links_for(id)
+    view_from data, true
   end
 
 
   ##
   # Create a resource view from the given data.
 
-  def self.view_from data
-    out = view ? view.build(data) : data
-    # TODO: find id
+  def self.view_from data, short=false
+    res_view = short ? preview : view
+
+    out = res_view ? res_view.build(data) : data
+
+    id = if data.respond_to?(:[])
+           data[identifier] || data[identifier.to_s]
+         elsif data.respond_to?(identifier)
+           data.__send__(identifier)
+         end
+
     out.merge links_for(id)
   end
 
@@ -103,7 +109,7 @@ class Kiwi::Resource
   # Hash of links for this resource.
 
   def self.links_for id
-    # TODO: implement
+    # TODO: implement, maybe as customizable view
   end
 
 
@@ -154,7 +160,7 @@ class Kiwi::Resource
   ##
   # Pre-implemented options method.
 
-  def options id
-    self.class.links_for id
+  def options
+    self.class.links_for @params[self.class.identifier]
   end
 end
