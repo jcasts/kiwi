@@ -42,10 +42,62 @@ class Kiwi::Resource
 
 
   ##
+  # Array of links for this resource.
+
+  def self.links_for id
+    (public_instance_methods & resource_methods).map do |mname|
+      link_for mname, id
+    end
+  end
+
+
+  ##
+  # Single link for this resource, for a method and id.
+
+  def self.link_for mname, id
+    mname = mname.to_sym
+    return unless public_instance_methods.include? mname
+
+    href  = route.dup
+
+    unless Kiwi.http_verbs.include?(mname)
+      http_method = :get
+      href << ".#{mname}"
+    end
+
+    href << "/#{id}" if id_resource_methods.include?(mname)
+
+    {
+      :href   => href,
+      :method => http_method.to_s.upcase,
+      :params => param.for_method(mname)
+    }
+  end
+
+
+  ##
   # The param description and validator accessor.
 
   def self.param
     @param ||= Kiwi::ParamValidator.new(self)
+  end
+
+
+  ##
+  # The list of methods to return as resource links if
+  # defined as instance methods.
+
+  def self.resource_methods
+    @resource_methods ||=
+      [:get, :put, :patch, :delete, :post, :list, :options]
+  end
+
+
+  ##
+  # The expected type of response and request method for each resource_method.
+
+  def self.id_resource_methods
+    @id_resource_methods ||= [:get, :put, :patch, :delete]
   end
 
 
@@ -103,15 +155,6 @@ class Kiwi::Resource
   end
 
 
-  ##
-  # Hash of links for this resource.
-
-  def self.links_for id
-    # TODO: implement, maybe as customizable view
-    # Also figure out if links should be restricted to http verbs
-  end
-
-
   attr_reader :app
 
   ##
@@ -160,6 +203,7 @@ class Kiwi::Resource
   # Pre-implemented options method.
 
   def options
+    # TODO: redirect to a Kiwi::LinkResource#get id=Foo ?
     self.class.links_for @params[self.class.identifier]
   end
 end
