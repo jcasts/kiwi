@@ -83,17 +83,15 @@ class Kiwi::Resource
   # Create a resource preview from the given data.
 
   def self.preview_from data
-    view_from data, true
+    view_from data, preview
   end
 
 
   ##
   # Create a resource view from the given data.
 
-  def self.view_from data, short=false
-    res_view = short ? preview : view
-
-    out = res_view ? res_view.build(data) : data
+  def self.view_from data, view_klass=view
+    out = view_klass ? view_klass.build(data) : data
 
     id = if data.respond_to?(:[])
            data[identifier] || data[identifier.to_s]
@@ -101,7 +99,7 @@ class Kiwi::Resource
            data.__send__(identifier)
          end
 
-    out.merge links_for(id)
+    out.merge links_for(id) # TODO: should this be explicit in the view?
   end
 
 
@@ -110,6 +108,7 @@ class Kiwi::Resource
 
   def self.links_for id
     # TODO: implement, maybe as customizable view
+    # Also figure out if links should be restricted to http verbs
   end
 
 
@@ -128,19 +127,11 @@ class Kiwi::Resource
 
   def call mname, params
     @params, args = validate! mname, params
-    data = __send__(mname, *args)
 
+    data = __send__(mname, *args)
     return unless data
 
-    if self.class.view
-      if Array === data
-        data = data.map{|item| self.class.view_from item }
-      else
-        data = self.class.view_from data
-      end
-    end
-
-    data
+    render data, self.class.view
   end
 
 
@@ -158,9 +149,26 @@ class Kiwi::Resource
 
 
   ##
+  # Render data with a specific view. Calling this from a resource
+  # method will skip the default view.
+
+  def render data, view=nil
+    if view
+      if Array === data
+        data = data.map{|item| self.class.view_from item, view }
+      else
+        data = self.class.view_from data, view
+      end
+    end
+
+    throw :respond, data
+  end
+
+
+  ##
   # Pre-implemented options method.
 
   def options
-    self.class.links_for @params[self.class.identifier]
+    render self.class.links_for(@params[self.class.identifier])
   end
 end
