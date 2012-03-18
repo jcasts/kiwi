@@ -8,6 +8,8 @@ class Kiwi::Resource
 
     param.string :id, :desc => "Id of the resource",
                       :only => [:get, :put, :patch, :delete]
+
+    identifier :id
   end
 
 
@@ -21,10 +23,19 @@ class Kiwi::Resource
 
 
   ##
+  # The field used as the resource id. Defaults to :id.
+
+  def self.identifier field=nil
+    return @identifier unless field
+    @identifier = field
+  end
+
+
+  ##
   # The param description and validator accessor.
 
   def self.param
-    @params ||= Kiwi::ParamValidator.new(self)
+    @param ||= Kiwi::ParamValidator.new(self)
   end
 
 
@@ -58,6 +69,32 @@ class Kiwi::Resource
   end
 
 
+  ##
+  # Create a resource preview from the given data.
+
+  def self.preview_from data
+    out = preview ? preview.build(data) : data
+    out.merge links_for(id)
+  end
+
+
+  ##
+  # Create a resource view from the given data.
+
+  def self.view_from data
+    out = view ? view.build(data) : data
+    out.merge links_for(id)
+  end
+
+
+  ##
+  # Hash of links for this resource.
+
+  def self.links_for id
+    # TODO: implement
+  end
+
+
   attr_reader :app
 
   ##
@@ -79,12 +116,11 @@ class Kiwi::Resource
 
     if self.class.view
       if Array === data
-        data = data.map{|item| self.class.view.build item }
+        data = data.map{|item| self.class.view_from item }
       else
-        data = self.class.view.build data
+        data = self.class.view_from data
       end
     end
-    # TODO: add resource links
 
     data
   end
@@ -106,15 +142,7 @@ class Kiwi::Resource
   ##
   # Pre-implemented options method.
 
-  def options
-    links
-  end
-
-
-  ##
-  # Hash of links for this resource.
-
-  def links
-    # TODO: implement
+  def options id
+    self.class.links_for id
   end
 end
