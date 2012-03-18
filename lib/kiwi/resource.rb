@@ -9,12 +9,6 @@ class Kiwi::Resource
     end
 
     subclass.identifier :id unless subclass.identifier
-
-    unless subclass.param[subclass.identifier]
-      subclass.param.string subclass.identifier,
-        :desc => "Id of the resource",
-        :only => [:get, :put, :patch, :delete]
-    end
   end
 
 
@@ -32,6 +26,17 @@ class Kiwi::Resource
 
   def self.identifier field=nil
     return @identifier unless field
+
+    if param[@identifier]
+      p_attr = param.params.delete @identifier.to_s
+      p_attr[:attr].name = field.to_s
+      param.params[field.to_s] = p_attr
+    else
+      param.string field,
+        :desc => "Id of the resource",
+        :only => [:get, :put, :patch, :delete]
+    end
+
     @identifier = field
   end
 

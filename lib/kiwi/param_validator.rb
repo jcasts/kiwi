@@ -2,6 +2,7 @@ class Kiwi::ParamValidator
 
   include Kiwi::Validator
 
+  attr_reader :params
 
   def initialize resource_class
     @resource_class = resource_class
@@ -10,7 +11,7 @@ class Kiwi::ParamValidator
 
 
   def [] key
-    @params[key]
+    @params[key.to_s]
   end
 
 

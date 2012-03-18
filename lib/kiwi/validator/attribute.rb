@@ -4,7 +4,7 @@
 
 class Kiwi::Validator::Attribute
 
-  attr_reader :name, :collection, :optional, :default
+  attr_accessor :name, :collection, :optional, :default
 
   ##
   # Create a new attribute with a name and data type.
