@@ -74,7 +74,7 @@ class Kiwi::Resource
     {
       :href   => href,
       :method => http_method.to_s.upcase,
-      :params => param.for_method(mname)
+      :params => param.for_method(mname) # TODO: implement to_hash
     }
   end
 
@@ -160,7 +160,8 @@ class Kiwi::Resource
            data.__send__(identifier)
          end
 
-    out.merge links_for(id) # TODO: should this be explicit in the view?
+    # TODO: should this be explicit in the view?
+    out['links'] ||= Kiwi::Resource::Link.view.build links_for(id)
   end
 
 
