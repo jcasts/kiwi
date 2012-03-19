@@ -1,6 +1,6 @@
 class Kiwi::Resource::Link < Kiwi::Resource
 
-  route "/_link"
+  route "_link"
 
   view Kiwi::View::Link
 

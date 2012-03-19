@@ -42,6 +42,7 @@ class Kiwi
     attr_accessor :enforce_desc
     attr_accessor :param_validation
     attr_accessor :http_verbs
+    attr_accessor :route_delim
   end
 
 
@@ -77,5 +78,6 @@ end
 
 Kiwi.trace            = true if ENV['RACK_ENV'] =~ /^dev/
 Kiwi.param_validation = true
+Kiwi.route_delim      = "/"
 Kiwi.http_verbs =
   [:get, :put, :patch, :delete, :post, :list, :options, :trace]

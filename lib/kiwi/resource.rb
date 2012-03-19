@@ -3,7 +3,7 @@ class Kiwi::Resource
 
   def self.inherited subclass
     unless subclass.route
-      new_route = subclass.name.gsub("::", "/")
+      new_route = subclass.name.gsub("::", Kiwi.route_delim)
       new_route = new_route.gsub(/([A-Z0-9])([A-Z])/,'\1_\2').downcase
       subclass.route new_route
     end
@@ -67,7 +67,7 @@ class Kiwi::Resource
       href << ".#{mname}"
     end
 
-    href << "/#{id}" if id_resource_methods.include?(mname)
+    href << "#{Kiwi.route_delim}#{id}" if id_resource_methods.include?(mname)
 
     {
       :href   => href,
@@ -109,9 +109,12 @@ class Kiwi::Resource
   # The route to access this resource. Defaults to the underscored version
   # of the class name.
 
-  def self.route string=nil
-    return @route unless string
-    @route = string.sub(/^\/?/, "/").sub(/\/?$/, "")
+  def self.route *parts
+    return @route if parts.empty?
+    string = parts.join Kiwi.route_delim
+    delim  = Regexp.escape Kiwi.route_delim
+    @route = string.sub(/^(#{delim})?/, Kiwi.route_delim).
+                    sub(/(#{delim})?$/, "")
   end
 
 
