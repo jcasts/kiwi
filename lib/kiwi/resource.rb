@@ -31,10 +31,11 @@ class Kiwi::Resource
       p_attr = param.params.delete @identifier.to_s
       p_attr[:attr].name = field.to_s
       param.params[field.to_s] = p_attr
-    else
+
+    elsif !param[field]
       param.string field,
         :desc => "Id of the resource",
-        :only => [:get, :put, :patch, :delete]
+        :only => id_resource_methods
     end
 
     @identifier = field

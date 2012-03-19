@@ -41,7 +41,7 @@ class Kiwi
     attr_accessor :enforce_view
     attr_accessor :enforce_desc
     attr_accessor :param_validation
-    attr_accessor :http_methods
+    attr_accessor :http_verbs
   end
 
 

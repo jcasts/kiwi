@@ -4,6 +4,10 @@ class Kiwi::Resource::Link < Kiwi::Resource
 
   view Kiwi::View::Link
 
+  param.string :id,
+    :desc => "Combination of [resource]:[method]",
+    :only => :get
+
   param.string :resource,
     :optional => true,
     :only     => :list
