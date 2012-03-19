@@ -13,7 +13,7 @@ class Kiwi::Resource::Link < Kiwi::Resource
     rsc_klass, rsc_method = @params['id'].split ":"
     return unless rsc_klass && rsc_method
 
-    rsc_klass.link_for(rsc_method, ":id")
+    rsc_klass.link_for(rsc_method, nil)
   end
 
 
@@ -22,10 +22,10 @@ class Kiwi::Resource::Link < Kiwi::Resource
       rsc_klass = @app.resource_for @params['resource']
       return [] unless rsc_klass
 
-      rsc_klass.links_for(":id")
+      rsc_klass.links_for(nil)
 
     else
-      @app.resources.map{|rsc| rsc.links_for(":id")}.flatten
+      @app.resources.map{|rsc| rsc.links_for(nil)}.flatten
     end
   end
 end

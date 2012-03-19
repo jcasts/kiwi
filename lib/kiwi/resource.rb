@@ -55,6 +55,7 @@ class Kiwi::Resource
   # Single link for this resource, for a method and id.
 
   def self.link_for mname, id
+    id  ||= identifier.inspect
     mname = mname.to_sym
     return unless public_instance_methods.include? mname
 
