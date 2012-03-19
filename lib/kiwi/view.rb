@@ -6,12 +6,32 @@ class Kiwi::View
   extend Kiwi::Validator
 
   ##
+  # Validates that the attribute follows the built-in link view.
+
+  def self.link name, opts={}
+    v_attribute name, Kiwi::Resource::Link.view, opts
+  end
+
+
+  ##
+  # Reference another resource's view.
+  # Uses Resource.preview if available, otherwise Resource.view.
+
+  def self.resource name, klass, opts={}
+    v_attribute name, (klass.preview || klass.view), opts
+  end
+
+
+  ##
   # Reference another view.
 
   def self.view name, klass, opts={}
     v_attribute name, klass, opts
   end
 
+
+  ##
+  # Implemants nesting for Validator methods.
 
   def self.subvalidator
     Class.new(self)
