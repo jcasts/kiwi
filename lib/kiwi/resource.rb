@@ -46,8 +46,10 @@ class Kiwi::Resource
   # Array of links for this resource.
 
   def self.links_for id
-    (public_instance_methods & resource_methods).map do |mname|
-      link_for mname, id
+    links = []
+    resource_methods.each do |mname|
+      link = link_for mname, id
+      links << link if link
     end
   end
 
