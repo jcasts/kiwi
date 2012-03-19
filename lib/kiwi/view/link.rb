@@ -4,12 +4,12 @@ class Kiwi::View::Link < Kiwi::View
   string :href
   string :desc, :optional => true
 
-  collection :params, :optional => true do |params|
-    params.string  :name
-    params.string  :type
-    params.string  :desc, :optional => true
-    params.boolean :collection, :default => false
-    params.string  :default, :optional => true
-    params.string  :values,  :optional => true, :collection => true
+  collection :params, :optional => true do |param|
+    param.string  :name
+    param.string  :type
+    param.string  :desc, :optional => true
+    param.boolean :collection, :default => false
+    param.string  :default, :optional => true
+    param.string  :values,  :optional => true, :collection => true
   end
 end

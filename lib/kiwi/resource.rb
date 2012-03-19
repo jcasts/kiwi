@@ -78,8 +78,10 @@ class Kiwi::Resource
   ##
   # The param description and validator accessor.
 
-  def self.param
+  def self.param &block
     @param ||= Kiwi::ParamValidator.new(self)
+    @param.instance_eval &block if block_given?
+    @param
   end
 
 
@@ -204,6 +206,7 @@ class Kiwi::Resource
 
   def options
     # TODO: redirect to a Kiwi::LinkResource#get id=Foo ?
+    # redirect :list, Kiwi::Resource::Link, :resource => self
     self.class.links_for @params[self.class.identifier]
   end
 end
