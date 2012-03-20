@@ -175,23 +175,21 @@ class Kiwi::Resource
 
     return unless data
 
-    if self.class.view
-      if Array === data
-        data = data.map do |item|
-          item = self.class.view_from item
+    if Array === data
+      data = data.map do |item|
+        item = self.class.view_from item
 
-          item['links'] ||=
-            self.class.links_for data.__val_for(self.class.identifier)
-
-          item
-        end
-
-      else
-        data = self.class.view_from data
-
-        data['links'] ||=
+        item['links'] ||=
           self.class.links_for data.__val_for(self.class.identifier)
+
+        item
       end
+
+    else
+      data = self.class.view_from data
+
+      data['links'] ||=
+        self.class.links_for data.__val_for(self.class.identifier)
     end
 
     data
