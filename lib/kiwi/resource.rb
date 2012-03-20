@@ -154,12 +154,7 @@ class Kiwi::Resource
   def self.view_from data, view_klass=view
     out = view_klass ? view_klass.build(data) : data
 
-    id = if data.respond_to?(:[])
-           data[identifier] || data[identifier.to_s]
-         elsif data.respond_to?(identifier)
-           data.__send__(identifier)
-         end
-
+    id = data.__val_for identifier
     # TODO: should this be explicit in the view?
     out['links'] ||= Kiwi::Resource::Link.view.build links_for(id)
   end
@@ -186,8 +181,16 @@ class Kiwi::Resource
 
     if self.class.view
       if Array === data
-        data = data.map{|item| self.class.view_from item }
+        data = data.map do |item|
+          item['links'] ||=
+            self.class.links_for data.__val_for(self.class.identifier)
+
+          self.class.view_from item
+        end
       else
+        data['links'] ||=
+          self.class.links_for data.__val_for(self.class.identifier)
+
         data = self.class.view_from data
       end
     end
