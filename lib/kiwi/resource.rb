@@ -177,19 +177,11 @@ class Kiwi::Resource
 
     if Array === data
       data = data.map do |item|
-        item = self.class.view_from item
-
-        item['links'] ||=
-          self.class.links_for data.__val_for(self.class.identifier)
-
-        item
+        add_links self.class.view_from(item)
       end
 
     else
-      data = self.class.view_from data
-
-      data['links'] ||=
-        self.class.links_for data.__val_for(self.class.identifier)
+      data = add_links self.class.view_from(data)
     end
 
     data
@@ -216,5 +208,16 @@ class Kiwi::Resource
     # TODO: redirect to a Kiwi::LinkResource#get id=Foo ?
     # redirect :list, Kiwi::Resource::Link, :resource => self
     self.class.links_for @params[self.class.identifier]
+  end
+
+
+  private
+
+  def add_links data
+    data['links'] ||=
+      Kiwi::Resource::Link.view.build \
+        self.class.links_for(data[self.class.identifier.to_s])
+
+    data
   end
 end
