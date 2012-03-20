@@ -144,19 +144,15 @@ class Kiwi::Resource
   # Create a resource preview from the given data.
 
   def self.preview_from data
-    view_from data, preview
+    preview ? preview.build(data) : data
   end
 
 
   ##
   # Create a resource view from the given data.
 
-  def self.view_from data, view_klass=view
-    out = view_klass ? view_klass.build(data) : data
-
-    id = data.__val_for identifier
-    # TODO: should this be explicit in the view?
-    out['links'] ||= Kiwi::Resource::Link.view.build links_for(id)
+  def self.view_from data
+    view ? view.build(data) : data
   end
 
 
@@ -182,16 +178,19 @@ class Kiwi::Resource
     if self.class.view
       if Array === data
         data = data.map do |item|
+          item = self.class.view_from item
+
           item['links'] ||=
             self.class.links_for data.__val_for(self.class.identifier)
 
-          self.class.view_from item
+          item
         end
+
       else
+        data = self.class.view_from data
+
         data['links'] ||=
           self.class.links_for data.__val_for(self.class.identifier)
-
-        data = self.class.view_from data
       end
     end
 
