@@ -187,8 +187,9 @@ class Kiwi::Resource
   # and the arguments for the method.
 
   def validate! mname, params
-    meth   = resource_method mname
-    raise BadRequest,
+    meth = resource_method mname
+
+    raise MethodNotAllowed,
       "Method not supported `#{mname}' for #{self.route}" unless meth
 
     params = self.class.param.validate! mname, params

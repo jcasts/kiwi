@@ -17,11 +17,14 @@ class Kiwi
   # Standard Kiwi runtime error.
   class Error < RuntimeError; end
 
+  # Error while validating input or output field.
+  class ValidationError < Error; end
+
   # Value was not valid according to requirements.
-  class InvalidTypeError < Error; end
+  class InvalidTypeError < ValidationError; end
 
   # Value was missing or nil.
-  class RequiredValueError < Error; end
+  class RequiredValueError < ValidationError; end
 
   # Something bad happenned with the request.
   class HTTPError < Error;               STATUS = 500; end
@@ -31,6 +34,9 @@ class Kiwi
 
   # The route requested does not exist.
   class RouteNotFound < HTTPError;       STATUS = 404; end
+
+  # The method requested is not available for the given resource.
+  class MethodNotAllowed < HTTPError;    STATUS = 405; end
 
   # The route requested exists but has no controller.
   class RouteNotImplemented < HTTPError; STATUS = 501; end
