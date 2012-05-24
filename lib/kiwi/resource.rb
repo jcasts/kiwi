@@ -48,8 +48,7 @@ class Kiwi::Resource
   def self.links_for id
     links = []
     resource_methods.each do |mname|
-      link = link_for mname, id, false
-      links << link if link
+      links << link_for mname, id, false
     end
   end
 
