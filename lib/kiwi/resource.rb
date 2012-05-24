@@ -119,8 +119,9 @@ class Kiwi::Resource
   ##
   # Reroute a method call to a different resource. Used to implement the
   # OPTION method:
-  #   redirect :option, LinkResource, :get do |params|
-  #     params[:id] = self.class.name
+  #   redirect :option, LinkResource, :list do |params|
+  #     params.clear
+  #     params[:resource] = self.class.route
   #   end
 
   def self.redirect mname, resource_klass, new_mname=nil, &block
@@ -265,7 +266,7 @@ class Kiwi::Resource
 
   def follow_redirect mname, params={}
     rdir = self.class.redirects[mname]
-    rdir[:proc].call(params) if rdir[:proc]
+    instance_exec(params, &rdir[:proc]) if rdir[:proc]
 
     rdir[:resource].new(@app).call rdir[:method], params
   end
