@@ -117,12 +117,15 @@ class Kiwi::Resource
 
 
   ##
-  # Reroute a method call to a different resource. Used to implement the
-  # OPTION method:
+  # Reroute a method call to a different resource and not trigger the view
+  # validation. Used to implement the OPTION method:
   #   redirect :option, LinkResource, :list do |params|
   #     params.clear
   #     params[:resource] = self.class.route
   #   end
+  #
+  # If a resource public instance method of the same name is defined,
+  # redirect will be ignored in favor of executing the method.
 
   def self.redirect mname, resource_klass, new_mname=nil, &block
     self.redirects[mname.to_sym] = {
