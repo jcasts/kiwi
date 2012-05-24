@@ -96,7 +96,7 @@ class Kiwi::Resource
   def self.resource_methods
     #@resource_methods ||=
     #  [:get, :put, :patch, :delete, :post, :list, :options]
-    public_instance_methods - superclass.public_instance_methods
+    public_instance_methods - Kiwi::Resource.public_instance_methods
   end
 
 
