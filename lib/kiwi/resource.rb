@@ -48,7 +48,7 @@ class Kiwi::Resource
   def self.links_for id
     links = []
     resource_methods.each do |mname|
-      link = link_for mname, id
+      link = link_for mname, id, false
       links << link if link
     end
   end
@@ -57,10 +57,10 @@ class Kiwi::Resource
   ##
   # Single link for this resource, for a method and id.
 
-  def self.link_for mname, id
+  def self.link_for mname, id, validate=true
     id  ||= identifier.inspect
     mname = mname.to_sym
-    return unless resource_methods.include? mname
+    return unless resource_methods.include?(mname) || !validate
 
     href  = route.dup
 
