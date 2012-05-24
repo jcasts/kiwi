@@ -60,7 +60,7 @@ class Kiwi::Resource
   def self.link_for mname, id
     id  ||= identifier.inspect
     mname = mname.to_sym
-    return unless public_instance_methods.include? mname
+    return unless resource_methods.include? mname
 
     href  = route.dup
 
