@@ -181,11 +181,11 @@ class Kiwi::Resource
 
     if Array === data
       data = data.map do |item|
-        add_links self.class.view_from(item)
+        resourcify item
       end
 
     else
-      data = add_links self.class.view_from(data)
+      data = resourcify data
     end
 
     data
@@ -197,7 +197,10 @@ class Kiwi::Resource
   # and the arguments for the method.
 
   def validate! mname, params
-    meth   = public_method mname
+    meth   = resource_method mname
+    raise BadRequest,
+      "Method not supported `#{mname}' for #{self.route}" unless meth
+
     params = self.class.param.validate! mname, params
     args   = meth.parameters.map{|(type, name)| params[name.to_s]}
 
@@ -215,10 +218,30 @@ class Kiwi::Resource
   end
 
 
+  ##
+  # Returns a resource method instance. Similar to public_method.
+
+  def resource_method name
+    return unless resource_methods.include?(name.to_sym)
+    public_method name
+  end
+
+
+  ##
+  # Shortcut for self.class.resource_methods.
+
+  def resource_methods
+    self.class.resource_methods
+  end
+
+
   private
 
-  def add_links data
-    data['links'] ||=
+  def resourcify data
+    data = self.class.view_from data
+
+    data['resource'] ||= self.class.name
+    data['links']    ||=
       Kiwi::Resource::Link.view.build \
         self.class.links_for(data[self.class.identifier.to_s])
 
