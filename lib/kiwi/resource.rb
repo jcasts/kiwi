@@ -96,7 +96,7 @@ class Kiwi::Resource
   def self.resource_methods
     #@resource_methods ||=
     #  [:get, :put, :patch, :delete, :post, :list, :options]
-    public_instance_methods
+    public_instance_methods - superclass.public_instance_methods
   end
 
 
@@ -105,7 +105,7 @@ class Kiwi::Resource
 
   def self.id_resource_methods
     #@id_resource_methods ||= [:get, :put, :patch, :delete]
-    public_instance_methods.select do |mname|
+    resource_methods.select do |mname|
       public_instance_method(mname).params[0][1] == :id
     end
   end
