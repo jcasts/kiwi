@@ -160,16 +160,6 @@ class Kiwi::Resource
   end
 
 
-  attr_reader :app
-
-  ##
-  # Create a new resource instance for the request.
-
-  def initialize app
-    @app = app
-  end
-
-
   ##
   # Call the resource with a method name and params.
 
