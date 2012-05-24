@@ -59,7 +59,7 @@ class Kiwi::Resource
   def self.link_for mname, id, validate=true
     id  ||= identifier.inspect
     mname = mname.to_sym
-    return unless resource_methods.include?(mname) || !validate
+    return unless !validate || resource_methods.include?(mname)
 
     href  = route.dup
 
