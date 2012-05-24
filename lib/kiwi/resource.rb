@@ -1,4 +1,3 @@
-
 class Kiwi::Resource
 
   def self.inherited subclass
@@ -232,7 +231,7 @@ class Kiwi::Resource
   def validate! mname, params
     meth = resource_method mname
 
-    raise MethodNotAllowed,
+    raise Kiwi::MethodNotAllowed,
       "Method not supported `#{mname}' for #{self.route}" unless meth
 
     params = self.class.param.validate! mname, params

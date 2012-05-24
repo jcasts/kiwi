@@ -41,7 +41,7 @@ class Kiwi::ParamValidator
       if !table || table[:except].include?(mname) ||
         !table[:only].empty? && !table[:only].include?(mname)
 
-        raise BadRequest,
+        raise Kiwi::BadRequest,
           "Invalid param `#{name}': #{mname} #{@resource_class.route}"
       end
 
