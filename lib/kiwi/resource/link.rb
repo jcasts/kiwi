@@ -5,7 +5,7 @@ class Kiwi::Resource::Link < Kiwi::Resource
   view Kiwi::View::Link
 
   param.string :id,
-    :desc => "Combination of [resource]:[method]",
+    :desc => "Combination of [resource_route]-[method]",
     :only => :get
 
   param.string :resource,
@@ -14,16 +14,18 @@ class Kiwi::Resource::Link < Kiwi::Resource
 
 
   def get
-    rsc_klass, rsc_method = @params['id'].split ":"
+    rsc_klass, rsc_method = @params[:id].split "-"
+    rsc_klass = @app.resource_for rsc_klass
+
     return unless rsc_klass && rsc_method
 
-    rsc_klass.link_for(rsc_method, nil)
+    rsc_klass.link_for(rsc_method.to_sym, nil)
   end
 
 
   def list
-    if @params['resource']
-      rsc_klass = @app.resource_for @params['resource']
+    if @params[:resource]
+      rsc_klass = @app.resource_for @params[:resource]
       return [] unless rsc_klass
 
       rsc_klass.links_for(nil)

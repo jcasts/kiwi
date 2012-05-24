@@ -27,19 +27,22 @@ class Kiwi
   class RequiredValueError < ValidationError; end
 
   # Something bad happenned with the request.
-  class HTTPError < Error;               STATUS = 500; end
+  class HTTPError < Error;                STATUS = 500; end
 
   # The request made to the endpoint was invalid.
-  class BadRequest < HTTPError;          STATUS = 400; end
+  class BadRequest < HTTPError;           STATUS = 400; end
 
   # The route requested does not exist.
-  class RouteNotFound < HTTPError;       STATUS = 404; end
+  class RouteNotFound < HTTPError;        STATUS = 404; end
 
   # The method requested is not available for the given resource.
-  class MethodNotAllowed < HTTPError;    STATUS = 405; end
+  class MethodNotAllowed < HTTPError;     STATUS = 405; end
+
+  # The Accept header type is not available for the given resource.
+  class NotAcceptable < HTTPError;        STATUS = 406; end
 
   # The route requested exists but has no controller.
-  class RouteNotImplemented < HTTPError; STATUS = 501; end
+  class RouteNotImplemented < HTTPError;  STATUS = 501; end
 
 
   class << self

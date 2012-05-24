@@ -9,6 +9,11 @@ class Kiwi::Resource
     end
 
     subclass.identifier :id unless subclass.identifier
+
+    subclass.redirect :option, Kiwi::Resource::Link, :list do |params|
+      params.clear
+      params[:resource] = self.class.route
+    end
   end
 
 
@@ -112,6 +117,30 @@ class Kiwi::Resource
 
 
   ##
+  # Reroute a method call to a different resource. Used to implement the
+  # OPTION method:
+  #   redirect :option, LinkResource, :get do |params|
+  #     params[:id] = self.class.name
+  #   end
+
+  def self.redirect mname, resource_klass, new_mname=nil, &block
+    self.redirects[mname.to_sym] = {
+      :resource => resource_klass,
+      :method   => (new_mname || mname).to_sym,
+      :proc     => block
+    }
+  end
+
+
+  ##
+  # Hash list of all redirects.
+
+  def self.redirects
+    @redirects ||= {}
+  end
+
+
+  ##
   # The route to access this resource. Defaults to the underscored version
   # of the class name.
 
@@ -161,9 +190,19 @@ class Kiwi::Resource
 
 
   ##
+  # New Resource instance with the app object that called it.
+
+  def initialize app
+    @app = app
+  end
+
+
+  ##
   # Call the resource with a method name and params.
 
   def call mname, params
+    return follow_redirect(mname, params) if redirect? mname
+
     @params, args = validate! mname, params
     data = __send__(mname, *args)
 
@@ -200,16 +239,6 @@ class Kiwi::Resource
 
 
   ##
-  # Pre-implemented options method.
-
-  def options
-    # TODO: redirect to a Kiwi::LinkResource#get id=Foo ?
-    # redirect :list, Kiwi::Resource::Link, :resource => self
-    self.class.links_for @params[self.class.identifier]
-  end
-
-
-  ##
   # Returns a resource method instance. Similar to public_method.
 
   def resource_method name
@@ -222,11 +251,25 @@ class Kiwi::Resource
   # Shortcut for self.class.resource_methods.
 
   def resource_methods
-    self.class.resource_methods
+    @resource_methods ||= self.class.resource_methods
   end
 
 
   private
+
+
+  def redirect? mname
+    self.class.redirects[mname] && !resource_methods.include?(mname)
+  end
+
+
+  def follow_redirect mname, params={}
+    rdir = self.class.redirects[mname]
+    rdir[:proc].call(params) if rdir[:proc]
+
+    rdir[:resource].new(@app).call rdir[:method], params
+  end
+
 
   def resourcify data
     data = self.class.view_from data
