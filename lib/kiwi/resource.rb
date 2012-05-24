@@ -94,8 +94,9 @@ class Kiwi::Resource
   # defined as instance methods.
 
   def self.resource_methods
-    @resource_methods ||=
-      [:get, :put, :patch, :delete, :post, :list, :options]
+    #@resource_methods ||=
+    #  [:get, :put, :patch, :delete, :post, :list, :options]
+    public_instance_methods
   end
 
 
@@ -103,7 +104,10 @@ class Kiwi::Resource
   # The expected type of response and request method for each resource_method.
 
   def self.id_resource_methods
-    @id_resource_methods ||= [:get, :put, :patch, :delete]
+    #@id_resource_methods ||= [:get, :put, :patch, :delete]
+    public_instance_methods.select do |mname|
+      public_instance_method(mname).params[0][1] == :id
+    end
   end
 
 
