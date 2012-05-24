@@ -26,6 +26,7 @@ class Kiwi::Resource
 
   def self.identifier field=nil
     return @identifier unless field
+    field = field.to_sym
 
     if param[@identifier]
       p_attr = param.params.delete @identifier.to_s
@@ -105,7 +106,7 @@ class Kiwi::Resource
   def self.id_resource_methods
     #@id_resource_methods ||= [:get, :put, :patch, :delete]
     resource_methods.select do |mname|
-      public_instance_method(mname).params[0][1] == :id
+      public_instance_method(mname).params[0][1].to_s == identifier.to_s
     end
   end
 
