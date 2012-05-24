@@ -157,6 +157,17 @@ class Kiwi::Resource
 
 
   ##
+  # Check if this resource routes the given path.
+
+  def self.routes? path
+    return true if path == self.route
+
+    delim = Regexp.escape Kiwi.route_delim
+    path.sub(/#{delim}[^#{delim}]*$/, "") == self.route
+  end
+
+
+  ##
   # Define the short version of the view for this resource.
   # Used by default on the list method.
 

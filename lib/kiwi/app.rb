@@ -16,6 +16,16 @@ class Kiwi::App
 
 
   ##
+  # Enforces an exact match on the Accept header or not.
+
+  def self.force_accept_header val=nil
+    @force_accept_header = !!val unless val.nil?
+    @force_accept_header = Kiwi.force_accept_header if @force_accept_header.nil?
+    @force_accept_header
+  end
+
+
+  ##
   # Assign one or more response formats: json, xml, plist, html.
 
   def self.formats *f
@@ -79,7 +89,19 @@ class Kiwi::App
   # Returns true if this app can return the given content type.
 
   def accept? ctype
-    !!self.class.mime_types.find{|mt| mt == ctype.to_s.downcase }
+    unless self.class.force_accept_header
+      ctype = Regexp.escape ctype
+      ctype = ctype.gsub("\\*", "[^/]*")
+      matcher = %r{#{ctype}}
+    end
+
+    !!self.class.mime_types.find do |mt|
+      if matcher
+        mt =~ matcher
+      else
+        mt == ctype
+      end
+    end
   end
 
 
@@ -88,11 +110,20 @@ class Kiwi::App
 
   def call env
     raise Kiwi::NotAcceptable,
-      "Accept header `#{env['Accept']}' invalid" unless accept?(env['Accept'])
+      "Accept header `#{env['HTTP_ACCEPT']}' invalid" unless
+        accept?(env['HTTP_ACCEPT'])
+
+    rsc_klass = self.class.resources.find{|rsc| rsc.routes? env['PATH_INFO']}
+
+    raise Kiwi::RouteNotFound,
+      "No resource for `#{env['PATH_INFO']}'" unless rsc_klass
 
     app = self.clone env
 
-    @response
+    rsc_klass.new(app).
+      call env['REQUEST_METHOD'].downcase.to_sym, app.params
+
+    app.response
   end
 
 
@@ -115,7 +146,7 @@ class Kiwi::App
 
   def content_type
     return unless @env
-    "application/#{self.class.api_name}+#{format}"
+    "#{self.class.media_type}/#{self.class.api_name}+#{format}"
   end
 
 
@@ -124,7 +155,17 @@ class Kiwi::App
 
   def format
     return unless @env
-    env['Accept'].to_s.sub(%r{^\w+/\w+\+?}, '')
+    f = env['Accept'].to_s.sub(%r{^\w+/\w+\+?}, '')
+    f.empty? ? self.class.formats.first : f.to_sym
+  end
+
+
+  ##
+  # Sugar for request.params
+
+  def params
+    return {} unless @request
+    @request.params
   end
 
 
