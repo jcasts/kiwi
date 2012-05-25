@@ -1,16 +1,6 @@
 require 'rack'
 
 class Kiwi
-  require 'kiwi/validator'
-  require 'kiwi/validator/attribute'
-  require 'kiwi/param_validator'
-  require 'kiwi/view'
-  require 'kiwi/core_ext'
-  require 'kiwi/hooks'
-  require 'kiwi/view/link'
-  require 'kiwi/resource/link'
-  require 'kiwi/resource'
-  require 'kiwi/app'
 
   # This gem's version.
   VERSION = '1.0.0'
@@ -93,3 +83,14 @@ Kiwi.param_validation    = true
 Kiwi.route_delim         = "/"
 Kiwi.http_verbs =
   [:get, :put, :patch, :delete, :post, :list, :options, :trace]
+
+require 'kiwi/core_ext'
+require 'kiwi/validator'
+require 'kiwi/validator/attribute'
+require 'kiwi/param_validator'
+require 'kiwi/view'
+require 'kiwi/view/link'
+require 'kiwi/hooks'
+require 'kiwi/resource'
+require 'kiwi/resource/link'
+require 'kiwi/app'

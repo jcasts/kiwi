@@ -25,8 +25,8 @@ class Kiwi::ParamValidator
 
 
   def validate! mname, params
-    mname = mname.to_s
-    value = {}
+    mname = mname.to_sym
+    value = Hash.new{|h,k| h[k] = h[k.to_s] if Symbol === k}
 
     params.each do |name, pvalue|
       name = name.to_s
