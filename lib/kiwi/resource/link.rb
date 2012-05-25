@@ -19,7 +19,7 @@ class Kiwi::Resource::Link < Kiwi::Resource
 
   def get id
     rsc_klass, rsc_method = @params[:id].split "-"
-    rsc_klass = Kiwi.find_const rsc_klass
+    rsc_klass = Kiwi.find_const(rsc_klass)
 
     return unless rsc_klass && rsc_method
 

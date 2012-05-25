@@ -4,7 +4,7 @@
 
 class Kiwi::Validator::Attribute
 
-  attr_accessor :name, :collection, :optional, :default
+  attr_accessor :name, :collection, :optional, :default, :desc
 
   ##
   # Create a new attribute with a name and data type.
@@ -18,6 +18,7 @@ class Kiwi::Validator::Attribute
     @type        = type
     @optional    = !!opts[:optional]
     @collection  = !!opts[:collection]
+    @desc        = opts[:desc]
 
     @has_default = opts.has_key?(:default)
     @default     = opts[:default]

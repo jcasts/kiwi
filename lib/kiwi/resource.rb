@@ -11,7 +11,7 @@ class Kiwi::Resource
 
     subclass.redirect :option, Kiwi::Resource::Link, :list do |params|
       params.clear
-      params[:resource] = self.class.route
+      params[:resource] = self.class.name
     end
   end
 
