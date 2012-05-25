@@ -75,6 +75,9 @@ class Kiwi
     end
 
     curr
+
+  rescue NameError
+    nil
   end
 end
 
