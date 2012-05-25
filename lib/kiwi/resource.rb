@@ -292,12 +292,11 @@ class Kiwi::Resource
 
 
   def resourcify data
+    id = data[self.class.identifier] || data[self.class.identifier.to_s]
+    links = self.class.links_for(id)
+
     data = self.class.view_from data
-
     data['_type']  ||= self.class.name
-
-    links = self.class.links_for(data[self.class.identifier.to_s])
-
     data['_links'] ||= links.map do |link|
       Kiwi::Resource::Link.view.build link
     end

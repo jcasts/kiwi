@@ -28,7 +28,7 @@ class Kiwi::ParamValidator
     mname = mname.to_s
     value = {}
 
-    params.each do |name, value|
+    params.each do |name, pvalue|
       name = name.to_s
 
       table = @params[name]
