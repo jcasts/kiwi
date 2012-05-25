@@ -117,7 +117,7 @@ class Kiwi::Resource
     resource_methods.select do |mname|
       prm = public_instance_method(mname).parameters[0]
 
-      prm && prm[1].to_s == identifier.to_s ||
+      prm && prm.any?{|name| name.to_s == identifier.to_s } ||
         param.for_method(mname).any?{|attr| attr.name == identifier.to_s }
     end
   end
@@ -251,7 +251,7 @@ class Kiwi::Resource
     meth = resource_method mname
 
     raise Kiwi::MethodNotAllowed,
-      "Method not supported `#{mname}' for #{self.route}" unless meth
+      "Method not supported `#{mname}' for #{self.class.route}" unless meth
 
     params = self.class.param.validate! mname, params
     args   = meth.parameters.map{|(type, name)| params[name.to_s]}
