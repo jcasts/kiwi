@@ -35,12 +35,12 @@ class Kiwi::Validator::Attribute
   ##
   # Returns a hash that matches a param view description.
 
-  def to_param_hash
+  def to_hash
     hash = {:name => @name, :type => @type.to_s}
     hash[:desc]       = @desc               if @desc
     hash[:default]    = @default.to_s       if @has_default
     hash[:values]     = @values.map(:to_s)  if @values
-    hash[:collection] = @collection
+    hash[:collection] = @collection         if @collection
     hash
   end
 

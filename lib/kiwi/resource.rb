@@ -83,7 +83,7 @@ class Kiwi::Resource
     {
       :href   => href,
       :method => http_method.to_s.upcase,
-      :params => param.for_method(mname).map{|prm| prm.to_param_hash}
+      :params => param.for_method(mname).map(&:to_hash)
     }
   end
 
@@ -103,8 +103,6 @@ class Kiwi::Resource
   # defined as instance methods.
 
   def self.resource_methods
-    #@resource_methods ||=
-    #  [:get, :put, :patch, :delete, :post, :list, :options]
     public_instance_methods - Kiwi::Resource.public_instance_methods
   end
 
@@ -208,6 +206,18 @@ class Kiwi::Resource
 
   def self.view_from data
     view ? view.build(data) : data
+  end
+
+
+  ##
+  # Create a hash for display purposes.
+
+  def self.to_hash
+    {
+      :type       => self.name,
+      :links      => links_for(nil),
+      :attributes => view.v_attributes.values.map(&:to_hash)
+    }
   end
 
 

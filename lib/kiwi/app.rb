@@ -207,4 +207,12 @@ class Kiwi::App
     return unless self.class.hooks[hook]
     instance_exec(*args, &self.class.hooks[hook])
   end
+
+
+  ##
+  # Shortcut for self.class.resources.
+
+  def resources
+    self.class.resources
+  end
 end

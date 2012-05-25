@@ -5,7 +5,7 @@ class Kiwi::Resource::Link < Kiwi::Resource
   view Kiwi::View::Link
 
   param.string :id,
-    :desc => "Combination of [resource_route]-[method]",
+    :desc => "Combination of [resource_type]-[method]",
     :only => :get
 
   param.string :rid,
