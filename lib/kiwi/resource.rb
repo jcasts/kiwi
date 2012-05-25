@@ -318,6 +318,7 @@ class Kiwi::Resource
          @params[self.class.identifier]
 
     links = self.class.links_for(id)
+    data[self.class.identifier.to_s] ||= id
 
     data = self.class.view_from data
     data['_type']  ||= self.class.name
