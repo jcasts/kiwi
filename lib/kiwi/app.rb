@@ -9,14 +9,16 @@ class Kiwi::App
   #  api_name "company.myapp.v1"
 
   def self.api_name name=nil
-    @api_name ||= self.class.name
+    @api_name ||= self.name
     @api_name   = name if name
     @api_name
   end
 
 
   ##
-  # Enforces an exact match on the Accept header or not.
+  # Enforces an exact match on the Accept header or not, defaults to
+  # Kiwi.force_accept_header. When set to false, will accept wildcards
+  # in the HTTP_ACCEPT env value.
 
   def self.force_accept_header val=nil
     @force_accept_header = !!val unless val.nil?
@@ -49,7 +51,7 @@ class Kiwi::App
   # Returns all the supported mime types.
 
   def self.mime_types
-    @formats.map{|f| "#{media_type}/#{api_name}+#{f}" }
+    self.formats.map{|f| "#{media_type}/#{api_name}+#{f}" }
   end
 
 
@@ -124,6 +126,9 @@ class Kiwi::App
       call env['REQUEST_METHOD'].downcase.to_sym, app.params
 
     app.response
+
+  rescue => e
+    self.class.error.build e
   end
 
 

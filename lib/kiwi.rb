@@ -7,8 +7,9 @@ class Kiwi
   require 'kiwi/view'
   require 'kiwi/core_ext'
   require 'kiwi/hooks'
+  require 'kiwi/view/link'
+  require 'kiwi/resource/link'
   require 'kiwi/resource'
-  require 'kiwi/request'
   require 'kiwi/app'
 
   # This gem's version.

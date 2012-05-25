@@ -32,6 +32,19 @@ class Kiwi::Validator::Attribute
 
 
   ##
+  # Returns a hash that matches a param view description.
+
+  def to_param_hash
+    hash = {:name => @name, :type => @type.to_s}
+    hash[:desc]       = @desc               if @desc
+    hash[:default]    = @default.to_s       if @has_default
+    hash[:values]     = @values.map(:to_s)  if @values
+    hash[:collection] = @collection
+    hash
+  end
+
+
+  ##
   # Retrieve the attribute value from the passed object. If a hash is given,
   # will look for a key with the same name as the attribute, otherwise will
   # try calling a method with the attribute name.
@@ -68,7 +81,7 @@ class Kiwi::Validator::Attribute
       key_found = true
       val = obj[@name.to_sym]
 
-    elsif obj.respond_to? @name
+    elsif !(Hash === obj) && obj.respond_to?(@name)
       key_found = true
       val = obj.send @name
 
@@ -95,8 +108,8 @@ class Kiwi::Validator::Attribute
        val = type.build val
 
       else
-        raise Kiwi::InvalidTypeError, "#{val.inspect} is not a #{type}" unless
-          type === val
+        raise Kiwi::InvalidTypeError,
+          "#{@name}: #{val.inspect} is not a #{type}" unless type === val
       end
     end
 

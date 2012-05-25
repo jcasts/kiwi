@@ -52,9 +52,12 @@ class Kiwi::Resource
 
   def self.links_for id
     links = []
+
     resource_methods.each do |mname|
-      links << link_for mname, id, false
+      links << link_for(mname, id, false)
     end
+
+    links
   end
 
 
@@ -68,6 +71,8 @@ class Kiwi::Resource
 
     href  = route.dup
 
+    http_method = mname
+
     unless Kiwi.http_verbs.include?(mname)
       http_method = :get
       href << ".#{mname}"
@@ -78,7 +83,7 @@ class Kiwi::Resource
     {
       :href   => href,
       :method => http_method.to_s.upcase,
-      :params => param.for_method(mname) # TODO: implement to_hash
+      :params => param.for_method(mname).map{|prm| prm.to_param_hash}
     }
   end
 
@@ -110,7 +115,8 @@ class Kiwi::Resource
   def self.id_resource_methods
     #@id_resource_methods ||= [:get, :put, :patch, :delete]
     resource_methods.select do |mname|
-      public_instance_method(mname).params[0][1].to_s == identifier.to_s
+      prm = public_instance_method(mname).parameters[0] and
+        prm[1].to_s == identifier.to_s
     end
   end
 
@@ -288,10 +294,13 @@ class Kiwi::Resource
   def resourcify data
     data = self.class.view_from data
 
-    data['resource'] ||= self.class.name
-    data['links']    ||=
-      Kiwi::Resource::Link.view.build \
-        self.class.links_for(data[self.class.identifier.to_s])
+    data['_type']  ||= self.class.name
+
+    links = self.class.links_for(data[self.class.identifier.to_s])
+
+    data['_links'] ||= links.map do |link|
+      Kiwi::Resource::Link.view.build link
+    end
 
     data
   end
