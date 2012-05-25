@@ -10,8 +10,7 @@ class Kiwi::Resource::Link < Kiwi::Resource
 
   param.string :rid,
     :desc     => "Actual id of the resource to get a link from",
-    :optional => true,
-    :only     => :get
+    :optional => true
 
   param.string :resource,
     :optional => true,
@@ -36,7 +35,7 @@ class Kiwi::Resource::Link < Kiwi::Resource
       rsc_klass.links_for(nil)
 
     else
-      @app.resources.map{|rsc| rsc.links_for(nil)}.flatten
+      @app.resources.map{|rsc| rsc.links_for(@params[:rid])}.flatten
     end
   end
 end
