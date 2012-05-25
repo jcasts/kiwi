@@ -115,8 +115,10 @@ class Kiwi::Resource
   def self.id_resource_methods
     #@id_resource_methods ||= [:get, :put, :patch, :delete]
     resource_methods.select do |mname|
-      prm = public_instance_method(mname).parameters[0] and
-        prm[1].to_s == identifier.to_s
+      prm = public_instance_method(mname).parameters[0]
+
+      prm && prm[1].to_s == identifier.to_s ||
+        param.for_method(mname).any?{|attr| attr.name == identifier.to_s }
     end
   end
 
