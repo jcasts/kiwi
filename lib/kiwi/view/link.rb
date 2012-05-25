@@ -1,6 +1,6 @@
 class Kiwi::View::Link < Kiwi::View
 
-  string :id
+  string :id, :optional => true
   string :method
   string :href
   string :desc, :optional => true
