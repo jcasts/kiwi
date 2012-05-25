@@ -16,6 +16,16 @@ class Kiwi::App
 
 
   ##
+  # The error view to output errors as. Defaults to Kiwi::View::Error.
+
+  def self.error err_view=nil
+    @err_view ||= Kiwi::View::Error
+    @err_view   = err_view if err_view
+    @err_view
+  end
+
+
+  ##
   # Enforces an exact match on the Accept header or not, defaults to
   # Kiwi.force_accept_header. When set to false, will accept wildcards
   # in the HTTP_ACCEPT env value.

@@ -74,7 +74,7 @@ class Kiwi::Resource
     http_method = mname
 
     unless Kiwi.http_verbs.include?(mname)
-      http_method = :get
+      http_method = Kiwi.default_http_verb
       href << ".#{mname}"
     end
 
@@ -216,6 +216,15 @@ class Kiwi::Resource
 
   def initialize app
     @app = app
+    @append_links = false
+  end
+
+
+  ##
+  # Sets flag to add links to the response.
+
+  def append_links
+    @append_links = true
   end
 
 
@@ -294,14 +303,17 @@ class Kiwi::Resource
 
 
   def resourcify data
-    id = data[self.class.identifier] || data[self.class.identifier.to_s]
+    id = data[self.class.identifier]      ||
+         data[self.class.identifier.to_s] ||
+         @params[self.class.identifier]
+
     links = self.class.links_for(id)
 
     data = self.class.view_from data
     data['_type']  ||= self.class.name
     data['_links'] ||= links.map do |link|
       Kiwi::Resource::Link.view.build link
-    end
+    end if @append_links
 
     data
   end

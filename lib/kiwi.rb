@@ -43,6 +43,7 @@ class Kiwi
     attr_accessor :force_accept_header
     attr_accessor :param_validation
     attr_accessor :http_verbs
+    attr_accessor :default_http_verb
     attr_accessor :route_delim
   end
 
@@ -81,6 +82,7 @@ Kiwi.trace               = true if ENV['RACK_ENV'] =~ /^dev/
 Kiwi.force_accept_header = true
 Kiwi.param_validation    = true
 Kiwi.route_delim         = "/"
+Kiwi.default_http_verb   = :get
 Kiwi.http_verbs =
   [:get, :put, :patch, :delete, :post, :list, :options, :trace]
 
@@ -89,7 +91,9 @@ require 'kiwi/validator'
 require 'kiwi/validator/attribute'
 require 'kiwi/param_validator'
 require 'kiwi/view'
+require 'kiwi/view/param'
 require 'kiwi/view/link'
+require 'kiwi/view/error'
 require 'kiwi/hooks'
 require 'kiwi/resource'
 require 'kiwi/resource/link'
