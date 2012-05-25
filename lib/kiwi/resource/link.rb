@@ -9,7 +9,7 @@ class Kiwi::Resource::Link < Kiwi::Resource
     :only => :get
 
   param.string :rid,
-    :desc     => "Actual if of the resource to get a link from",
+    :desc     => "Actual id of the resource to get a link from",
     :optional => true,
     :only     => :get
 
