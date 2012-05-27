@@ -1,6 +1,7 @@
 class Kiwi::Resource::Link < Kiwi::Resource
 
   route "_link"
+  desc  "View and list links for various resources"
 
   view Kiwi::View::Link
 

@@ -214,11 +214,13 @@ class Kiwi::Resource
   # Create a hash for display purposes.
 
   def self.to_hash
-    {
+    out = {
       :type       => self.name,
       :links      => links_for(nil),
       :attributes => view.v_attributes.values.map(&:to_hash)
     }
+    out[:desc] = @desc if @desc
+    out
   end
 
 

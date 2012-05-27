@@ -1,6 +1,7 @@
 class Kiwi::Resource::Resource < Kiwi::Resource
 
   route "_resource"
+  desc  "Show the links and attributes of any resource."
 
   view Kiwi::View::Resource
 

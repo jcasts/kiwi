@@ -1,6 +1,7 @@
 class Kiwi::View::Resource < Kiwi::View
 
-  string :id,         :desc => "The Resource type identifier"
-  view   :links,      Kiwi::View::Link,  :collection => true
-  view   :attributes, Kiwi::View::Param, :collection => true
+  string   :id,   :desc => "The Resource type identifier"
+  string   :desc, :optional => true, :desc => "Description of the resource"
+  resource :links,      "Kiwi::Resource::Link",      :collection => true
+  resource :attributes, "Kiwi::Resource::Attribute", :collection => true
 end

@@ -17,7 +17,8 @@ class Kiwi::App
   # Set of default resources included with the app.
 
   def self.default_resources
-    [Kiwi::Resource::Resource, Kiwi::Resource::Link, Kiwi::Resource::App]
+    [Kiwi::Resource::Resource, Kiwi::Resource::Link,
+      Kiwi::Resource::App, Kiwi::Resource::Attribute]
   end
 
 

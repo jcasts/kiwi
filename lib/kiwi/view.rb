@@ -9,7 +9,7 @@ class Kiwi::View
   # Validates that the attribute follows the built-in link view.
 
   def self.link name, opts={}
-    v_attribute name, Kiwi::View::Link, opts
+    v_attribute name, "Kiwi::Resource::Link", opts
   end
 
 
@@ -18,7 +18,7 @@ class Kiwi::View
   # Uses Resource.preview if available, otherwise Resource.view.
 
   def self.resource name, klass, opts={}
-    v_attribute name, (klass.preview || klass.view), opts
+    v_attribute name, klass, opts
   end
 
 
@@ -63,7 +63,7 @@ class Kiwi::View
     subclass.string '_type', :optional => true unless
       subclass.v_attributes['_type']
 
-    subclass.view '_links', "Kiwi::View::Link",
+    subclass.view '_links', "Kiwi::Resource::Link",
       :optional => true, :collection => true unless
         subclass.v_attributes['_links']
   end

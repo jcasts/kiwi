@@ -1,6 +1,8 @@
 class Kiwi::Resource::App < Kiwi::Resource
 
   route "/"
+  desc  "A resource representation of this application"
+
   view Kiwi::View::App
   param.delete :id
 
