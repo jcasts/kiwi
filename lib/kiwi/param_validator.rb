@@ -15,6 +15,11 @@ class Kiwi::ParamValidator
   end
 
 
+  def delete key
+    @params.delete key.to_s
+  end
+
+
   def for_method mname
     # TODO: refactor!
     @params.values.select do |table|

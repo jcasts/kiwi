@@ -9,7 +9,7 @@ class Kiwi::View
   # Validates that the attribute follows the built-in link view.
 
   def self.link name, opts={}
-    v_attribute name, Kiwi::Resource::Link.view, opts
+    v_attribute name, Kiwi::View::Link, opts
   end
 
 

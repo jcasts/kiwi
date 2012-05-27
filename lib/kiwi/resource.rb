@@ -9,9 +9,9 @@ class Kiwi::Resource
 
     subclass.identifier :id unless subclass.identifier
 
-    subclass.redirect :option, Kiwi::Resource::Link, :list do |params|
+    subclass.redirect :options, Kiwi::Resource::Resource, :get do |params|
       params.clear
-      params[:resource] = self.class.name
+      params[:id] = self.class.name
     end
   end
 
@@ -67,7 +67,8 @@ class Kiwi::Resource
   def self.link_for mname, id, validate=true
     id  ||= identifier.inspect
     mname = mname.to_sym
-    return unless !validate || resource_methods.include?(mname)
+    return unless !validate || resource_methods.include?(mname) ||
+                  self.redirects[mname]
 
     href  = route.dup
 
@@ -158,7 +159,7 @@ class Kiwi::Resource
     string = parts.join Kiwi.route_delim
     delim  = Regexp.escape Kiwi.route_delim
     @route = string.sub(/^(#{delim})?/, Kiwi.route_delim).
-                    sub(/(#{delim})?$/, "")
+                    sub(/(\w)(#{delim})?$/, '\1')
   end
 
 

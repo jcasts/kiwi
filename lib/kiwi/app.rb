@@ -4,6 +4,24 @@
 class Kiwi::App
 
   ##
+  # Clone resource list when inheriting.
+
+  def self.inherited subclass
+    subclass.resources.concat self.default_resources
+    subclass.resources.concat self.resources
+    subclass.resources.uniq!
+  end
+
+
+  ##
+  # Set of default resources included with the app.
+
+  def self.default_resources
+    [Kiwi::Resource::Resource, Kiwi::Resource::Link, Kiwi::Resource::App]
+  end
+
+
+  ##
   # Read or set the name of this app's api.
   # Used for api versionning:
   #  api_name "company.myapp.v1"
@@ -114,6 +132,14 @@ class Kiwi::App
         mt == ctype
       end
     end
+  end
+
+
+  ##
+  # Shortcut for self.class.api_name.
+
+  def api_name
+    self.class.api_name
   end
 
 
