@@ -66,4 +66,11 @@ class Kiwi::ParamValidator
       :except => Array(opts[:except])
     }
   end
+
+
+  def v_attributes
+    out = {}
+    @params.each{|name, param| out[name] = param[:attr] }
+    out
+  end
 end

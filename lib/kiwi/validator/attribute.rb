@@ -24,7 +24,7 @@ class Kiwi::Validator::Attribute
     @default     = opts[:default]
 
     raise ArgumentError, "Invalid type #{@type.inspect} must be a Class" unless
-      Module === @type || String === @type
+      Module === @type || String === @type || Kiwi::Validator === @type
 
     raise Kiwi::InvalidTypeError,
       "Default #{@default.inspect} isn't a #{@type}" if
@@ -36,7 +36,16 @@ class Kiwi::Validator::Attribute
   # Returns a hash that matches a param view description.
 
   def to_hash
-    hash = {:name => @name, :type => @type.to_s}
+    hash = {:name => @name}
+
+    if Kiwi::Validator === @type &&
+        (Kiwi::ParamValidator === @type || @type.name.nil?)
+      hash[:attributes] = @type.v_attributes.values.map{|attr| attr.to_hash}
+      hash[:type] = '_embedded'
+    else
+      hash[:type] = @type.to_s
+    end
+
     hash[:desc]       = @desc               if @desc
     hash[:default]    = @default.to_s       if @has_default
     hash[:values]     = @values.map(:to_s)  if @values
