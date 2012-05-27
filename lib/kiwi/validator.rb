@@ -98,7 +98,7 @@ module Kiwi::Validator
   #   end
 
   def optional
-    optional_flag = true
+    self.optional_flag = true
   end
 
 
@@ -115,6 +115,6 @@ module Kiwi::Validator
   #   end
 
   def required
-    optional_flag = false
+    self.optional_flag = false
   end
 end

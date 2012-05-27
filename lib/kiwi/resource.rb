@@ -94,7 +94,7 @@ class Kiwi::Resource
 
   def self.param &block
     @param ||= Kiwi::ParamValidator.new(self)
-    @param.instance_eval &block if block_given?
+    @param.instance_eval(&block) if block_given?
     @param
   end
 
@@ -276,7 +276,7 @@ class Kiwi::Resource
       "Method not supported `#{mname}' for #{self.class.route}" unless meth
 
     params = self.class.param.validate! mname, params
-    args   = meth.parameters.map{|(type, name)| params[name.to_s]}
+    args   = meth.parameters.map{|(_, name)| params[name.to_s]}
 
     [params, args]
   end
