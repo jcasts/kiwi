@@ -55,6 +55,14 @@ class Kiwi::View
 
 
   ##
+  # Inherit v_attributes when subclassing.
+
+  def self.inherited subclass
+    subclass.v_attributes.merge! v_attributes
+  end
+
+
+  ##
   # Build the validator from an object or hash.
 
   def self.build obj
