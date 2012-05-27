@@ -3,6 +3,9 @@
 
 module Kiwi::Validator
 
+  attr_accessor :optional_flag
+
+
   ##
   # Define an Boolean validator attribute.
 
@@ -73,7 +76,7 @@ module Kiwi::Validator
   def v_attribute name, type, opts={}
     opts, type = type, nil if Hash === type
 
-    opts = {:optional => @optional}.merge opts if @optional
+    opts = {:optional => optional_flag}.merge opts if optional_flag
 
     if block_given?
       type = subvalidator
@@ -95,7 +98,7 @@ module Kiwi::Validator
   #   end
 
   def optional
-    @optional = true
+    optional_flag = true
   end
 
 
@@ -112,6 +115,6 @@ module Kiwi::Validator
   #   end
 
   def required
-    @optional = false
+    optional_flag = false
   end
 end

@@ -56,6 +56,7 @@ class Kiwi
     name   = consts.pop
     parent = find_const consts
 
+    raise NameError, "uninitialized constant #{consts}" unless parent
     parent.const_set name.capitalize, value
   end
 

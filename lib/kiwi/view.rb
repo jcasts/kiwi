@@ -34,7 +34,7 @@ class Kiwi::View
   # Implemants nesting for Validator methods.
 
   def self.subvalidator
-    Class.new(self)
+    Class.new(Kiwi::View)
   end
 
 

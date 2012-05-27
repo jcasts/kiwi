@@ -24,13 +24,8 @@ class TestKiwi < Test::Unit::TestCase
 
 
   def test_find_const_non_existant
-    assert_raises(NameError, "uninitialized constant Foo") do
-      Kiwi.find_const(["Foo", "Bar"])
-    end
-
-    assert_raises(NameError, "uninitialized constant Foo") do
-      Kiwi.find_const("Foo::Bar")
-    end
+    assert_nil Kiwi.find_const(["Foo", "Bar"])
+    assert_nil Kiwi.find_const("Foo::Bar")
   end
 
 

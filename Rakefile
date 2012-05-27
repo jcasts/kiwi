@@ -4,9 +4,7 @@ require 'rubygems'
 require 'hoe'
 
 Hoe.spec 'kiwi' do
-  # developer('FIX', 'FIX@example.com')
-
-  # self.rubyforge_name = 'kiwix' # if different than 'kiwi'
+  developer('Jeremie Castagna', 'yaksnrainbows@gmail.com')
 end
 
 # vim: syntax=ruby
