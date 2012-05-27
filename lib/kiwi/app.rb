@@ -195,6 +195,15 @@ class Kiwi::App
 
 
   ##
+  # Find a resource from its string representation.
+
+  def find_resource str
+    rsc = Kiwi.find_const str
+    return rsc if resources.include?(rsc)
+  end
+
+
+  ##
   # Returns the format requested by the client.
 
   def format

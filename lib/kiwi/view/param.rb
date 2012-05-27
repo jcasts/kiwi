@@ -7,5 +7,6 @@ class Kiwi::View::Param < Kiwi::View
   string  :values,     :optional => true, :collection => true
   boolean :collection, :optional => true
   boolean :optional,   :optional => true
-  view :attributes, Kiwi::View::Param, :collection => true, :optional => true
+  view :attributes, Kiwi::View::Param, :collection => true, :optional => true,
+    :desc => "Unfolds embedded attributes for anonymous sub-views"
 end

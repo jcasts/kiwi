@@ -19,7 +19,7 @@ class Kiwi::Resource::Link < Kiwi::Resource
 
   def get id
     rsc_klass, rsc_method = @params[:id].split "-"
-    rsc_klass = Kiwi.find_const(rsc_klass)
+    rsc_klass = @app.find_resource(rsc_klass)
 
     return unless rsc_klass && rsc_method
 
@@ -29,7 +29,7 @@ class Kiwi::Resource::Link < Kiwi::Resource
 
   def list
     if @params[:resource]
-      rsc_klass = Kiwi.find_const @params[:resource]
+      rsc_klass = @app.find_resource @params[:resource]
       return [] unless rsc_klass
 
       rsc_klass.links_for(@params[:rid])

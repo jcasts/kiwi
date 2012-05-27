@@ -10,7 +10,7 @@ class Kiwi::Resource::Resource < Kiwi::Resource
 
 
   def get id
-    rsc_klass = Kiwi.find_const(@params[:id])
+    rsc_klass = @app.find_resource(@params[:id])
     return unless rsc_klass
 
     hashify rsc_klass
