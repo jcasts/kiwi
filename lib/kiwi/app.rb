@@ -132,13 +132,16 @@ class Kiwi::App
 
     app = self.clone env
 
-    rsc_klass.new(app).
-      call env['REQUEST_METHOD'].downcase.to_sym, app.params
+    app.data( rsc_klass.new(app).
+      call env['REQUEST_METHOD'].downcase.to_sym, app.params )
 
     app.response
 
   rescue => e
-    self.class.error.build e
+    code = e.class::STATUS rescue 500
+    app.status(code)
+    app.data(self.class.error.build e)
+    app.response
   end
 
 
@@ -150,7 +153,7 @@ class Kiwi::App
 
     app.env      = env
     app.request  = Rack::Request.new env
-    app.response = [200, {'Content-Type' => content_type }, ['']]
+    app.response = [200, {'Content-Type' => app.content_type }, ['']]
 
     app
   end
@@ -170,7 +173,7 @@ class Kiwi::App
 
   def format
     return unless @env
-    f = env['Accept'].to_s.sub(%r{^\w+/\w+\+?}, '')
+    f = env['HTTP_ACCEPT'].to_s.sub(%r{^\w+/\w+\+?}, '')
     f.empty? ? self.class.formats.first : f.to_sym
   end
 
@@ -181,6 +184,23 @@ class Kiwi::App
   def params
     return {} unless @request
     @request.params
+  end
+
+
+  ##
+  # Assign the response body.
+
+  def body resp
+    resp = [resp] unless resp.respond_to?(:each)
+    @response[2] = resp
+  end
+
+
+  ##
+  # Assign the response body from data.
+
+  def data obj
+    body obj.to_json
   end
 
 
