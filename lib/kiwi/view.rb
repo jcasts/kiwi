@@ -59,6 +59,13 @@ class Kiwi::View
 
   def self.inherited subclass
     subclass.v_attributes.merge! v_attributes
+
+    subclass.string '_type', :optional => true unless
+      subclass.v_attributes['_type']
+
+    subclass.view '_links', "Kiwi::View::Link",
+      :optional => true, :collection => true unless
+        subclass.v_attributes['_links']
   end
 
 

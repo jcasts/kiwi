@@ -5,5 +5,6 @@ class Kiwi::View::Param < Kiwi::View
   string  :desc,       :optional => true
   string  :default,    :optional => true
   string  :values,     :optional => true, :collection => true
-  boolean :collection, :default  => false
+  boolean :collection, :optional => true
+  boolean :optional,   :optional => true
 end

@@ -41,6 +41,7 @@ class Kiwi::Validator::Attribute
     hash[:default]    = @default.to_s       if @has_default
     hash[:values]     = @values.map(:to_s)  if @values
     hash[:collection] = @collection         if @collection
+    hash[:optional]   = @optional           if @optional
     hash
   end
 

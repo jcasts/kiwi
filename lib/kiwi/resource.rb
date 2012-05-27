@@ -320,11 +320,12 @@ class Kiwi::Resource
     links = self.class.links_for(id)
     data[self.class.identifier.to_s] ||= id
 
-    data = self.class.view_from data
     data['_type']  ||= self.class.name
     data['_links'] ||= links.map do |link|
       Kiwi::Resource::Link.view.build link
     end if @append_links
+
+    data = self.class.view_from data
 
     data
   end
