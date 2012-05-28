@@ -38,8 +38,7 @@ class Kiwi::Validator::Attribute
   def to_hash
     hash = {:name => @name}
 
-    if Kiwi::Validator === @type &&
-        (Kiwi::ParamValidator === @type || @type.name.nil?)
+    if Kiwi::Validator === @type
       hash[:attributes] = @type.v_attributes.values.map{|attr| attr.to_hash}
       hash[:type] = '_embedded'
     else
