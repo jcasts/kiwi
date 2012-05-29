@@ -3,7 +3,7 @@ class Kiwi::Resource
   def self.inherited subclass
     unless subclass.route
       new_route = subclass.name.gsub("::", Kiwi.route_delim)
-      new_route = new_route.gsub(/([A-Z0-9])([A-Z])/,'\1_\2').downcase
+      new_route = new_route.gsub(/([A-Za-z0-9])([A-Z])/,'\1_\2').downcase
       subclass.route new_route
     end
 

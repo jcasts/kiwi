@@ -4,5 +4,6 @@
 * Only allow attributes of the previously set types
 * Allow attributes that match a set array of values
 * HTTP Method route mapping per app.
+* OPTIONS and GET methods used in Kiwi::Resource should refer to the Kiwi routes
 * Implement triggers/hooks
 * Implement multi-app class
