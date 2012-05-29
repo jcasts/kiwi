@@ -27,36 +27,4 @@ class TestKiwi < Test::Unit::TestCase
     assert_nil Kiwi.find_const(["Foo", "Bar"])
     assert_nil Kiwi.find_const("Foo::Bar")
   end
-
-
-  def test_assign_const_empty
-    assert_raises(NoMethodError, "undefined method `capitalize' for nil:NilClass") do
-      Kiwi.assign_const "", "foo"
-    end
-  end
-
-
-  def test_assign_const_one
-    Kiwi.assign_const "Bar", "bar"
-    assert_equal ::Bar, "bar"
-
-    Kiwi.assign_const "Bar", "foobar"
-    assert_equal ::Bar, "foobar"
-  end
-
-
-  def test_assign_const_deep
-    Kiwi.assign_const "TestKiwi::Bar", "test_bar"
-    assert_equal Bar, "test_bar"
-
-    Kiwi.assign_const "TestKiwi::Bar", "test_foobar"
-    assert_equal Bar, "test_foobar"
-  end
-
-
-  def test_assign_const_deep_nonexistant
-    assert_raises NameError, "uninitialized constant TestKiwi::Foo" do
-      Kiwi.assign_const "TestKiwi::Foo::Bar", "test_bar"
-    end
-  end
 end

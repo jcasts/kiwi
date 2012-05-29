@@ -49,19 +49,6 @@ class Kiwi
 
 
   ##
-  # Assign any constant with a value.
-
-  def self.assign_const name, value
-    consts = name.to_s.split("::")
-    name   = consts.pop
-    parent = find_const consts
-
-    raise NameError, "uninitialized constant #{consts}" unless parent
-    parent.const_set name.capitalize, value
-  end
-
-
-  ##
   # Find any constant.
 
   def self.find_const consts
