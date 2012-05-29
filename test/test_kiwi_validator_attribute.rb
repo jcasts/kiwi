@@ -161,4 +161,41 @@ class TestKiwiValidatorAttribute < Test::Unit::TestCase
 
     assert_equal expected, val
   end
+
+
+  def test_to_hash_view
+    validator = Class.new Kiwi::View
+    validator.string  :name
+    validator.integer :age
+
+    attrib = Kiwi::Validator::Attribute.new 'thing', validator
+
+    expected = {
+      :type => '_embedded',
+      :name => 'thing',
+      :attributes => [
+        {
+          :type => "String",
+          :name => "_type",
+          :optional => true,
+        },
+        {
+          :type => "Kiwi::Resource::Link",
+          :name => "_links",
+          :optional   => true,
+          :collection => true
+        },
+        {
+          :type => "String",
+          :name => "name"
+        },
+        {
+          :type => "Integer",
+          :name => "age"
+        }
+      ]
+    }
+
+    assert_equal expected, attrib.to_hash
+  end
 end
