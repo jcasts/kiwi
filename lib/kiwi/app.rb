@@ -79,8 +79,10 @@ class Kiwi::App
   ##
   # Returns all the supported mime types.
 
-  def self.mime_types
-    self.formats.map{|f| "#{media_type}/#{api_name}+#{f}" }
+  def self.mime_types *more
+    (@custom_mime_types ||= []).concat more
+    @custom_mim_types.concat \
+      self.formats.map{|f| "#{media_type}/#{api_name}+#{f}" }
   end
 
 

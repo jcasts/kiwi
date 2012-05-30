@@ -14,6 +14,10 @@ class Kiwi::Resource::App < Kiwi::Resource
       }
     end
 
-    {:api_name => @app.api_name, :resources => resources}
+    {
+      :api_name   => @app.api_name,
+      :mime_types => @app.mime_types,
+      :resources  => resources,
+    }
   end
 end
