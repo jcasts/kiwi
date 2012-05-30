@@ -81,7 +81,7 @@ class Kiwi::App
 
   def self.mime_types *more
     (@custom_mime_types ||= []).concat more
-    @custom_mim_types.concat \
+    @custom_mime_types |
       self.formats.map{|f| "#{media_type}/#{api_name}+#{f}" }
   end
 
@@ -143,6 +143,14 @@ class Kiwi::App
 
   def api_name
     self.class.api_name
+  end
+
+
+  ##
+  # Shortcut for self.class.api_name.
+
+  def mime_types
+    self.class.mime_types
   end
 
 
