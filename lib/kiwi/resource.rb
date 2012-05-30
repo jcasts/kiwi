@@ -217,7 +217,7 @@ class Kiwi::Resource
     out = {
       :type       => self.name,
       :links      => links_for(nil),
-      :attributes => view.v_attributes.values.map(&:to_hash)
+      :attributes => view.to_a
     }
     out[:desc] = @desc if @desc
     out

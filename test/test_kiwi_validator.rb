@@ -210,20 +210,78 @@ class TestKiwiValidator < Test::Unit::TestCase
   end
 
 
-  def test_to_hash_validator
+  def test_to_a_validator
     PersonValidator.validator :cats, CatValidator,
       :optional => true, :collection => true
 
-    validator = PersonValidator.new :name => "Jack",
-            :cats => [
-              {:name => "daisy",  :age => 2, :colors => ["black"]},
-              {:name => "bandit", :age => 1, :colors => ["white", "black"]}
-            ]
+    expected = [
+ {:name=>"_type", :type=>"String", :optional=>true},
+ {:name=>"_links",
+  :type=>"Kiwi::Resource::Link",
+  :collection=>true,
+  :optional=>true},
+ {:name=>"name", :type=>"String"},
+ {:name=>"gender", :type=>"String", :optional=>true},
+ {:name=>"attributes",
+  :attributes=>
+   [{:name=>"_type", :type=>"String", :optional=>true},
+    {:name=>"_links",
+     :type=>"Kiwi::Resource::Link",
+     :collection=>true,
+     :optional=>true},
+    {:name=>"awesome", :type=>"Boolean", :default=>"false", :optional=>true},
+    {:name=>"awake", :type=>"Boolean", :default=>"false"}],
+  :type=>"_embedded",
+  :collection=>true,
+  :optional=>true},
+ {:name=>"foo", :type=>"String", :optional=>true},
+ {:name=>"cats",
+  :attributes=>
+   [{:name=>"_type", :type=>"String", :optional=>true},
+    {:name=>"_links",
+     :type=>"Kiwi::Resource::Link",
+     :collection=>true,
+     :optional=>true},
+    {:name=>"name", :type=>"String"},
+    {:name=>"age", :type=>"Integer"},
+    {:name=>"colors", :type=>"String", :collection=>true}],
+  :type=>"_embedded",
+  :collection=>true,
+  :optional=>true}
+    ]
 
-    expected = {"name" => "Jack", "cats" =>
-      [{"name" => "daisy",  "age" => 2, "colors" => ["black"]},
-       {"name" => "bandit", "age" => 1, "colors" => ["white", "black"]}]}
+    assert_equal expected, PersonValidator.to_a
+  end
 
-    assert_equal expected, validator.to_hash
+
+  def test_to_a_resource
+    PersonValidator.validator :cats, FooResource,
+      :optional => true, :collection => true
+
+    expected = [
+ {:name=>"_type", :type=>"String", :optional=>true},
+ {:name=>"_links",
+  :type=>"Kiwi::Resource::Link",
+  :collection=>true,
+  :optional=>true},
+ {:name=>"name", :type=>"String"},
+ {:name=>"gender", :type=>"String", :optional=>true},
+ {:name=>"attributes",
+  :attributes=>
+   [{:name=>"_type", :type=>"String", :optional=>true},
+    {:name=>"_links",
+     :type=>"Kiwi::Resource::Link",
+     :collection=>true,
+     :optional=>true},
+    {:name=>"awesome", :type=>"Boolean", :default=>"false", :optional=>true},
+    {:name=>"awake", :type=>"Boolean", :default=>"false"}],
+  :type=>"_embedded",
+  :collection=>true,
+  :optional=>true},
+ {:name=>"foo", :type=>"String", :optional=>true},
+ {:name=>"cats", :type=>"FooResource", :collection=>true, :optional=>true}
+    ]
+
+    assert_equal expected, PersonValidator.to_a
   end
 end

@@ -117,4 +117,12 @@ module Kiwi::Validator
   def required
     self.optional_flag = false
   end
+
+
+  ##
+  # Return an array hashes of v_attributes.
+
+  def to_a
+    v_attributes.values.map(&:to_hash)
+  end
 end

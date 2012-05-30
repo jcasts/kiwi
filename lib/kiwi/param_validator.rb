@@ -21,11 +21,12 @@ class Kiwi::ParamValidator
 
 
   def for_method mname
-    # TODO: refactor!
-    @params.values.select do |table|
-      !table[:except].include?(mname) &&
+    @params.values.inject([]) do |table|
+      out << table[:attr] if
+        !table[:except].include?(mname) &&
         (table[:only].empty? || table[:only].include?(mname))
-    end.map{|table| table[:attr] }
+      out
+    end
   end
 
 
