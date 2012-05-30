@@ -84,7 +84,7 @@ class Kiwi::Resource
     {
       :href   => href,
       :method => http_method.to_s.upcase,
-      :params => param.for_method(mname).map(&:to_hash)
+      :params => param.for_method(mname, &:to_hash)
     }
   end
 

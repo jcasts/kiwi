@@ -20,11 +20,12 @@ class Kiwi::ParamValidator
   end
 
 
-  def for_method mname
+  def for_method mname, &block
     @params.values.inject([]) do |table|
-      out << table[:attr] if
+      out << (block_given? ? yield(table[:attr]) : table[:attr]) if
         !table[:except].include?(mname) &&
         (table[:only].empty? || table[:only].include?(mname))
+
       out
     end
   end
