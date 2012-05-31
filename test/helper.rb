@@ -7,6 +7,14 @@ end
 
 class FooResource < Kiwi::Resource
   view FooView
+
+  def get id
+    {:foo => "myfoo"}
+  end
+
+  def list
+    [{:foo => "myfoo"}]
+  end
 end
 
 class ViewlessResource < Kiwi::Resource
