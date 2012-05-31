@@ -102,6 +102,28 @@ class TestKiwiValidatorAttribute < Test::Unit::TestCase
   end
 
 
+  def test_resource_attr
+    res_attr = Kiwi::Validator::Attribute.new :rsc, FooResource
+    res_attr.value_from(:rsc => {:foo => "blah"})
+  end
+
+
+  def test_bad_resource_attr
+    res_attr = Kiwi::Validator::Attribute.new :rsc, FooResource
+    assert_raises Kiwi::RequiredValueError do
+      res_attr.value_from(:foo => {:foo => "blah"})
+    end
+  end
+
+
+  def test_resource_attr_no_view
+    res_attr = Kiwi::Validator::Attribute.new :rsc, ViewlessResource
+    assert_raises Kiwi::ValidationError do
+      res_attr.value_from(:rsc => {:foo => "blah"})
+    end
+  end
+
+
   def test_bool_attr
     assert_equal true, @bool_attr.value_from(:foo => true)
     assert_equal false, @bool_attr.value_from(:foo => false)
