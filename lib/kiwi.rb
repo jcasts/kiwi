@@ -17,6 +17,9 @@ class Kiwi
   # Value was missing or nil.
   class RequiredValueError < ValidationError; end
 
+  # Unexpected param was given to a ParamSet
+  class InvalidParam < ValidationError; end
+
   # Something bad happenned with the request.
   class HTTPError < Error;                STATUS = 500; end
 

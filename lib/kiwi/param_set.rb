@@ -4,9 +4,8 @@ class Kiwi::ParamSet
 
   attr_reader :params
 
-  def initialize resource_class
-    @resource_class = resource_class
-    @params         = {}
+  def initialize
+    @params = {}
   end
 
 
@@ -44,8 +43,8 @@ class Kiwi::ParamSet
       if !table || table[:except].include?(mname) ||
         !table[:only].empty? && !table[:only].include?(mname)
 
-        raise Kiwi::BadRequest,
-          "Invalid param `#{name}': #{mname} #{@resource_class.route}"
+        raise Kiwi::InvalidParam,
+          "Invalid param `#{name}': #{mname}"
       end
 
       val = table[:attr].value_from params
@@ -57,7 +56,7 @@ class Kiwi::ParamSet
 
 
   def subvalidator
-    self.class.new(@resource_class)
+    self.class.new
   end
 
 
