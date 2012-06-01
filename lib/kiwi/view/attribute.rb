@@ -1,4 +1,4 @@
-class Kiwi::View::Param < Kiwi::View
+class Kiwi::View::Attribute < Kiwi::View
 
   string   :name
   string   :type

@@ -1,4 +1,4 @@
-class Kiwi::ParamValidator
+class Kiwi::ParamSet
 
   include Kiwi::Validator
 

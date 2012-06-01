@@ -93,7 +93,7 @@ class Kiwi::Resource
   # The param description and validator accessor.
 
   def self.param &block
-    @param ||= Kiwi::ParamValidator.new(self)
+    @param ||= Kiwi::ParamSet.new(self)
     @param.instance_eval(&block) if block_given?
     @param
   end
