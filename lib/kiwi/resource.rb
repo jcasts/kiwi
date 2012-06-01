@@ -1,12 +1,6 @@
 class Kiwi::Resource
 
   def self.inherited subclass
-    unless subclass.route
-      new_route = subclass.name.gsub("::", Kiwi.route_delim)
-      new_route = new_route.gsub(/([A-Za-z0-9])([A-Z])/,'\1_\2').downcase
-      subclass.route new_route
-    end
-
     subclass.identifier :id unless subclass.identifier
 
     subclass.redirect :options, Kiwi::Resource::Resource, :get do |params|
@@ -152,10 +146,19 @@ class Kiwi::Resource
 
   ##
   # The route to access this resource. Defaults to the underscored version
-  # of the class name.
+  # of the class name. Pass multiple parts as arguments to use the preset
+  # Kiwi route delimiter:
+  #   MyResource.route "foo", "bar"
+  #   #=> "/foo/bar"
 
   def self.route *parts
-    return @route if parts.empty?
+    return @route if @route && parts.empty?
+
+    if parts.empty?
+      new_route = self.name.gsub(/([A-Za-z0-9])([A-Z])/,'\1_\2').downcase
+      parts     = new_route.split("::")
+    end
+
     string = parts.join Kiwi.route_delim
     delim  = Regexp.escape Kiwi.route_delim
     @route = string.sub(/^(#{delim})?/, Kiwi.route_delim).
