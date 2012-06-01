@@ -4,8 +4,7 @@ class Kiwi::Resource
     subclass.identifier :id unless subclass.identifier
 
     subclass.redirect :options, Kiwi::Resource::Resource, :get do |params|
-      params.clear
-      params[:id] = self.class.name
+      params[Kiwi::Resource::Resource.identifier] = self.class.name
     end
   end
 
