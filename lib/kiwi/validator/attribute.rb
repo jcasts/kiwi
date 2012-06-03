@@ -4,7 +4,7 @@
 
 class Kiwi::Validator::Attribute
 
-  attr_accessor :name, :collection, :optional, :default, :desc
+  attr_reader :name, :collection, :optional, :default, :desc
 
   ##
   # Create a new attribute with a name and data type.
@@ -14,7 +14,7 @@ class Kiwi::Validator::Attribute
   # :optional::   Bool - Required or not.
 
   def initialize name, type, opts={}
-    @name        = name.to_s
+    self.name    = name
     @type        = type
     @optional    = !!opts[:optional]
     @collection  = !!opts[:collection]
@@ -29,6 +29,14 @@ class Kiwi::Validator::Attribute
     raise Kiwi::InvalidTypeError,
       "Default #{@default.inspect} isn't a #{@type}" if
         @default && Module === @type && !(@type === @default)
+  end
+
+
+  ##
+  # Name attribute writer
+
+  def name= val
+    @name = val.to_s
   end
 
 

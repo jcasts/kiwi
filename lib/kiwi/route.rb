@@ -21,7 +21,7 @@ class Kiwi::Route
   ##
   # Turns string path into a Regexp matcher and key names. (Thanks Sinatra!)
 
-  def self.parse_path path_str
+  def self.parse_path path_str, &block
     return [path_str, []] if Regexp === path_str
 
     keys          = []
@@ -33,11 +33,13 @@ class Kiwi::Route
         case match
         when "*"
           keys << 'splat'
+          yield keys.last if block_given?
           "(.*?)"
         when *special_chars
           Regexp.escape(match)
         else
           keys << $2[1..-1]
+          yield keys.last if block_given?
           "([^#{delim}?#]+)"
         end
       end
@@ -46,20 +48,21 @@ class Kiwi::Route
   end
 
 
-  attr_reader :path, :matcher, :keys
+  attr_reader :path, :matcher, :keys, :params
 
 
   ##
   # Create a new Route object. Parts will be joined with the route delimiter.
+  # If a block is given, will yield for every special key found.
 
-  def initialize *parts
+  def initialize *parts, &block
     string = parts.join Kiwi.route_delim
     delim  = Regexp.escape self.class.delimiter
     @path  = string.sub(/^(#{delim})?/, self.class.delimiter).
                     sub(/(\w)(#{delim})?$/, '\1')
 
     rpath = "#{@path}#{self.class.delimiter}?:#{self.class.tmp_id}?"
-    @matcher, @keys = self.class.parse_path rpath
+    @matcher, @keys = self.class.parse_path rpath, &block
   end
 
 

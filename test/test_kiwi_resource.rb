@@ -4,7 +4,7 @@ class TestKiwiResource < Test::Unit::TestCase
   class Foo < Kiwi::Resource; end
 
   def test_init
-    assert_equal "/test_kiwi_resource/foo", Foo.route
+    assert_equal "/test_kiwi_resource/foo", Foo.route.path
     assert_equal :id, Foo.identifier
 
     assert_equal 1, Foo.redirects.length
@@ -32,7 +32,7 @@ class TestKiwiResource < Test::Unit::TestCase
 
   def test_route
     FooResource.route "//foo/bar/"
-    assert_equal "//foo/bar", FooResource.route
+    assert_equal "//foo/bar", FooResource.route.path
     assert FooResource.routes?("//foo/bar"), "Resource should route //foo/bar"
     assert FooResource.routes?("//foo/bar/"), "Resource should route //foo/bar/"
     assert FooResource.routes?("//foo/bar/123"),
@@ -64,9 +64,9 @@ class TestKiwiResource < Test::Unit::TestCase
 [{:href=>"/foo_resource/:id",
     :method=>"GET",
     :params=>[{:name=>"id", :type=>"String", :desc=>"Id of the resource"}]},
-   {:href=>"/foo_resource/:id",
+   {:href=>"/foo_resource",
     :method=>"LIST",
-    :params=>[{:name=>"id", :type=>"String", :desc=>"Id of the resource"}]}],
+    :params=>[]}],
 
       :attributes =>
 [{:name=>"_type", :type=>"String", :optional=>true},

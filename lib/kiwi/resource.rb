@@ -25,9 +25,20 @@ class Kiwi::Resource
     if field
       param[field] = param.delete(@identifier) if param[@identifier]
       @identifier  = field.to_sym
+      default_id_param.name = @identifier
     end
 
     @identifier
+  end
+
+
+  class << self
+    private
+    def default_id_param # :nodoc:
+      @default_id_param ||=
+        Kiwi::Validator::Attribute.new self.identifier, String,
+          :desc => "Id of the resource"
+    end
   end
 
 
@@ -68,7 +79,7 @@ class Kiwi::Resource
     {
       :href   => href,
       :method => http_method.to_s.upcase,
-      :params => param.for_method(mname, &:to_hash)
+      :params => params_for_method(mname).map(&:to_hash)
     }
   end
 
@@ -80,6 +91,20 @@ class Kiwi::Resource
     @param ||= Kiwi::ParamSet.new
     @param.instance_eval(&block) if block_given?
     @param
+  end
+
+
+  ##
+  # An array of param validators for the given method.
+
+  def self.params_for_method mname
+    params = param.for_method(mname)
+
+    if !param[self.identifier] && id_resource_methods.include?(mname)
+      params.unshift default_id_param
+    end
+
+    params
   end
 
 
@@ -149,7 +174,10 @@ class Kiwi::Resource
       parts     = new_route.split("::")
     end
 
-    @route = Kiwi::Route.new(*parts)
+    @route = Kiwi::Route.new(*parts) do |key|
+      next if key == Kiwi::Route.tmp_id
+      self.param.string key
+    end
   end
 
 
