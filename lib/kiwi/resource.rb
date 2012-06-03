@@ -54,8 +54,7 @@ class Kiwi::Resource
     return unless !validate || resource_methods.include?(mname) ||
                   self.redirects[mname]
 
-    href  = route.path.dup
-
+    href = route.path.dup
     http_method = mname
 
     unless Kiwi.http_verbs.include?(mname)

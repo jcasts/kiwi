@@ -49,7 +49,8 @@ class Kiwi::Route
     @path  = string.sub(/^(#{delim})?/, self.class.delimiter).
                     sub(/(\w)(#{delim})?$/, '\1')
 
-    @matcher, @keys = self.class.parse_path @path
+    @matcher, @keys =
+      self.class.parse_path "#{@path}#{self.class.delimiter}?:_kiwi_id?"
   end
 
 
@@ -66,7 +67,9 @@ class Kiwi::Route
   # Returns a hash of params if the path is parseable, otherwise returns nil.
 
   def parse path_str
-    match  = @matcher.match path_str
+    match = @matcher.match path_str
+    return unless match
+
     values = match.captures.to_a
 
     if @keys.any?
@@ -74,7 +77,7 @@ class Kiwi::Route
         if k == 'splat'
           (hash[k] ||= []) << v
         else
-          hash[k] = v
+          hash[k] = v unless v.nil?
         end
 
         hash
