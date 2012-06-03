@@ -69,8 +69,8 @@ class Kiwi::Route
     match  = @matcher.match path_str
     values = match.captures.to_a
 
-    if @path_keys.any?
-      @path_keys.zip(values).inject({}) do |hash,(k,v)|
+    if @keys.any?
+      @keys.zip(values).inject({}) do |hash,(k,v)|
         if k == 'splat'
           (hash[k] ||= []) << v
         else
