@@ -1,5 +1,6 @@
 = TODO
 
+* Implement param type coersion from String
 * Have a list of allowable types for the app: resources + base types
 * Only allow attributes of the previously set types
 * Allow attributes that match a set array of values
