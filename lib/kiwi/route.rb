@@ -10,6 +10,15 @@ class Kiwi::Route
 
 
   ##
+  # Temporary resource id param name. Defaults to _kiwi_id.
+
+  def self.tmp_id new_id=nil
+    @tmp_id   = new_id if new_id
+    @tmp_id ||= "_kiwi_id"
+  end
+
+
+  ##
   # Turns string path into a Regexp matcher and key names. (Thanks Sinatra!)
 
   def self.parse_path path_str
@@ -49,8 +58,8 @@ class Kiwi::Route
     @path  = string.sub(/^(#{delim})?/, self.class.delimiter).
                     sub(/(\w)(#{delim})?$/, '\1')
 
-    @matcher, @keys =
-      self.class.parse_path "#{@path}#{self.class.delimiter}?:_kiwi_id?"
+    rpath = "#{@path}#{self.class.delimiter}?:#{self.class.tmp_id}?"
+    @matcher, @keys = self.class.parse_path rpath
   end
 
 
