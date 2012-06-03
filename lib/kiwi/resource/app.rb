@@ -1,6 +1,6 @@
 class Kiwi::Resource::App < Kiwi::Resource
 
-  route Kiwi.route_delim
+  route Kiwi::Route.delimiter
   desc  "A resource representation of this application"
 
   view Kiwi::View::App

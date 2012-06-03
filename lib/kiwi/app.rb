@@ -169,6 +169,8 @@ class Kiwi::App
 
     app = self.clone env
 
+    app.params.merge!( rsc_klass.route.parse(env['PATH_INFO']) )
+
     app.data( rsc_klass.new(app).
       call env['REQUEST_METHOD'].downcase.to_sym, app.params )
 
@@ -228,7 +230,7 @@ class Kiwi::App
   # Sugar for request.params
 
   def params
-    return {} unless @request
+    return unless @request
     @request.params
   end
 

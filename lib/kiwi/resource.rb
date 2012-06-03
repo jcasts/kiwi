@@ -1,8 +1,6 @@
 class Kiwi::Resource
 
   def self.inherited subclass
-    subclass.identifier :id unless subclass.identifier
-
     subclass.redirect :options, Kiwi::Resource::Resource, :get do |params|
       params[Kiwi::Resource::Resource.identifier] = self.class.name
     end
@@ -22,21 +20,14 @@ class Kiwi::Resource
   # The field used as the resource id. Defaults to :id.
 
   def self.identifier field=nil
-    return @identifier unless field
-    field = field.to_sym
+    @identifier ||= :id
 
-    if param[@identifier]
-      p_attr = param.params.delete @identifier.to_s
-      p_attr[:attr].name = field.to_s
-      param.params[field.to_s] = p_attr
-
-    elsif !param[field]
-      param.string field,
-        :desc => "Id of the resource",
-        :only => id_resource_methods
+    if field
+      param[field] = param.delete(@identifier) if param[@identifier]
+      @identifier  = field.to_sym
     end
 
-    @identifier = field
+    @identifier
   end
 
 
@@ -63,7 +54,7 @@ class Kiwi::Resource
     return unless !validate || resource_methods.include?(mname) ||
                   self.redirects[mname]
 
-    href  = route.dup
+    href  = route.path.dup
 
     http_method = mname
 
@@ -72,7 +63,8 @@ class Kiwi::Resource
       href << ".#{mname}"
     end
 
-    href << "#{Kiwi.route_delim}#{id}" if id_resource_methods.include?(mname)
+    href << "#{Kiwi::Route.delimiter}#{id}" if
+      id_resource_methods.include?(mname)
 
     {
       :href   => href,
@@ -158,10 +150,7 @@ class Kiwi::Resource
       parts     = new_route.split("::")
     end
 
-    string = parts.join Kiwi.route_delim
-    delim  = Regexp.escape Kiwi.route_delim
-    @route = string.sub(/^(#{delim})?/, Kiwi.route_delim).
-                    sub(/(\w)(#{delim})?$/, '\1')
+    @route = Kiwi::Route.new(*parts)
   end
 
 
@@ -169,10 +158,7 @@ class Kiwi::Resource
   # Check if this resource routes the given path.
 
   def self.routes? path
-    return true if path == self.route
-
-    delim = Regexp.escape Kiwi.route_delim
-    path.sub(/#{delim}[^#{delim}]*$/, "") == self.route
+    self.route.routes? path
   end
 
 

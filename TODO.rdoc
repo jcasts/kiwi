@@ -8,3 +8,4 @@
 * Implement triggers/hooks
 * Implement multi-app class
 * Allow multi-app to describe all available apps
+* Swappable route parser
