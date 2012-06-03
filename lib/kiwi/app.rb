@@ -169,10 +169,8 @@ class Kiwi::App
 
     app = self.clone env
 
-    app.params.merge!( rsc_klass.route.parse(env['PATH_INFO']) )
-
     app.data( rsc_klass.new(app).
-      call env['REQUEST_METHOD'].downcase.to_sym, app.params )
+      call env['REQUEST_METHOD'].downcase.to_sym, env['PATH_INFO'], app.params )
 
     app.response
 

@@ -214,8 +214,8 @@ class Kiwi::Resource
   ##
   # New Resource instance with the app object that called it.
 
-  def initialize app
-    @app = app
+  def initialize app=nil
+    @app          = app
     @append_links = false
   end
 
@@ -231,10 +231,11 @@ class Kiwi::Resource
   ##
   # Call the resource with a method name and params.
 
-  def call mname, params
+  def call mname, path, params
+    params = merge_path_params! path, params
     return follow_redirect(mname, params) if redirect? mname
 
-    @params, args = validate! mname, params
+    @params, args = validate! mname, path, params
     data = __send__(mname, *args)
 
     return unless data
@@ -256,7 +257,7 @@ class Kiwi::Resource
   # Validate the incoming request. Returns the validated params hash
   # and the arguments for the method.
 
-  def validate! mname, params
+  def validate! mname, path, params
     meth = resource_method mname
 
     raise Kiwi::MethodNotAllowed,
@@ -322,5 +323,18 @@ class Kiwi::Resource
     data = self.class.view_from data
 
     data
+  end
+
+
+  ##
+  # Merge the params from the path into the params hash.
+
+  def merge_path_params! path, params={}
+    path_params = self.class.route.parse(path)
+
+    params[self.class.identifier] = path_params.delete(Kiwi::Route.tmp_id) if
+      path_params.has_key?(Kiwi::Route.tmp_id)
+
+    params.merge( path_params )
   end
 end
