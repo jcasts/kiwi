@@ -3,6 +3,13 @@ require 'test/helper'
 class TestKiwiResource < Test::Unit::TestCase
   class Foo < Kiwi::Resource; end
 
+  def setup
+    FooResource.route "/foo_resource"
+    FooResource.desc "Foo Resource"
+    FooResource.identifier :id
+  end
+
+
   def test_init
     assert_equal "/test_kiwi_resource/foo", Foo.route.path
     assert_equal :id, Foo.identifier
@@ -40,23 +47,93 @@ class TestKiwiResource < Test::Unit::TestCase
   end
 
 
+  def test_preview_from
+    view = FooResource.preview_from :foo => "blah", :bar => "thing"
+    assert FooResource.preview
+    assert_equal({"foo" => "blah"}, view)
+  end
+
+
+  def test_preview_from_no_view
+    view = Foo.preview_from :foo => "blah", :bar => "thing"
+    assert Foo.preview.nil?
+    assert_equal({:foo => "blah", :bar => "thing"}, view)
+  end
+
+
   def test_view_from
     view = FooResource.view_from :foo => "blah", :bar => "thing"
+    assert FooResource.view
     assert_equal({"foo" => "blah"}, view)
   end
 
 
   def test_view_from_no_view
     view = Foo.view_from :foo => "blah", :bar => "thing"
+    assert Foo.view.nil?
     assert_equal({:foo => "blah", :bar => "thing"}, view)
   end
 
 
-  def test_to_hash
-    FooResource.route "/foo_resource"
-    FooResource.desc "Foo Resource"
-    FooResource.identifier :id
+  def test_links_for_id
+    expected = [
+     {:href=>"/foo_resource/123",
+      :method=>"GET",
+      :params=>[{:name=>"id", :type=>"String", :desc=>"Id of the resource"}]},
+     {:href=>"/foo_resource",
+      :method=>"LIST",
+      :params=>[]}]
 
+    assert_equal expected, FooResource.links_for('123')
+  end
+
+
+  def test_links_for_generic
+    expected = [
+     {:href=>"/foo_resource/:id",
+      :method=>"GET",
+      :params=>[{:name=>"id", :type=>"String", :desc=>"Id of the resource"}]},
+     {:href=>"/foo_resource",
+      :method=>"LIST",
+      :params=>[]}]
+
+    assert_equal expected, FooResource.links_for(nil)
+  end
+
+
+  def test_link_for_generic
+    expected_get =
+     {:href=>"/foo_resource/:id",
+      :method=>"GET",
+      :params=>[{:name=>"id", :type=>"String", :desc=>"Id of the resource"}]}
+
+    expected_list =
+     {:href=>"/foo_resource",
+      :method=>"LIST",
+      :params=>[]}
+
+    assert_equal expected_get, FooResource.link_for(:get, nil)
+    assert_equal expected_list, FooResource.link_for(:list, nil)
+  end
+
+
+  def test_link_for_generic
+    expected_get =
+     {:href=>"/foo_resource/123",
+      :method=>"GET",
+      :params=>[{:name=>"id", :type=>"String", :desc=>"Id of the resource"}]}
+
+    expected_list =
+     {:href=>"/foo_resource",
+      :method=>"LIST",
+      :params=>[]}
+
+    assert_equal expected_get, FooResource.link_for(:get, "123")
+    assert_equal expected_list, FooResource.link_for(:list, "123")
+  end
+
+
+  def test_to_hash
     hash = FooResource.to_hash
     expected = {
       :type  => "FooResource",
