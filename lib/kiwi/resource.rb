@@ -4,6 +4,12 @@ class Kiwi::Resource
     subclass.redirect :options, Kiwi::Resource::Resource, :get do |params|
       params[Kiwi::Resource::Resource.identifier] = self.class.name
     end
+
+    subclass.instance_eval do
+      @route   = nil
+      @preview = nil
+      @view    = nil
+    end
   end
 
 

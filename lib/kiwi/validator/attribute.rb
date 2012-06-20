@@ -23,6 +23,8 @@ class Kiwi::Validator::Attribute
     @has_default = opts.has_key?(:default)
     @default     = opts[:default]
 
+    @values      = nil
+
     raise ArgumentError, "Invalid type #{@type.inspect} must be a Class" unless
       Module === @type || String === @type || Kiwi::Validator === @type
 
