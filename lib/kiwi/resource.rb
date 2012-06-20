@@ -41,9 +41,8 @@ class Kiwi::Resource
   class << self
     private
     def default_id_param # :nodoc:
-      @default_id_param ||=
-        Kiwi::Validator::Attribute.new self.identifier, String,
-          :desc => "Id of the resource"
+      Kiwi::Validator::Attribute.new self.identifier, String,
+        :desc => "Id of the resource"
     end
   end
 

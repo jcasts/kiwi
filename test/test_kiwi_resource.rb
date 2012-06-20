@@ -133,6 +133,15 @@ class TestKiwiResource < Test::Unit::TestCase
   end
 
 
+  def test_default_id_param
+    id = FooResource.__send__ :default_id_param
+    assert_equal Kiwi::Validator::Attribute, id.class
+    assert_equal FooResource.identifier, id.name.to_sym
+    assert_equal String, id.type
+    assert_equal "Id of the resource", id.desc
+  end
+
+
   def test_to_hash
     hash = FooResource.to_hash
     expected = {
