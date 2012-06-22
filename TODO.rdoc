@@ -6,9 +6,11 @@
 * Implement triggers/hooks
 * Implement multi-app class
   * Allow multi-app to describe all available apps
-  * Support in-Kiwi middleware for app-specific things when running multi-app
-  * Middleware is pre-body serialization middleware
-* HTML, JSON, PLIST, XML, YAML serializers
+* Support in-Kiwi middleware (Kiwi::App attribute)
+  * Middleware request is called after Resource has been identified and assigned
+    to env['kiwi.resource']
+  * Middleware response is pre-body serialization
+* HTML, JSON, PLIST, XML, YAML serializers (Kiwi::App attribute)
   * May require layout implementation. (HTML, XML)
 
 == Maybe
