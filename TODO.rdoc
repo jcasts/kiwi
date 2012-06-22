@@ -11,3 +11,5 @@
 * Implement multi-app class
   * Allow multi-app to describe all available apps
   * Support in-Kiwi middleware for app-specific things when running multi-app
+  * Middleware is pre-body serialization middleware
+* Kiwi apps should run standalone as a command line app with options.
