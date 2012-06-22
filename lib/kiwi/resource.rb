@@ -113,9 +113,9 @@ class Kiwi::Resource
   def self.params_for_method mname
     params = param.for_method(mname)
 
-    if !param[self.identifier] && id_resource_methods.include?(mname)
-      params.unshift default_id_param
-    end
+    params.unshift default_id_param if !param[self.identifier] &&
+                                        id_resource_methods.include?(mname) &&
+                                        default_id_param.include?(mname)
 
     params
   end
