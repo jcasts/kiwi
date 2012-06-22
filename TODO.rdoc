@@ -1,16 +1,21 @@
 = TODO
 
 * Implement param type coersion from String
-* Have a list of allowable types for the app: resources + base types
-* Only allow attributes of the previously set types
+* Differentiate between executable link and buildable link.
 * Allow attributes that match a set array of values
-* HTTP Method route mapping per app
-* OPTIONS and GET methods used in Kiwi::Resource should refer to the Kiwi routes
-* Swappable route parser
 * Implement triggers/hooks
 * Implement multi-app class
   * Allow multi-app to describe all available apps
   * Support in-Kiwi middleware for app-specific things when running multi-app
   * Middleware is pre-body serialization middleware
+* HTML, JSON, PLIST, XML, YAML serializers
+  * May require layout implementation. (HTML, XML)
+
+== Maybe
+
+* HTTP Method route mapping per app
+  * Swappable route parser
+  * OPTIONS and GET methods in Kiwi::Resource should refer to the Kiwi routes
 * Kiwi apps should run standalone as a command line app with options.
-* Differentiate between executable link and buildable link.
+* Have a list of allowable types for the app: resources + base types
+  * Only allow attributes of the previously set types

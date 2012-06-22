@@ -18,7 +18,7 @@ class Kiwi::App
 
   def self.default_resources
     [Kiwi::Resource::Resource, Kiwi::Resource::Link,
-      Kiwi::Resource::App, Kiwi::Resource::Attribute]
+      Kiwi::Resource::App, Kiwi::Resource::Attribute, Kiwi::Resource::Error]
   end
 
 
@@ -35,24 +35,13 @@ class Kiwi::App
 
 
   ##
-  # The error view to output errors as. Defaults to Kiwi::View::Error.
-
-  def self.error err_view=nil
-    @err_view ||= Kiwi::View::Error
-    @err_view   = err_view if err_view
-    @err_view
-  end
-
-
-  ##
   # Enforces an exact match on the Accept header or not, defaults to
   # Kiwi.force_accept_header. When set to false, will accept wildcards
   # in the HTTP_ACCEPT env value.
 
   def self.force_accept_header val=nil
     @force_accept_header = !!val unless val.nil?
-    @force_accept_header = Kiwi.force_accept_header if @force_accept_header.nil?
-    @force_accept_header
+    @force_accept_header.nil? ? Kiwi.force_accept_header : @force_accept_header
   end
 
 

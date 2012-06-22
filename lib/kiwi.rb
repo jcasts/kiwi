@@ -41,7 +41,6 @@ class Kiwi
 
   class << self
     attr_accessor :trace
-    attr_accessor :enforce_view
     attr_accessor :enforce_desc
     attr_accessor :force_accept_header
     attr_accessor :param_validation
@@ -72,7 +71,7 @@ class Kiwi
   end
 end
 
-Kiwi.trace               = true if ENV['RACK_ENV'] =~ /^dev/
+Kiwi.trace               = !!(ENV['RACK_ENV'] =~ /^dev/i)
 Kiwi.force_accept_header = true
 Kiwi.param_validation    = true
 Kiwi.route_delim         = "/"
