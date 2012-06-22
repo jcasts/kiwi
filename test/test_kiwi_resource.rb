@@ -147,7 +147,7 @@ class TestKiwiResource < Test::Unit::TestCase
 
   def test_default_id_param
     id = FooResource.__send__ :default_id_param
-    assert_equal Kiwi::Validator::Attribute, id.class
+    assert_equal Kiwi::Param, id.class
     assert_equal FooResource.identifier, id.name.to_sym
     assert_equal String, id.type
     assert_equal "Id of the resource", id.desc
