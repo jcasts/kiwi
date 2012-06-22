@@ -17,5 +17,14 @@ class FooResource < Kiwi::Resource
   end
 end
 
+
+class InheritedResource < FooResource
+  view FooView
+
+  def post id
+    {:foo => "myfoo"}
+  end
+end
+
 class ViewlessResource < Kiwi::Resource
 end

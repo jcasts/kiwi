@@ -6,7 +6,8 @@ class TestKiwiResource < Test::Unit::TestCase
   def setup
     FooResource.route "/foo_resource"
     FooResource.desc "Foo Resource"
-    FooResource.identifier :id
+    FooResource.identifier false
+    InheritedResource.identifier false
   end
 
 
@@ -18,6 +19,7 @@ class TestKiwiResource < Test::Unit::TestCase
     assert_equal :get, Foo.redirects[:options][:method]
     assert_equal Kiwi::Resource::Resource, Foo.redirects[:options][:resource]
     assert_equal Proc, Foo.redirects[:options][:proc].class
+    assert_equal 'id', Foo.__send__(:default_id_param).name
   end
 
 
@@ -44,6 +46,16 @@ class TestKiwiResource < Test::Unit::TestCase
     assert FooResource.routes?("//foo/bar/"), "Resource should route //foo/bar/"
     assert FooResource.routes?("//foo/bar/123"),
       "Resource should route //foo/bar/123"
+  end
+
+
+  def test_route_join_parts
+    FooResource.route "/", "bar", "foo"
+    assert_equal "//bar/foo", FooResource.route.path
+    assert FooResource.routes?("//bar/foo"), "Resource should route //foo/bar"
+    assert FooResource.routes?("//bar/foo/"), "Resource should route //foo/bar/"
+    assert FooResource.routes?("//bar/foo/123"),
+      "Resource should route //bar/foo/123"
   end
 
 
@@ -139,6 +151,76 @@ class TestKiwiResource < Test::Unit::TestCase
     assert_equal FooResource.identifier, id.name.to_sym
     assert_equal String, id.type
     assert_equal "Id of the resource", id.desc
+  end
+
+
+  def test_identifier
+    assert_equal :id, FooResource.identifier
+
+    FooResource.identifier :myid
+    assert_equal :myid, FooResource.identifier
+
+    FooResource.identifier false
+    assert_equal :id, FooResource.identifier
+  end
+
+
+  def test_param
+    assert_equal Kiwi::ParamSet, Foo.param.class
+
+    Foo.param do
+      string :blah
+    end
+
+    Foo.param.integer :bar
+
+    assert_equal String,  Foo.param[:blah].type
+    assert_equal Integer, Foo.param[:bar].type
+  end
+
+
+  def test_params_for_method
+    
+  end
+
+
+  def test_resource_methods
+    assert_equal [:get, :list],        FooResource.resource_methods
+    assert_equal [:post, :get, :list], InheritedResource.resource_methods
+  end
+
+
+  def test_id_resource_methods
+    assert_equal [:get],        FooResource.id_resource_methods
+    assert_equal [:post, :get], InheritedResource.id_resource_methods
+  end
+
+
+  def test_id_resource_methods_inherited_identifier
+    FooResource.identifier :myid
+    assert_equal [], FooResource.id_resource_methods
+    assert_equal [], InheritedResource.id_resource_methods
+  end
+
+
+  def test_id_resource_methods_inherited_custom_identifier
+    InheritedResource.identifier :id
+    FooResource.identifier :myid
+    assert_equal [],            FooResource.id_resource_methods
+    assert_equal [:post, :get], InheritedResource.id_resource_methods
+  end
+
+
+  def test_redirects
+    block = lambda{|params| puts "foo" }
+
+    Foo.redirect "my_method", InheritedResource, &block
+    assert_equal :my_method, Foo.redirects[:my_method][:method]
+    assert_equal block, Foo.redirects[:my_method][:proc]
+
+    Foo.redirect "my_method", InheritedResource, :post
+    assert_equal :post, Foo.redirects[:my_method][:method]
+    assert_nil Foo.redirects[:my_method][:proc]
   end
 
 
