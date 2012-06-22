@@ -21,7 +21,7 @@ class TestKiwiValidator < Test::Unit::TestCase
 
 
   def test_v_attribute_name
-    v_attribute = PersonValidator.v_attributes['name']
+    v_attribute = PersonValidator.v_attributes[:name]
 
     assert_equal Kiwi::Validator::Attribute, v_attribute.class
     assert_equal String,                v_attribute.type
@@ -32,7 +32,7 @@ class TestKiwiValidator < Test::Unit::TestCase
 
 
   def test_v_attribute_gender
-    v_attribute = PersonValidator.v_attributes['gender']
+    v_attribute = PersonValidator.v_attributes[:gender]
 
     assert_equal Kiwi::Validator::Attribute, v_attribute.class
     assert_equal String,                v_attribute.type
@@ -44,7 +44,7 @@ class TestKiwiValidator < Test::Unit::TestCase
 
 
   def test_v_attribute_attributes
-    v_attribute = PersonValidator.v_attributes['attributes']
+    v_attribute = PersonValidator.v_attributes[:attributes]
 
     assert_equal Kiwi::Validator::Attribute, v_attribute.class
     assert       v_attribute.type.is_a?(Kiwi::Validator)
@@ -53,13 +53,13 @@ class TestKiwiValidator < Test::Unit::TestCase
     assert_equal true,                  v_attribute.optional
     assert_nil                          v_attribute.default
 
-    sub_attribute = v_attribute.type.v_attributes['awesome']
+    sub_attribute = v_attribute.type.v_attributes[:awesome]
     assert_equal Kiwi::Validator::Attribute, sub_attribute.class
     assert_equal false,                 sub_attribute.collection
     assert_equal true,                  sub_attribute.optional
     assert_equal false,                 sub_attribute.default
 
-    sub_attribute = v_attribute.type.v_attributes['awake']
+    sub_attribute = v_attribute.type.v_attributes[:awake]
     assert_equal Kiwi::Validator::Attribute, sub_attribute.class
     assert_equal false,                 sub_attribute.collection
     assert_equal false,                 sub_attribute.optional
@@ -69,7 +69,7 @@ class TestKiwiValidator < Test::Unit::TestCase
 
   def test_string_attribute
     PersonValidator.string :foo, :optional => true
-    v_attribute = PersonValidator.v_attributes['foo']
+    v_attribute = PersonValidator.v_attributes[:foo]
 
     assert_equal Kiwi::Validator::Attribute, v_attribute.class
     assert_equal String,                v_attribute.type
@@ -81,7 +81,7 @@ class TestKiwiValidator < Test::Unit::TestCase
 
   def test_integer_attribute
     PersonValidator.integer :foo, :optional => true
-    v_attribute = PersonValidator.v_attributes['foo']
+    v_attribute = PersonValidator.v_attributes[:foo]
 
     assert_equal Kiwi::Validator::Attribute, v_attribute.class
     assert_equal Integer,               v_attribute.type
@@ -93,7 +93,7 @@ class TestKiwiValidator < Test::Unit::TestCase
 
   def test_boolean_attribute
     PersonValidator.boolean :foo, :optional => true
-    v_attribute = PersonValidator.v_attributes['foo']
+    v_attribute = PersonValidator.v_attributes[:foo]
 
     assert_equal Kiwi::Validator::Attribute, v_attribute.class
     assert_equal Boolean,               v_attribute.type
@@ -107,7 +107,7 @@ class TestKiwiValidator < Test::Unit::TestCase
     PersonValidator.validator :cats, CatValidator,
       :optional => true, :collection => true
 
-    v_attribute = PersonValidator.v_attributes['cats']
+    v_attribute = PersonValidator.v_attributes[:cats]
 
     assert_equal Kiwi::Validator::Attribute, v_attribute.class
     assert_equal CatValidator,               v_attribute.type
@@ -123,7 +123,7 @@ class TestKiwiValidator < Test::Unit::TestCase
       cat.integer :age
     end
 
-    v_attribute = PersonValidator.v_attributes['cats']
+    v_attribute = PersonValidator.v_attributes[:cats]
 
     assert_equal Kiwi::Validator::Attribute, v_attribute.class
     assert       v_attribute.type.is_a?(Kiwi::Validator)
@@ -139,7 +139,7 @@ class TestKiwiValidator < Test::Unit::TestCase
       cat.integer :age
     end
 
-    v_attribute = PersonValidator.v_attributes['cats']
+    v_attribute = PersonValidator.v_attributes[:cats]
 
     assert_equal Kiwi::Validator::Attribute, v_attribute.class
     assert       v_attribute.type.is_a?(Kiwi::Validator)

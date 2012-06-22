@@ -10,12 +10,12 @@ class Kiwi::ParamSet
 
 
   def [] key
-    @params[key.to_s]
+    @params[key.to_sym]
   end
 
 
   def delete key
-    @params.delete key.to_s
+    @params.delete key.to_sym
   end
 
 
@@ -30,10 +30,10 @@ class Kiwi::ParamSet
   def validate! mname, params
     mname = mname.to_sym
     value =
-      Hash.new{|h,k| h[k] = h[k.to_s] if Symbol === k && h.has_key?(k.to_s)}
+      Hash.new{|h,k| h[k] = h[k.to_sym] if String === k && h.has_key?(k.to_sym)}
 
     params.each do |name, pvalue|
-      name = name.to_s
+      name = name.to_sym
 
       param = @params[name]
 

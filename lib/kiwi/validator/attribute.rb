@@ -38,7 +38,7 @@ class Kiwi::Validator::Attribute
   # Name attribute writer
 
   def name= val
-    @name = val.to_s
+    @name = val.to_sym
   end
 
 
@@ -46,7 +46,7 @@ class Kiwi::Validator::Attribute
   # Returns a hash that matches a param view description.
 
   def to_hash
-    hash = {:name => @name}
+    hash = {:name => @name.to_s}
 
     if Kiwi::Validator === self.type
       hash[:attributes] = self.type.v_attributes.values.map{|attr| attr.to_hash}
@@ -97,9 +97,9 @@ class Kiwi::Validator::Attribute
       key_found = true
       val = obj[@name]
 
-    elsif Hash === obj && obj.has_key?(@name.to_sym)
+    elsif Hash === obj && obj.has_key?(@name.to_s)
       key_found = true
-      val = obj[@name.to_sym]
+      val = obj[@name.to_s]
 
     elsif !(Hash === obj) && obj.respond_to?(@name)
       key_found = true

@@ -19,7 +19,7 @@ class TestKiwiResource < Test::Unit::TestCase
     assert_equal :get, Foo.redirects[:options][:method]
     assert_equal Kiwi::Resource::Resource, Foo.redirects[:options][:resource]
     assert_equal Proc, Foo.redirects[:options][:proc].class
-    assert_equal 'id', Foo.__send__(:default_id_param).name
+    assert_equal :id, Foo.__send__(:default_id_param).name
   end
 
 
