@@ -184,6 +184,11 @@ class TestKiwiResource < Test::Unit::TestCase
   end
 
 
+  def test_params_for_method_custom_id_param
+    
+  end
+
+
   def test_resource_methods
     assert_equal [:get, :list],        FooResource.resource_methods
     assert_equal [:post, :get, :list], InheritedResource.resource_methods
