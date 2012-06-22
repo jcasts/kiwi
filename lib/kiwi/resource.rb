@@ -6,9 +6,11 @@ class Kiwi::Resource
     end
 
     subclass.instance_eval do
-      @route   = nil
-      @preview = nil
-      @view    = nil
+      @route      = nil
+      @preview    = nil
+      @view       = nil
+      @identifier = nil
+      default_id_param.name = identifier
     end
   end
 
@@ -24,15 +26,23 @@ class Kiwi::Resource
 
   ##
   # The field used as the resource id. Defaults to :id.
+  # This attribute is inherited by the superclass by default.
+  # Setting it to false will re-enable the inheritance.
 
   def self.identifier field=nil
-    @identifier ||= :id
+    default_id_param.name = @identifier = field.to_sym if field
 
-    if field
-      default_id_param.name = @identifier = field.to_sym
+    out =
+      @identifier ||
+      superclass.respond_to?(:identifier) && superclass.identifier ||
+      :id
+
+    if field == false
+      default_id_param.name = out
+      @identifier = nil
     end
 
-    @identifier
+    out
   end
 
 
