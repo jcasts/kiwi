@@ -83,6 +83,7 @@ Kiwi.http_verbs =
 require 'kiwi/core_ext'
 require 'kiwi/validator'
 require 'kiwi/validator/attribute'
+require 'kiwi/param'
 require 'kiwi/param_set'
 require 'kiwi/view'
 require 'kiwi/view/attribute'

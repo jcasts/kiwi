@@ -47,6 +47,14 @@ class Kiwi::View
 
 
   ##
+  # Creates a new attribute object.
+
+  def self.new_attribute name, type, opts={}
+    Kiwi::Validator::Attribute.new(name, type, opts)
+  end
+
+
+  ##
   # Returns a hash of name/attr pairs for all validator attributes.
 
   def self.v_attributes

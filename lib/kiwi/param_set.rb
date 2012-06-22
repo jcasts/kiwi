@@ -20,11 +20,8 @@ class Kiwi::ParamSet
 
 
   def for_method mname, &block
-    @params.values.inject([]) do |out, table|
-      out << (block_given? ? yield(table[:attr]) : table[:attr]) if
-        !table[:except].include?(mname) &&
-        (table[:only].empty? || table[:only].include?(mname))
-
+    @params.values.inject([]) do |out, param|
+      out << (block_given? ? yield(param) : param) if param.include?(mname)
       out
     end
   end
@@ -38,17 +35,14 @@ class Kiwi::ParamSet
     params.each do |name, pvalue|
       name = name.to_s
 
-      table = @params[name]
+      param = @params[name]
 
-      if !table || table[:except].include?(mname) ||
-        !table[:only].empty? && !table[:only].include?(mname)
-
-        raise Kiwi::InvalidParam,
-          "Invalid param `#{name}': #{mname}"
+      if !param || !param.include?(mname)
+        raise Kiwi::InvalidParam, "Invalid param `#{name}': #{mname}"
       end
 
-      val = table[:attr].value_from params
-      value[name] = val unless val.nil? && table[:attr].optional
+      val = param.value_from params
+      value[name] = val unless val.nil? && param.optional
     end
 
     value
@@ -61,17 +55,18 @@ class Kiwi::ParamSet
 
 
   def assign_attribute attr, opts={}
-    @params[attr.name] = {
-      :attr   => attr,
-      :only   => Array(opts[:only]),
-      :except => Array(opts[:except])
-    }
+    @params[attr.name] = attr
+  end
+
+
+  def new_attribute name, type, opts={}
+    Kiwi::Param.new name, type, opts
   end
 
 
   def v_attributes
     out = {}
-    @params.each{|name, param| out[name] = param[:attr] }
+    @params.each{|name, param| out[name] = param }
     out
   end
 end

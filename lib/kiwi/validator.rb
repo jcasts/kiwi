@@ -84,7 +84,7 @@ module Kiwi::Validator
     end
 
     name = name.to_s
-    assign_attribute Attribute.new(name, type, opts), opts
+    assign_attribute new_attribute(name, type, opts), opts
   end
 
 
