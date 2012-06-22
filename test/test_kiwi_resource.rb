@@ -6,6 +6,7 @@ class TestKiwiResource < Test::Unit::TestCase
   def setup
     FooResource.route "/foo_resource"
     FooResource.desc "Foo Resource"
+    FooResource.param.clear
     FooResource.identifier false
     InheritedResource.identifier false
   end
@@ -180,12 +181,38 @@ class TestKiwiResource < Test::Unit::TestCase
 
 
   def test_params_for_method
-    
+    params = FooResource.params_for_method :get
+    assert_equal [:id], params.map(&:name)
+  end
+
+
+  def test_params_for_method_only
+    FooResource.param do
+      string :all
+      string :only_bar, :only => :bar
+    end
+
+    params = FooResource.params_for_method :bar
+    assert_equal [:all, :only_bar], params.map(&:name)
+
+    params = FooResource.params_for_method :get
+    assert_equal [:id, :all], params.map(&:name)
   end
 
 
   def test_params_for_method_custom_id_param
-    
+    FooResource.identifier :myid
+
+    params = FooResource.params_for_method :get
+    assert_equal [], params
+
+    FooResource.param.string :myid, :except => :list
+
+    params = FooResource.params_for_method :get
+    assert_equal [:myid], params.map(&:name)
+
+    params = FooResource.params_for_method :list
+    assert_equal [], params.map(&:name)
   end
 
 

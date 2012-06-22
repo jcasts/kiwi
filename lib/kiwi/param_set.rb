@@ -14,6 +14,11 @@ class Kiwi::ParamSet
   end
 
 
+  def clear
+    @params.clear
+  end
+
+
   def delete key
     @params.delete key.to_sym
   end
