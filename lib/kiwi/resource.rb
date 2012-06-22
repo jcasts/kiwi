@@ -29,9 +29,7 @@ class Kiwi::Resource
     @identifier ||= :id
 
     if field
-      param[field] = param.delete(@identifier) if param[@identifier]
-      @identifier  = field.to_sym
-      default_id_param.name = @identifier
+      default_id_param.name = @identifier = field.to_sym
     end
 
     @identifier
