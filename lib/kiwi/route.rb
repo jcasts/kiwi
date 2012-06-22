@@ -48,7 +48,7 @@ class Kiwi::Route
   end
 
 
-  attr_reader :path, :matcher, :keys, :params
+  attr_reader :path, :matcher, :keys
 
 
   ##
