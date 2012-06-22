@@ -10,7 +10,6 @@ class Kiwi::Resource
       @preview    = nil
       @view       = nil
       @identifier = nil
-      default_id_param.name = identifier
     end
   end
 
@@ -30,17 +29,13 @@ class Kiwi::Resource
   # Setting it to false will re-enable the inheritance.
 
   def self.identifier field=nil
-    default_id_param.name = @identifier = field.to_sym if field
+    @identifier = field.to_sym if field
+    @identifier = nil          if field == false
 
     out =
       @identifier ||
       superclass.respond_to?(:identifier) && superclass.identifier ||
       :id
-
-    if field == false
-      default_id_param.name = out
-      @identifier = nil
-    end
 
     out
   end
@@ -114,8 +109,7 @@ class Kiwi::Resource
     params = param.for_method(mname)
 
     params.unshift default_id_param if !param[self.identifier] &&
-                                        id_resource_methods.include?(mname) &&
-                                        default_id_param.include?(mname)
+                                        id_resource_methods.include?(mname)
 
     params
   end
