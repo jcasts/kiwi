@@ -9,6 +9,20 @@ class Kiwi::Param < Kiwi::Validator::Attribute
   end
 
 
+  ##
+  # Coerce a String into the expected param type.
+
+  def coerce str
+    rule = Kiwi.input_types[self.type]
+    raise TypeError, "Can't coerce #{str.class} into #{self.type}" unless rule
+
+    rule.respond_to?(:call) ? rule.call(str) : str.__send__(rule)
+  end
+
+
+  ##
+  # Check if the given method name is allowed based on except and only rules.
+
   def include? mname
     !@except.include?(mname) &&
       (@only.empty? || @only.include?(mname))

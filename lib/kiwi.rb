@@ -43,6 +43,7 @@ class Kiwi
     attr_accessor :trace
     attr_accessor :enforce_desc
     attr_accessor :force_accept_header
+    attr_accessor :input_types
     attr_accessor :param_validation
     attr_accessor :http_verbs
     attr_accessor :default_http_verb
@@ -72,19 +73,6 @@ class Kiwi
   end
 end
 
-Kiwi.trace               = !!(ENV['RACK_ENV'] =~ /^dev/i)
-Kiwi.force_accept_header = true
-Kiwi.param_validation    = true
-Kiwi.route_delim         = "/"
-
-Kiwi.serializers = {
-  %r{^[^/]+/(.*\+)?json$} => lambda{|data| require 'json'; data.to_json }
-}
-
-Kiwi.default_http_verb = :get
-Kiwi.http_verbs =
-  [:get, :put, :patch, :delete, :post, :list, :options, :trace]
-
 require 'kiwi/core_ext'
 require 'kiwi/validator'
 require 'kiwi/validator/attribute'
@@ -105,3 +93,4 @@ require 'kiwi/resource/app'
 require 'kiwi/resource/attribute'
 require 'kiwi/resource/error'
 require 'kiwi/app'
+require 'kiwi/init'

@@ -125,7 +125,7 @@ class Kiwi::Validator::Attribute
 
     if type
       if Kiwi::Validator === type
-       val = type.build val
+        val = type.build val
 
       elsif type.respond_to?(:ancestors) &&
         type.ancestors.include?(Kiwi::Resource)

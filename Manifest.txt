@@ -10,6 +10,7 @@ lib/kiwi.rb
 lib/kiwi/app.rb
 lib/kiwi/core_ext.rb
 lib/kiwi/hooks.rb
+lib/kiwi/init.rb
 lib/kiwi/param.rb
 lib/kiwi/param_set.rb
 lib/kiwi/resource.rb
