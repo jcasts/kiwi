@@ -11,6 +11,7 @@ Kiwi.input_types = {
 }
 
 Kiwi.serializers = {
+  # TODO: placeholder. allow for other serializers and parsers.
   %r{^[^/]+/(.*\+)?json$} => lambda{|data| require 'json'; data.to_json }
 }
 

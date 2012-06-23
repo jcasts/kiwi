@@ -28,4 +28,12 @@ class Kiwi::Param < Kiwi::Validator::Attribute
     !@except.include?(mname) &&
       (@only.empty? || @only.include?(mname))
   end
+
+
+  private
+
+  def validate val, skip_collection=false
+    return super if @collection && !skip_collection
+    super coerce(val), skip_collection
+  end
 end
