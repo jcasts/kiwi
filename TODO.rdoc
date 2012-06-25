@@ -1,8 +1,6 @@
 = TODO
 
-* Implement param type coersion from String
 * Differentiate between executable link and buildable link.
-* Allow attributes that match a set array of values
 * Implement triggers/hooks
 * Implement multi-app class
   * Allow multi-app to describe all available apps
@@ -12,6 +10,11 @@
   * Middleware response is pre-body serialization (and pre-validation?)
 * HTML, JSON, PLIST, XML, YAML serializers (Kiwi::App attribute)
   * May require layout implementation. (HTML, XML)
+
+== Done
+
+* Implement param type coersion from String
+* Allow attributes that match a set array of values
 
 == Maybe
 
