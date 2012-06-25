@@ -185,6 +185,16 @@ class TestKiwiValidatorAttribute < Test::Unit::TestCase
   end
 
 
+  def test_validate_values
+    attrib = Kiwi::Validator::Attribute.new 'thing', Integer, :values => (1..3)
+    assert_equal 3, attrib.value_from(:thing => 3)
+
+    assert_raises Kiwi::BadValueError do
+      attrib.value_from(:thing => 4)
+    end
+  end
+
+
   def test_to_hash_view
     validator = Class.new Kiwi::View
     validator.string  :name

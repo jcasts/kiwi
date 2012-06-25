@@ -14,6 +14,9 @@ class Kiwi
   # Value was not valid according to requirements.
   class InvalidTypeError < ValidationError; end
 
+  # Value was not in the specified set.
+  class BadValueError < ValidationError; end
+
   # Value was missing or nil.
   class RequiredValueError < ValidationError; end
 

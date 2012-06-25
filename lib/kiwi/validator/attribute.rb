@@ -23,7 +23,7 @@ class Kiwi::Validator::Attribute
     @has_default = opts.has_key?(:default)
     @default     = opts[:default]
 
-    @values      = nil
+    @values      = Array(opts[:values]) if opts[:values]
 
     raise ArgumentError, "Invalid type #{@type.inspect} must be a Class" unless
       Module === @type || String === @type || Kiwi::Validator === @type
@@ -123,26 +123,38 @@ class Kiwi::Validator::Attribute
       return val.map{|v| validate v, true}
     end
 
-    if type
-      if Kiwi::Validator === type
-        val = type.build val
+    val = validate_type val if type
+    validate_value val      if @values
 
-      elsif type.respond_to?(:ancestors) &&
-        type.ancestors.include?(Kiwi::Resource)
-        builder = (type.preview || type.view)
-        raise Kiwi::ValidationError,
-          "Invalid view #{builder.inspect} for resource #{type}" unless
-            Kiwi::Validator === builder
+    val
+  end
 
-        val = builder.build val
 
-      else
-        raise Kiwi::InvalidTypeError,
-          "#{@name}: #{val.inspect} is not a #{type}" unless type === val
-      end
+  def validate_type val
+    if Kiwi::Validator === type
+      val = type.build val
+
+    elsif type.respond_to?(:ancestors) &&
+      type.ancestors.include?(Kiwi::Resource)
+      builder = (type.preview || type.view)
+      raise Kiwi::ValidationError,
+        "Invalid view #{builder.inspect} for resource #{type}" unless
+          Kiwi::Validator === builder
+
+      val = builder.build val
+
+    else
+      raise Kiwi::InvalidTypeError,
+        "#{@name}: #{val.inspect} is not a #{type}" unless type === val
     end
 
     val
   end
-end
 
+
+  def validate_value val
+    raise Kiwi::BadValueError,
+      "Value #{val.inspect} must be in #{@values.inspect}" unless
+        @values.include?(val)
+  end
+end
