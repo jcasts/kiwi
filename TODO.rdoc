@@ -9,7 +9,7 @@
 * Support in-Kiwi middleware (Kiwi::App attribute)
   * Middleware request is called after Resource has been identified and assigned
     to env['kiwi.resource']
-  * Middleware response is pre-body serialization
+  * Middleware response is pre-body serialization (and pre-validation?)
 * HTML, JSON, PLIST, XML, YAML serializers (Kiwi::App attribute)
   * May require layout implementation. (HTML, XML)
 
