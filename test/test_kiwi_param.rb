@@ -1,6 +1,6 @@
 require 'test/helper'
 
-class TestParam < Test::Unit::TestCase
+class TestKiwiParam < Test::Unit::TestCase
 
   def setup
     @param_foo = Kiwi::Param.new "foo", Integer,
