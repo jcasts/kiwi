@@ -4,13 +4,16 @@ class TestKiwiParam < Test::Unit::TestCase
 
   def setup
     @param_foo = Kiwi::Param.new "foo", Integer,
-              :except => :bar, :only => [:blah, :bar]
+      :except => :bar, :only => [:blah, :bar]
 
     @param_bar = Kiwi::Param.new "bar", String
 
     @param_baz = Kiwi::Param.new "baz", Boolean
 
     @param_flt = Kiwi::Param.new "flt", Float
+
+    @param_col = Kiwi::Param.new "col", Integer,
+      :collection => true
   end
 
 
@@ -64,5 +67,10 @@ class TestKiwiParam < Test::Unit::TestCase
     assert_equal false, @param_baz.value_from(:baz => "false")
     assert_equal 123,   @param_foo.value_from("foo" => "123")
     assert_equal 123.1, @param_flt.value_from(:flt => "123.10")
+    assert_equal [1,2], @param_col.value_from(:col => %w{1 2})
+
+    assert_raises Kiwi::InvalidTypeError do
+      @param_col.value_from(:col => 1)
+    end
   end
 end

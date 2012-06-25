@@ -118,7 +118,7 @@ class Kiwi::Validator::Attribute
   def validate val, skip_collection=false
     if @collection && !skip_collection
       raise Kiwi::InvalidTypeError,
-        "Collection #{val.inspect} must be an Array" unless Array === val
+        "Value #{val.inspect} expected to be an Array" unless Array === val
 
       return val.map{|v| validate v, true}
     end
