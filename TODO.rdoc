@@ -12,6 +12,7 @@
   * Serializer gets assigned to env['kiwi.serializer']
 * HTML, JSON, PLIST, XML, YAML serializers (Kiwi::App attribute)
   * May require layout implementation. (HTML, XML)
+* Support streaming
 
 == Done
 
