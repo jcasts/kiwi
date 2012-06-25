@@ -12,6 +12,7 @@
   * Serializer gets assigned to env['kiwi.serializer']
 * HTML, JSON, PLIST, XML, YAML serializers (Kiwi::App attribute)
   * May require layout implementation. (HTML, XML)
+* Kiwi apps should be easily self-encapsulated, deployable, and bootable.
 * Support streaming
 
 == Done
@@ -25,5 +26,3 @@
   * Swappable route parser
   * OPTIONS and GET methods in Kiwi::Resource should refer to the Kiwi routes
 * Kiwi apps should run standalone as a command line app with options.
-* Have a list of allowable types for the app: resources + base types
-  * Only allow attributes of the previously set types
