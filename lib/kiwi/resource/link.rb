@@ -33,10 +33,10 @@ class Kiwi::Resource::Link < Kiwi::Resource
       rsc_klass = @app.find_resource @params[:resource]
       return [] unless rsc_klass
 
-      rsc_klass.links_for(@params[:rid])
+      rsc_klass.links(@params[:rid])
 
     else
-      @app.resources.map{|rsc| rsc.links_for(@params[:rid])}.flatten
+      @app.resources.map{|rsc| rsc.links(@params[:rid])}.flatten
     end
   end
 end

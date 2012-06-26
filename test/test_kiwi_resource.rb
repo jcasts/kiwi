@@ -88,7 +88,7 @@ class TestKiwiResource < Test::Unit::TestCase
   end
 
 
-  def test_links_for_id
+  def test_links_id
     expected = [
      {:href=>"/foo_resource/123",
       :method=>"GET",
@@ -97,11 +97,11 @@ class TestKiwiResource < Test::Unit::TestCase
       :method=>"LIST",
       :params=>[]}]
 
-    assert_equal expected, FooResource.links_for('123')
+    assert_equal expected, FooResource.links('123')
   end
 
 
-  def test_links_for_generic
+  def test_links_generic
     expected = [
      {:href=>"/foo_resource/:id",
       :method=>"GET",
@@ -110,7 +110,7 @@ class TestKiwiResource < Test::Unit::TestCase
       :method=>"LIST",
       :params=>[]}]
 
-    assert_equal expected, FooResource.links_for(nil)
+    assert_equal expected, FooResource.links(nil)
   end
 
 

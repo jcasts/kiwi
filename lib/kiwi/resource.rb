@@ -55,7 +55,7 @@ class Kiwi::Resource
   ##
   # Array of links for this resource.
 
-  def self.links_for id
+  def self.links id=nil
     links = []
 
     resource_methods.each do |mname|
@@ -69,7 +69,7 @@ class Kiwi::Resource
   ##
   # Single link for this resource, for a method and id.
 
-  def self.link_for mname, id, validate=true
+  def self.link_for mname, id=nil, validate=true
     id  ||= identifier.inspect
     mname = mname.to_sym
     return unless !validate || resource_methods.include?(mname) ||
@@ -240,8 +240,8 @@ class Kiwi::Resource
   def self.to_hash
     out = {
       :type       => self.name,
-      :links      => links_for(nil),
-      :attributes => view.to_a
+      :links      => self.links,
+      :attributes => self.view.to_a
     }
     out[:desc] = @desc if @desc
     out
@@ -349,7 +349,7 @@ class Kiwi::Resource
          data[self.class.identifier.to_s] ||
          @params[self.class.identifier]
 
-    links = self.class.links_for(id)
+    links = self.class.links(id) # Revisit this when link_to is implemented
     data[self.class.identifier.to_s] ||= id
 
     data['_type']  ||= self.class.name
