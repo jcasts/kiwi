@@ -1,6 +1,5 @@
 = TODO
 
-* Return 400 when non-supported param is given
 * Differentiate between executable link and buildable link.
 * Implement triggers/hooks
 * Implement multi-app class
@@ -19,6 +18,7 @@
 
 * Implement param type coersion from String
 * Allow attributes that match a set array of values
+* Return 400 when non-supported param is given
 
 == Maybe
 
