@@ -120,6 +120,22 @@ module Kiwi::Validator
 
 
   ##
+  # Build the validator from an object or hash.
+
+  def build obj
+    value = {}
+
+    v_attributes.each do |name, attrib|
+      val = attrib.value_from obj
+      value[name.to_s] = val unless val.nil? && attrib.optional
+    end
+
+    value
+  end
+
+
+
+  ##
   # Return an array hashes of v_attributes.
 
   def to_a
