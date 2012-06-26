@@ -24,7 +24,7 @@ class TestKiwiLink < Test::Unit::TestCase
 
 
   def test_init
-    assert_equal :post, @link.http_method
+    assert_equal "POST", @link.http_method
     assert_equal "/foo/bar/:id", @link.path
     assert_equal @params.v_attributes.values, @link.params
   end
@@ -33,7 +33,7 @@ class TestKiwiLink < Test::Unit::TestCase
   def test_build
     expected = {
       :href   => "/foo/bar/123?foo=bar&bar=true",
-      :method => :post
+      :method => "POST"
     }
 
     assert_equal expected, @link.build(:id => "123", :foo => "bar", :bar => true)
@@ -50,7 +50,7 @@ class TestKiwiLink < Test::Unit::TestCase
   def test_build_collection
     expected = {
       :href   => "/foo/bar/123?foo=bar&int[]=1&int[]=2",
-      :method => :post
+      :method => "POST"
     }
 
     assert_equal expected, @link.build(:id => "123",
@@ -61,7 +61,7 @@ class TestKiwiLink < Test::Unit::TestCase
   def test_build_subset
     expected = {
       :href   => "/foo/bar/123?foo=bar&sub[col][]=1&sub[col][]=2&sub[str]=val",
-      :method => :post
+      :method => "POST"
     }
 
     assert_equal expected, @link.build(:id => "123", :foo => "bar",
@@ -72,7 +72,7 @@ class TestKiwiLink < Test::Unit::TestCase
   def test_to_hash
     expected = {
       :href   => "/foo/bar/:id",
-      :method => :post,
+      :method => "POST",
       :params => [
        {:name=>"id", :type=>"String"},
        {:name=>"foo", :type=>"String"},

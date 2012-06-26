@@ -88,11 +88,15 @@ class Kiwi::Resource
     href << "#{Kiwi::Route.delimiter}#{id}" if
       id_resource_methods.include?(mname)
 
-    {
-      :href   => href,
-      :method => http_method.to_s.upcase,
-      :params => params_for_method(mname).map(&:to_hash)
-    }
+    Kiwi::Link.new mname, href, params_for_method(mname)
+  end
+
+
+  ##
+  # Single link to a specific resource and method.
+
+  def self.link_to mname, params=nil
+    link_for(mname).build(params)
   end
 
 
@@ -242,7 +246,7 @@ class Kiwi::Resource
   def self.to_hash
     out = {
       :type       => self.name,
-      :links      => self.links,
+      :links      => self.links.map(&:to_hash),
       :attributes => self.view.to_a
     }
     out[:desc] = @desc if @desc
@@ -351,7 +355,7 @@ class Kiwi::Resource
          data[self.class.identifier.to_s] ||
          @params[self.class.identifier]
 
-    links = self.class.links(id) # Revisit this when link_to is implemented
+    links = self.class.links(id).map(&:to_hash) # Revisit this when link_to is implemented
     data[self.class.identifier.to_s] ||= id
 
     data['_type']  ||= self.class.name

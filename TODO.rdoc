@@ -1,5 +1,6 @@
 = TODO
 
+* Include the _type attribute automatically on known sub-resources?
 * Have links parse incoming requests?
 * Differentiate between executable link and buildable link.
 * Implement triggers/hooks

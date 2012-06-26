@@ -24,7 +24,7 @@ class Kiwi::Resource::Link < Kiwi::Resource
 
     return unless rsc_klass && rsc_method
 
-    rsc_klass.link_for(rsc_method.to_sym, @params[:rid])
+    rsc_klass.link_for(rsc_method.to_sym, @params[:rid]).to_hash
   end
 
 
@@ -33,10 +33,10 @@ class Kiwi::Resource::Link < Kiwi::Resource
       rsc_klass = @app.find_resource @params[:resource]
       return [] unless rsc_klass
 
-      rsc_klass.links(@params[:rid])
+      rsc_klass.links(@params[:rid]).map(&:to_hash)
 
     else
-      @app.resources.map{|rsc| rsc.links(@params[:rid])}.flatten
+      @app.resources.map{|rsc| rsc.links(@params[:rid]).map(&:to_hash)}.flatten
     end
   end
 end

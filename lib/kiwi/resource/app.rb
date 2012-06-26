@@ -10,7 +10,7 @@ class Kiwi::Resource::App < Kiwi::Resource
     resources = @app.resources.map do |rsc|
       {
         :id   => rsc.name,
-        :link => rsc.link_for(:options, rsc.name)
+        :link => rsc.link_for(:options, rsc.name).to_hash
       }
     end
 

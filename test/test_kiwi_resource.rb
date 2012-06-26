@@ -97,7 +97,7 @@ class TestKiwiResource < Test::Unit::TestCase
       :method=>"LIST",
       :params=>[]}]
 
-    assert_equal expected, FooResource.links('123')
+    assert_equal expected, FooResource.links('123').map(&:to_hash)
   end
 
 
@@ -110,8 +110,8 @@ class TestKiwiResource < Test::Unit::TestCase
       :method=>"LIST",
       :params=>[]}]
 
-    assert_equal expected, FooResource.links(nil)
-    assert_equal expected, FooResource.links
+    assert_equal expected, FooResource.links(nil).map(&:to_hash)
+    assert_equal expected, FooResource.links.map(&:to_hash)
   end
 
 
@@ -126,10 +126,10 @@ class TestKiwiResource < Test::Unit::TestCase
       :method=>"LIST",
       :params=>[]}
 
-    assert_equal expected_get, FooResource.link_for(:get, nil)
-    assert_equal expected_get, FooResource.link_for(:get)
-    assert_equal expected_list, FooResource.link_for(:list, nil)
-    assert_equal expected_list, FooResource.link_for(:list)
+    assert_equal expected_get, FooResource.link_for(:get, nil).to_hash
+    assert_equal expected_get, FooResource.link_for(:get).to_hash
+    assert_equal expected_list, FooResource.link_for(:list, nil).to_hash
+    assert_equal expected_list, FooResource.link_for(:list).to_hash
   end
 
 
@@ -144,14 +144,32 @@ class TestKiwiResource < Test::Unit::TestCase
       :method=>"LIST",
       :params=>[]}
 
-    assert_equal expected_get, FooResource.link_for(:get, "123")
-    assert_equal expected_list, FooResource.link_for(:list, "123")
+    assert_equal expected_get, FooResource.link_for(:get, "123").to_hash
+    assert_equal expected_list, FooResource.link_for(:list, "123").to_hash
   end
 
 
   def test_link_for_bad_method_name
     assert_raises Kiwi::MethodNotAllowed do
       FooResource.link_for(:lsKDFJ, "123")
+    end
+  end
+
+
+  def test_link_to
+    FooResource.param.string :bar, :optional => true
+
+    expected = {:href => "/foo_resource/123?bar=1", :method => "GET"}
+    assert_equal expected, FooResource.link_to(:get, :id => "123", :bar => "1")
+
+    expected = {:href => "/foo_resource?bar=1", :method => "LIST"}
+    assert_equal expected, FooResource.link_to(:list, :id => "123", :bar => "1")
+  end
+
+
+  def test_link_to_bad_method_name
+    assert_raises Kiwi::MethodNotAllowed do
+      FooResource.link_to(:lsKDFJ)
     end
   end
 

@@ -3,7 +3,7 @@ class Kiwi::Link
   attr_reader :params, :path, :http_method
 
   def initialize http_method, path, params=[]
-    @http_method = http_method.to_sym
+    @http_method = http_method.to_s.upcase
     @path        = path
     @params      = params
   end
@@ -12,7 +12,7 @@ class Kiwi::Link
   ##
   # Builds the full link url and http method
 
-  def build params={}
+  def build params=nil
     pvalues = {}
     path    = @path.dup
 
@@ -25,7 +25,7 @@ class Kiwi::Link
       path = new_path and next if path != new_path
 
       pvalues[param.name] = val unless val.nil? && param.optional
-    end
+    end if params
 
     query = "?#{build_query(pvalues)}" unless pvalues.empty?
 
