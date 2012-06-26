@@ -40,6 +40,8 @@ class Kiwi::Resource
     out
   end
 
+  identifier :id
+
 
   class << self
     private
