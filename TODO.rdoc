@@ -1,5 +1,6 @@
 = TODO
 
+* Have links parse incoming requests?
 * Differentiate between executable link and buildable link.
 * Implement triggers/hooks
 * Implement multi-app class
