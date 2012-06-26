@@ -149,6 +149,13 @@ class TestKiwiResource < Test::Unit::TestCase
   end
 
 
+  def test_link_for_bad_method_name
+    assert_raises Kiwi::MethodNotAllowed do
+      FooResource.link_for(:lsKDFJ, "123")
+    end
+  end
+
+
   def test_default_id_param
     id = FooResource.__send__ :default_id_param
     assert_equal Kiwi::Param, id.class
