@@ -111,6 +111,7 @@ class TestKiwiResource < Test::Unit::TestCase
       :params=>[]}]
 
     assert_equal expected, FooResource.links(nil)
+    assert_equal expected, FooResource.links
   end
 
 
@@ -126,7 +127,9 @@ class TestKiwiResource < Test::Unit::TestCase
       :params=>[]}
 
     assert_equal expected_get, FooResource.link_for(:get, nil)
+    assert_equal expected_get, FooResource.link_for(:get)
     assert_equal expected_list, FooResource.link_for(:list, nil)
+    assert_equal expected_list, FooResource.link_for(:list)
   end
 
 

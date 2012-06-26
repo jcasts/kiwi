@@ -59,7 +59,7 @@ class Kiwi::Resource
     links = []
 
     resource_methods.each do |mname|
-      links << link_for(mname, id, false)
+      links << link_for(mname, id)
     end
 
     links
@@ -69,11 +69,13 @@ class Kiwi::Resource
   ##
   # Single link for this resource, for a method and id.
 
-  def self.link_for mname, id=nil, validate=true
+  def self.link_for mname, id=nil
     id  ||= identifier.inspect
     mname = mname.to_sym
-    return unless !validate || resource_methods.include?(mname) ||
-                  self.redirects[mname]
+
+    raise Kiwi::MethodNotAllowed,
+      "Method not supported `#{mname}' for #{self.name}" unless
+        resource_methods.include?(mname) || self.redirects[mname]
 
     href = route.path.dup
     http_method = mname

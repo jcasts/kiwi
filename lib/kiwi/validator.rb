@@ -134,7 +134,6 @@ module Kiwi::Validator
   end
 
 
-
   ##
   # Return an array hashes of v_attributes.
 
