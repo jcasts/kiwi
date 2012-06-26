@@ -70,8 +70,6 @@ class Kiwi::ParamSet
 
 
   def v_attributes
-    out = {}
-    @params.each{|name, param| out[name] = param }
-    out
+    @params
   end
 end
