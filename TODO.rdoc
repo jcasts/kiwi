@@ -1,7 +1,7 @@
 = TODO
 
-* Include the _type attribute automatically on known sub-resources?
-* Have links parse incoming requests?
+* Include the _type (and optional _link) attribute automatically on known
+  sub-resources? cc/ Resource#resourcify
 * Differentiate between executable link and buildable link.
 * Implement triggers/hooks
 * Implement multi-app class
