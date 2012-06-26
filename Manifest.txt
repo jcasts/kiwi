@@ -11,6 +11,7 @@ lib/kiwi/app.rb
 lib/kiwi/core_ext.rb
 lib/kiwi/hooks.rb
 lib/kiwi/init.rb
+lib/kiwi/link.rb
 lib/kiwi/param.rb
 lib/kiwi/param_set.rb
 lib/kiwi/resource.rb
@@ -29,6 +30,7 @@ lib/kiwi/view/link.rb
 lib/kiwi/view/resource.rb
 test/helper.rb
 test/test_kiwi.rb
+test/test_kiwi_link.rb
 test/test_kiwi_param.rb
 test/test_kiwi_resource.rb
 test/test_kiwi_validator.rb
