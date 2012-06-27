@@ -9,14 +9,14 @@ class Kiwi::Resource::Link < Kiwi::Resource
     :desc => "Combination of [resource_type]-[method]",
     :only => :get
 
-  param.string :rid,
-    :desc     => "Id of a resource instance to get a link for",
-    :optional => true
-
   param.string :resource,
     :desc     => "The resource name to lookup",
     :optional => true,
     :only     => :list
+
+  param.string :rid,
+    :desc     => "Id of a resource instance to get a link for",
+    :optional => true
 
 
   def get id
