@@ -1,6 +1,6 @@
 require 'test/helper'
 
-class TestKiwiResourceResource < Test::Unit::TestCase
+class TestKiwiResourceResource < Kiwi::Test::Resource
 
   def test_fooresource_resource
     expected = {
@@ -91,13 +91,5 @@ class TestKiwiResourceResource < Test::Unit::TestCase
     :collection=>true}]}
 
     assert_equal expected, resource_body_for(Kiwi::Resource::Resource)
-  end
-
-
-  private
-
-  def resource_body_for rsc_name
-    Kiwi::Resource::Resource.new(TEST_APP).
-      call(:get, "/_resource/#{rsc_name}", {})
   end
 end

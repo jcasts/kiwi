@@ -42,3 +42,24 @@ class TestApp < Kiwi::App
 end
 
 TEST_APP = TestApp.new
+
+
+class Kiwi::Test::Resource < Test::Unit::TestCase
+
+  private
+
+  def resource_body_for rsc_name
+    Kiwi::Resource::Resource.new(TEST_APP).
+      call(:get, "/_resource/#{rsc_name}", {})
+  end
+
+  def link_body_for rsc_name
+    Kiwi::Resource::Link.new(TEST_APP).
+      call(:get, "/_link/#{rsc_name}", {})
+  end
+
+  def links_body_for rsc_name
+    Kiwi::Resource::Link.new(TEST_APP).
+      call(:list, "/_link", {:resource => rsc_name})
+  end
+end

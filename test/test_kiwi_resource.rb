@@ -338,4 +338,19 @@ class TestKiwiResource < Test::Unit::TestCase
     }
     assert_equal expected, Kiwi::Resource.to_hash
   end
+
+
+  ###
+  # Instance method tests
+  ###
+
+
+  def test_call_bad_id_param
+    msg = "Invalid param `id': list for Kiwi::Resource::Link#list"
+    assert_raises Kiwi::BadRequest, msg do
+      Kiwi::Resource::Link.new(TEST_APP).
+        call(:list, "/_link/Kiwi::Resource::Link", {})
+    end
+  end
+
 end

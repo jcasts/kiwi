@@ -10,10 +10,11 @@ class Kiwi::Resource::Link < Kiwi::Resource
     :only => :get
 
   param.string :rid,
-    :desc     => "Actual id of the resource to get a link from",
+    :desc     => "Id of a resource instance to get a link for",
     :optional => true
 
   param.string :resource,
+    :desc     => "The resource name to lookup",
     :optional => true,
     :only     => :list
 
