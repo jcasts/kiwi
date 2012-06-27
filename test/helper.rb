@@ -12,7 +12,6 @@ end
 
 class FooResource < Kiwi::Resource
   view FooView
-  preview FooView
 
   def get id
     {:foo => "myfoo"}

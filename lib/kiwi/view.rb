@@ -14,8 +14,7 @@ class Kiwi::View
 
 
   ##
-  # Reference another resource's view.
-  # Uses Resource.preview if available, otherwise Resource.view.
+  # Reference another resource.
 
   def self.resource name, klass, opts={}
     v_attribute name, klass, opts

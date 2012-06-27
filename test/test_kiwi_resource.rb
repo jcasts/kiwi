@@ -29,12 +29,10 @@ class TestKiwiResource < Test::Unit::TestCase
     FooResource.identifier "blah"
     FooResource.reroute :blah, Kiwi::Resource::App, :get
     FooResource.view FooView
-    FooResource.preview FooView
 
     assert_equal "Foo Resource", FooResource.desc
     assert_equal :blah, FooResource.identifier
     assert_equal FooView, FooResource.view
-    assert_equal FooView, FooResource.preview
     assert_equal Kiwi::Resource::App, FooResource.reroutes[:blah][:resource]
     assert_equal :get, FooResource.reroutes[:blah][:method]
   end
@@ -68,20 +66,6 @@ class TestKiwiResource < Test::Unit::TestCase
     assert FooResource.routes?("//bar/foo/"), "Resource should route //foo/bar/"
     assert FooResource.routes?("//bar/foo/123"),
       "Resource should route //bar/foo/123"
-  end
-
-
-  def test_preview_from
-    view = FooResource.preview_from :foo => "blah", :bar => "thing"
-    assert FooResource.preview, "Resource should have a preview class"
-    assert_equal({:foo => "blah"}, view)
-  end
-
-
-  def test_preview_from_no_view
-    view = Foo.preview_from :foo => "blah", :bar => "thing"
-    assert Foo.preview.nil?
-    assert_equal({:foo => "blah", :bar => "thing"}, view)
   end
 
 

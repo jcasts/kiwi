@@ -136,7 +136,7 @@ class Kiwi::Validator::Attribute
 
     elsif type.respond_to?(:ancestors) &&
       type.ancestors.include?(Kiwi::Resource)
-      val = type.build val, :preview => true
+      val = type.build val
 
     else
       raise Kiwi::InvalidTypeError,

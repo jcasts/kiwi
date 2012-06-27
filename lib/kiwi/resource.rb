@@ -7,7 +7,6 @@ class Kiwi::Resource
 
     subclass.instance_eval do
       @route      = nil
-      @preview    = nil
       @view       = nil
       @identifier = nil
     end
@@ -28,8 +27,7 @@ class Kiwi::Resource
     data[:_type]     ||= self.name
     data[identifier] ||= id if id
 
-
-    opts[:preview] ? preview_from(data) : view_from(data)
+    view_from(data)
   end
 
 
@@ -224,30 +222,12 @@ class Kiwi::Resource
 
 
   ##
-  # Define the short version of the view for this resource.
-  # Used by default on the list method.
-
-  def self.preview view_class=nil
-    return @preview unless view_class
-    @preview = view_class
-  end
-
-
-  ##
   # Define the view to render for this resource.
   # Used by default on all methods but list.
 
   def self.view view_class=nil
     return @view unless view_class
     @view = view_class
-  end
-
-
-  ##
-  # Create a resource preview from the given data.
-
-  def self.preview_from data
-    preview && preview.build(data) || view_from(data)
   end
 
 
