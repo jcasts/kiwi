@@ -43,14 +43,14 @@ class TestKiwiResourceLink < Kiwi::Test::Resource
       :href=>"/_link",
       :params=>
        [{:_type=>"Kiwi::Resource::Attribute",
-         :name=>"rid",
-         :type=>"String",
-         :desc=>"Id of a resource instance to get a link for",
-         :optional=>true},
-        {:_type=>"Kiwi::Resource::Attribute",
          :name=>"resource",
          :type=>"String",
          :desc=>"The resource name to lookup",
+         :optional=>true},
+        {:_type=>"Kiwi::Resource::Attribute",
+         :name=>"rid",
+         :type=>"String",
+         :desc=>"Id of a resource instance to get a link for",
          :optional=>true}]}]
 
     assert_equal expected, links_body_for("Kiwi::Resource::Link")
