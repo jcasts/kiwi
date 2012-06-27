@@ -1,6 +1,7 @@
 require "test/unit"
 require "kiwi"
 
+
 class FooView < Kiwi::View
   string :foo
 
@@ -33,3 +34,11 @@ end
 
 class ViewlessResource < Kiwi::Resource
 end
+
+
+class TestApp < Kiwi::App
+  resource FooResource
+  resource InheritedResource
+end
+
+TEST_APP = TestApp.new

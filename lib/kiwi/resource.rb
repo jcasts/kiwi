@@ -23,13 +23,11 @@ class Kiwi::Resource
          data[identifier.to_s] ||
          opts[identifier]
 
-    rsc_links = self.links(id).map(&:to_hash) # Revisit this when link_to is implemented
+    # TODO: Revisit this when link_to is implemented
+    data[:_links]    ||= self.links(id).map(&:to_hash) if opts[:append_links]
+    data[:_type]     ||= self.name
     data[identifier] ||= id if id
 
-    data[:_type]  ||= self.name
-    data[:_links] ||= rsc_links.map do |link|
-      Kiwi::Resource::Link.build link
-    end if opts[:append_links]
 
     opts[:preview] ? preview_from(data) : view_from(data)
   end
@@ -271,7 +269,7 @@ class Kiwi::Resource
       :attributes => self.view.to_a
     }
     out[:desc] = @desc if @desc
-    Kiwi::Resource::Resource.build(out)
+    out
   end
 
 

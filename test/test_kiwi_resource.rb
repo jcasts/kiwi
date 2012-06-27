@@ -296,37 +296,29 @@ class TestKiwiResource < Test::Unit::TestCase
 
 
   def test_to_hash
-    hash = FooResource.to_hash
     expected = {
-      :_type => "Kiwi::Resource::Resource",
       :name  => "FooResource",
       :links =>
-  [{:_type => "Kiwi::Resource::Link",
-    :href=>"/foo_resource/:id",
+  [{:href=>"/foo_resource/:id",
     :method=>"GET",
     :params=>[
-     {:_type => "Kiwi::Resource::Attribute",
-      :name=>"id",
+     {:name=>"id",
       :type=>"String",
       :desc=>"Id of the resource"}]},
-   {:_type => "Kiwi::Resource::Link",
-    :href=>"/foo_resource",
+   {:href=>"/foo_resource",
     :method=>"LIST",
     :params=>[]}],
 
       :attributes =>
-  [{:_type => "Kiwi::Resource::Attribute",
-    :name=>"_type",
+  [{:name=>"_type",
     :type=>"String",
     :optional=>true},
-   {:_type => "Kiwi::Resource::Attribute",
-    :name=>"_links",
+   {:name=>"_links",
     :type=>"Kiwi::Resource::Link",
     :collection=>true,
     :optional=>true},
-   {:_type => "Kiwi::Resource::Attribute", :name=>"foo", :type=>"String"},
-   {:_type => "Kiwi::Resource::Attribute",
-    :name=>"id",
+   {:name=>"foo", :type=>"String"},
+   {:name=>"id",
     :type=>"String",
     :optional => true}],
 
@@ -334,6 +326,16 @@ class TestKiwiResource < Test::Unit::TestCase
 
     }
 
-    assert_equal expected, hash
+    assert_equal expected, FooResource.to_hash
+  end
+
+
+  def test_resource_to_hash
+    expected = {
+      :name  => "Kiwi::Resource",
+      :links => [],
+      :attributes => []
+    }
+    assert_equal expected, Kiwi::Resource.to_hash
   end
 end
