@@ -15,6 +15,26 @@ class Kiwi::Resource
 
 
   ##
+  # Build and validate a Resource hash from a data hash.
+
+  def self.build data, opts={}
+    id = data[identifier]      ||
+         data[identifier.to_s] ||
+         opts[identifier]
+
+    rsc_links = self.links(id).map(&:to_hash) # Revisit this when link_to is implemented
+    data[identifier] ||= id if id
+
+    data[:_type]  ||= self.name
+    data[:_links] ||= rsc_links.map do |link|
+      Kiwi::Resource::Link.build link
+    end if opts[:append_links]
+
+    opts[:preview] ? preview_from(data) : view_from(data)
+  end
+
+
+  ##
   # An optional description for the resource.
 
   def self.desc string=nil
@@ -228,7 +248,7 @@ class Kiwi::Resource
   # Create a resource preview from the given data.
 
   def self.preview_from data
-    preview ? preview.build(data) : data
+    preview && preview.build(data) || view_from(data)
   end
 
 
@@ -236,7 +256,7 @@ class Kiwi::Resource
   # Create a resource view from the given data.
 
   def self.view_from data
-    view ? view.build(data) : data
+    view && view.build(data) || data
   end
 
 
@@ -283,13 +303,18 @@ class Kiwi::Resource
 
     return unless data
 
+    opts = {
+      self.class.identifier => @params[self.class.identifier],
+      :append_links => @append_links
+    }
+
     if Array === data
       data = data.map do |item|
-        resourcify item
+        self.class.build item, opts
       end
 
     else
-      data = resourcify data
+      data = self.class.build data, opts
     end
 
     data
@@ -347,25 +372,6 @@ class Kiwi::Resource
     instance_exec(params, &rdir[:proc]) if rdir[:proc]
 
     rdir[:resource].new(@app).call rdir[:method], params
-  end
-
-
-  def resourcify data
-    id = data[self.class.identifier]      ||
-         data[self.class.identifier.to_s] ||
-         @params[self.class.identifier]
-
-    links = self.class.links(id).map(&:to_hash) # Revisit this when link_to is implemented
-    data[self.class.identifier.to_s] ||= id
-
-    data['_type']  ||= self.class.name
-    data['_links'] ||= links.map do |link|
-      Kiwi::Resource::Link.view.build link
-    end if @append_links
-
-    data = self.class.view_from data
-
-    data
   end
 
 

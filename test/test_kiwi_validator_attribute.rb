@@ -105,6 +105,10 @@ class TestKiwiValidatorAttribute < Test::Unit::TestCase
   def test_resource_attr
     res_attr = Kiwi::Validator::Attribute.new :rsc, FooResource
     res_attr.value_from(:rsc => {:foo => "blah"})
+
+    expected = {:foo => "blah", :_type => "FooResource"}
+
+    assert_equal(expected, res_attr.value_from(:rsc => {:foo => "blah"}))
   end
 
 
@@ -118,9 +122,9 @@ class TestKiwiValidatorAttribute < Test::Unit::TestCase
 
   def test_resource_attr_no_view
     res_attr = Kiwi::Validator::Attribute.new :rsc, ViewlessResource
-    assert_raises Kiwi::ValidationError do
-      res_attr.value_from(:rsc => {:foo => "blah"})
-    end
+    expected = {:foo => "blah", :_type => "ViewlessResource"}
+
+    assert_equal(expected, res_attr.value_from(:rsc => {:foo => "blah"}))
   end
 
 
@@ -178,8 +182,8 @@ class TestKiwiValidatorAttribute < Test::Unit::TestCase
 
     attrib = Kiwi::Validator::Attribute.new 'thing', validator
 
-    val = attrib.value_from :thing => {:name => "George", :age => 34}
-    expected = {"name" => "George", "age" => 34}
+    val = attrib.value_from :thing => {"name" => "George", "age" => 34}
+    expected = {:name => "George", :age => 34}
 
     assert_equal expected, val
   end

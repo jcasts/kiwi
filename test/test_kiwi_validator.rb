@@ -151,7 +151,7 @@ class TestKiwiValidator < Test::Unit::TestCase
 
   def test_build_basic
     res = PersonValidator.build :name => "John"
-    expected = {"name" => "John"}
+    expected = {:name => "John"}
 
     assert_equal expected, res
   end
@@ -161,8 +161,8 @@ class TestKiwiValidator < Test::Unit::TestCase
     res = PersonValidator.build :name => "John",
                                 :attributes => [{:awake => true}]
 
-    expected = {"name" => "John",
-        "attributes" => [{"awake" => true, "awesome" => false}]}
+    expected = {:name => "John",
+        :attributes => [{:awake => true, :awesome => false}]}
 
     assert_equal expected, res
   end
@@ -181,7 +181,7 @@ class TestKiwiValidator < Test::Unit::TestCase
 
   def test_to_hash_basic
     res = PersonValidator.new(:name => "John").to_hash
-    expected = {"name" => "John"}
+    expected = {:name => "John"}
 
     assert_equal expected, res
   end
@@ -191,8 +191,8 @@ class TestKiwiValidator < Test::Unit::TestCase
     res = PersonValidator.
       new(:name => "John", :attributes => [{:awake => true}]).to_hash
 
-    expected = {"name" => "John",
-        "attributes" => [{"awake" => true, "awesome" => false}]}
+    expected = {:name => "John",
+        :attributes => [{:awake => true, :awesome => false}]}
 
     assert_equal expected, res
   end

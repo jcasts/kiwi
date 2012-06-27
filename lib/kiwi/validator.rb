@@ -127,7 +127,7 @@ module Kiwi::Validator
 
     v_attributes.each do |name, attrib|
       val = attrib.value_from obj
-      value[name.to_s] = val unless val.nil? && attrib.optional
+      value[name.to_sym] = val unless val.nil? && attrib.optional
     end
 
     value

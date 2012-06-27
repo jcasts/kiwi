@@ -136,12 +136,7 @@ class Kiwi::Validator::Attribute
 
     elsif type.respond_to?(:ancestors) &&
       type.ancestors.include?(Kiwi::Resource)
-      builder = (type.preview || type.view)
-      raise Kiwi::ValidationError,
-        "Invalid view #{builder.inspect} for resource #{type}" unless
-          Kiwi::Validator === builder
-
-      val = builder.build val
+      val = type.build val, :preview => true
 
     else
       raise Kiwi::InvalidTypeError,

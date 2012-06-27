@@ -62,8 +62,8 @@ class TestKiwiResource < Test::Unit::TestCase
 
   def test_preview_from
     view = FooResource.preview_from :foo => "blah", :bar => "thing"
-    assert FooResource.preview
-    assert_equal({"foo" => "blah"}, view)
+    assert FooResource.preview, "Resource should have a preview class"
+    assert_equal({:foo => "blah"}, view)
   end
 
 
@@ -77,7 +77,7 @@ class TestKiwiResource < Test::Unit::TestCase
   def test_view_from
     view = FooResource.view_from :foo => "blah", :bar => "thing"
     assert FooResource.view
-    assert_equal({"foo" => "blah"}, view)
+    assert_equal({:foo => "blah"}, view)
   end
 
 
