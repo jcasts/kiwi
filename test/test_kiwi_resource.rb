@@ -40,6 +40,17 @@ class TestKiwiResource < Test::Unit::TestCase
   end
 
 
+  def test_build
+    expected = {
+      :_type => "FooResource",
+      :foo   => "bar",
+      :id    => "123"
+    }
+
+    assert_equal expected, FooResource.build(:foo => "bar", :id => "123")
+  end
+
+
   def test_route
     FooResource.route "//foo/bar/"
     assert_equal "//foo/bar", FooResource.route.path
@@ -287,22 +298,37 @@ class TestKiwiResource < Test::Unit::TestCase
   def test_to_hash
     hash = FooResource.to_hash
     expected = {
-      :type  => "FooResource",
+      :_type => "Kiwi::Resource::Resource",
+      :name  => "FooResource",
       :links =>
-[{:href=>"/foo_resource/:id",
+  [{:_type => "Kiwi::Resource::Link",
+    :href=>"/foo_resource/:id",
     :method=>"GET",
-    :params=>[{:name=>"id", :type=>"String", :desc=>"Id of the resource"}]},
-   {:href=>"/foo_resource",
+    :params=>[
+     {:_type => "Kiwi::Resource::Attribute",
+      :name=>"id",
+      :type=>"String",
+      :desc=>"Id of the resource"}]},
+   {:_type => "Kiwi::Resource::Link",
+    :href=>"/foo_resource",
     :method=>"LIST",
     :params=>[]}],
 
       :attributes =>
-[{:name=>"_type", :type=>"String", :optional=>true},
-   {:name=>"_links",
+  [{:_type => "Kiwi::Resource::Attribute",
+    :name=>"_type",
+    :type=>"String",
+    :optional=>true},
+   {:_type => "Kiwi::Resource::Attribute",
+    :name=>"_links",
     :type=>"Kiwi::Resource::Link",
     :collection=>true,
     :optional=>true},
-   {:name=>"foo", :type=>"String"}],
+   {:_type => "Kiwi::Resource::Attribute", :name=>"foo", :type=>"String"},
+   {:_type => "Kiwi::Resource::Attribute",
+    :name=>"id",
+    :type=>"String",
+    :optional => true}],
 
     :desc=>"Foo Resource"
 

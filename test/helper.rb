@@ -3,6 +3,10 @@ require "kiwi"
 
 class FooView < Kiwi::View
   string :foo
+
+  optional
+
+  string :id
 end
 
 class FooResource < Kiwi::Resource

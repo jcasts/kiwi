@@ -18,6 +18,7 @@ class Kiwi::Resource
   # Build and validate a Resource hash from a data hash.
 
   def self.build data, opts={}
+    data = data.dup
     id = data[identifier]      ||
          data[identifier.to_s] ||
          opts[identifier]
@@ -265,12 +266,12 @@ class Kiwi::Resource
 
   def self.to_hash
     out = {
-      :type       => self.name,
+      :name       => self.name,
       :links      => self.links.map(&:to_hash),
       :attributes => self.view.to_a
     }
     out[:desc] = @desc if @desc
-    out
+    Kiwi::Resource::Resource.build(out)
   end
 
 

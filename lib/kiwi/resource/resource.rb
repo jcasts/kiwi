@@ -14,23 +14,14 @@ class Kiwi::Resource::Resource < Kiwi::Resource
     rsc_klass = @app.find_resource(@params[:id])
     return unless rsc_klass
 
-    hashify rsc_klass
+    rsc_klass.to_hash
   end
 
 
   def list
     @app.resources.map do |rsc_klass|
-      hashify rsc_klass
+      rsc_klass.to_hash
     end
-  end
-
-
-  private
-
-  def hashify rsc_klass
-    out = rsc_klass.to_hash
-    out[:id] = out.delete :type
-    out
   end
 end
 
