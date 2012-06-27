@@ -296,35 +296,23 @@ class TestKiwiResource < Test::Unit::TestCase
 
 
   def test_to_hash
-    expected = {
-      :name  => "FooResource",
-      :links =>
+    expected =
+{:name=>"FooResource",
+ :details=>{:href=>"/_resource/FooResource", :method=>"GET"},
+ :links=>
   [{:href=>"/foo_resource/:id",
     :method=>"GET",
-    :params=>[
-     {:name=>"id",
-      :type=>"String",
-      :desc=>"Id of the resource"}]},
-   {:href=>"/foo_resource",
-    :method=>"LIST",
-    :params=>[]}],
-
-      :attributes =>
-  [{:name=>"_type",
-    :type=>"String",
-    :optional=>true},
+    :params=>[{:name=>"id", :type=>"String", :desc=>"Id of the resource"}]},
+   {:href=>"/foo_resource", :method=>"LIST", :params=>[]}],
+ :attributes=>
+  [{:name=>"_type", :type=>"String", :optional=>true},
    {:name=>"_links",
     :type=>"Kiwi::Resource::Link",
     :collection=>true,
     :optional=>true},
    {:name=>"foo", :type=>"String"},
-   {:name=>"id",
-    :type=>"String",
-    :optional => true}],
-
-    :desc=>"Foo Resource"
-
-    }
+   {:name=>"id", :type=>"String", :optional=>true}],
+ :desc=>"Foo Resource"}
 
     assert_equal expected, FooResource.to_hash
   end
@@ -332,8 +320,9 @@ class TestKiwiResource < Test::Unit::TestCase
 
   def test_resource_to_hash
     expected = {
-      :name  => "Kiwi::Resource",
-      :links => [],
+      :name       => "Kiwi::Resource",
+      :details    => {:href=>"/_resource/Kiwi::Resource", :method=>"GET"},
+      :links      => [],
       :attributes => []
     }
     assert_equal expected, Kiwi::Resource.to_hash

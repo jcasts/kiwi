@@ -33,6 +33,7 @@ test/test_kiwi.rb
 test/test_kiwi_link.rb
 test/test_kiwi_param.rb
 test/test_kiwi_resource.rb
+test/test_kiwi_resource_app.rb
 test/test_kiwi_resource_resource.rb
 test/test_kiwi_resource_link.rb
 test/test_kiwi_validator.rb

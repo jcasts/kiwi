@@ -1,17 +1,18 @@
 class Kiwi::Resource::App < Kiwi::Resource
 
+  FILTER = [:name, :details, :desc]
+
   route Kiwi::Route.delimiter
   desc  "A resource representation of this application"
 
   view Kiwi::View::App
   param.delete :id
 
+
   def get
     resources = @app.resources.map do |rsc|
-      {
-        :id   => rsc.name,
-        :link => rsc.link_for(:options, rsc.name).to_hash
-      }
+      hash = rsc.to_hash.select{|k, v| FILTER.include?(k) }
+      Kiwi::Resource::Resource.build hash
     end
 
     {

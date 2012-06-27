@@ -1,7 +1,7 @@
 = TODO
 
-* Include the _type (and optional _link) attribute automatically on known
-  sub-resources? cc/ Resource#resourcify
+* Show rerouted resource methods in the resource links.
+* Allow setting a description for every resource action.
 * Differentiate between executable link and buildable link.
 * Implement triggers/hooks
 * Implement multi-app class
@@ -18,6 +18,8 @@
 
 == Done
 
+* Include the _type (and optional _link) attribute automatically on known
+  sub-resources
 * Implement param type coersion from String
 * Allow attributes that match a set array of values
 * Return 400 when non-supported param is given

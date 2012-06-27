@@ -265,6 +265,8 @@ class Kiwi::Resource
   def self.to_hash
     out = {
       :name       => self.name,
+      :details    => Kiwi::Resource::Resource.link_to(:get,
+        Kiwi::Resource::Resource.identifier => self.name).to_hash,
       :links      => self.links.map(&:to_hash),
       :attributes => self.view.to_a
     }
