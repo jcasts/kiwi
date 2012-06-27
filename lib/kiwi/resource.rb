@@ -1,7 +1,7 @@
 class Kiwi::Resource
 
   def self.inherited subclass
-    subclass.redirect :options, Kiwi::Resource::Resource, :get do |params|
+    subclass.reroute :options, Kiwi::Resource::Resource, :get do |params|
       params[Kiwi::Resource::Resource.identifier] = self.class.name
     end
 
@@ -94,7 +94,7 @@ class Kiwi::Resource
 
     raise Kiwi::MethodNotAllowed,
       "Method not supported `#{mname}' for #{self.name}" unless
-        resource_methods.include?(mname) || self.redirects[mname]
+        resource_methods.include?(mname) || self.reroutes[mname]
 
     href = route.path.dup
     http_method = mname
@@ -168,16 +168,16 @@ class Kiwi::Resource
   ##
   # Reroute a method call to a different resource and not trigger the view
   # validation. Used to implement the OPTION method:
-  #   redirect :option, LinkResource, :list do |params|
+  #   reroute :option, LinkResource, :list do |params|
   #     params.clear
   #     params[:resource] = self.class.route
   #   end
   #
   # If a resource public instance method of the same name is defined,
-  # redirect will be ignored in favor of executing the method.
+  # reroute will be ignored in favor of executing the method.
 
-  def self.redirect mname, resource_klass, new_mname=nil, &block
-    self.redirects[mname.to_sym] = {
+  def self.reroute mname, resource_klass, new_mname=nil, &block
+    self.reroutes[mname.to_sym] = {
       :resource => resource_klass,
       :method   => (new_mname || mname).to_sym,
       :proc     => block
@@ -186,10 +186,10 @@ class Kiwi::Resource
 
 
   ##
-  # Hash list of all redirects.
+  # Hash list of all reroutes.
 
-  def self.redirects
-    @redirects ||= {}
+  def self.reroutes
+    @reroutes ||= {}
   end
 
 
@@ -295,7 +295,7 @@ class Kiwi::Resource
 
   def call mname, path, params
     params = merge_path_params! path, params
-    return follow_redirect(mname, params) if redirect? mname
+    return follow_reroute(mname, params) if reroute? mname
 
     @params, args = validate! mname, path, params
     data = __send__(mname, *args)
@@ -361,13 +361,13 @@ class Kiwi::Resource
   private
 
 
-  def redirect? mname
-    self.class.redirects[mname] && !resource_methods.include?(mname)
+  def reroute? mname
+    self.class.reroutes[mname] && !resource_methods.include?(mname)
   end
 
 
-  def follow_redirect mname, params={}
-    rdir = self.class.redirects[mname]
+  def follow_reroute mname, params={}
+    rdir = self.class.reroutes[mname]
     instance_exec(params, &rdir[:proc]) if rdir[:proc]
 
     rdir[:resource].new(@app).call rdir[:method], params

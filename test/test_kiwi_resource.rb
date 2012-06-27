@@ -16,10 +16,10 @@ class TestKiwiResource < Test::Unit::TestCase
     assert_equal "/test_kiwi_resource/foo", Foo.route.path
     assert_equal :id, Foo.identifier
 
-    assert_equal 1, Foo.redirects.length
-    assert_equal :get, Foo.redirects[:options][:method]
-    assert_equal Kiwi::Resource::Resource, Foo.redirects[:options][:resource]
-    assert_equal Proc, Foo.redirects[:options][:proc].class
+    assert_equal 1, Foo.reroutes.length
+    assert_equal :get, Foo.reroutes[:options][:method]
+    assert_equal Kiwi::Resource::Resource, Foo.reroutes[:options][:resource]
+    assert_equal Proc, Foo.reroutes[:options][:proc].class
     assert_equal :id, Foo.__send__(:default_id_param).name
   end
 
@@ -27,7 +27,7 @@ class TestKiwiResource < Test::Unit::TestCase
   def test_attribs
     FooResource.desc "Foo Resource"
     FooResource.identifier "blah"
-    FooResource.redirect :blah, Kiwi::Resource::App, :get
+    FooResource.reroute :blah, Kiwi::Resource::App, :get
     FooResource.view FooView
     FooResource.preview FooView
 
@@ -35,8 +35,8 @@ class TestKiwiResource < Test::Unit::TestCase
     assert_equal :blah, FooResource.identifier
     assert_equal FooView, FooResource.view
     assert_equal FooView, FooResource.preview
-    assert_equal Kiwi::Resource::App, FooResource.redirects[:blah][:resource]
-    assert_equal :get, FooResource.redirects[:blah][:method]
+    assert_equal Kiwi::Resource::App, FooResource.reroutes[:blah][:resource]
+    assert_equal :get, FooResource.reroutes[:blah][:method]
   end
 
 
@@ -282,16 +282,16 @@ class TestKiwiResource < Test::Unit::TestCase
   end
 
 
-  def test_redirects
+  def test_reroutes
     block = lambda{|params| puts "foo" }
 
-    Foo.redirect "my_method", InheritedResource, &block
-    assert_equal :my_method, Foo.redirects[:my_method][:method]
-    assert_equal block, Foo.redirects[:my_method][:proc]
+    Foo.reroute "my_method", InheritedResource, &block
+    assert_equal :my_method, Foo.reroutes[:my_method][:method]
+    assert_equal block, Foo.reroutes[:my_method][:proc]
 
-    Foo.redirect "my_method", InheritedResource, :post
-    assert_equal :post, Foo.redirects[:my_method][:method]
-    assert_nil Foo.redirects[:my_method][:proc]
+    Foo.reroute "my_method", InheritedResource, :post
+    assert_equal :post, Foo.reroutes[:my_method][:method]
+    assert_nil Foo.reroutes[:my_method][:proc]
   end
 
 
