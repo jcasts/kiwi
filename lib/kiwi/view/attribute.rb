@@ -1,12 +1,19 @@
 class Kiwi::View::Attribute < Kiwi::View
 
-  string   :name
-  string   :type
-  string   :desc,       :optional => true
-  string   :default,    :optional => true
-  string   :values,     :optional => true, :collection => true
-  boolean  :collection, :optional => true
-  boolean  :optional,   :optional => true
+  string   :name,       :desc => "Name of the attribute"
+  string   :type,       :desc => "Data type of the attribute"
+  string   :desc,       :desc => "Attribute description",     :optional => true
+  string   :default,    :desc => "Default used when omitted", :optional => true
+  boolean  :collection, :desc => "Attribute is and array",    :optional => true
+  boolean  :optional,   :desc => "Attribute is optional",     :optional => true
+
+  string   :value,      :desc => "Currently assigned value",  :optional => true
+
+  collection :values, :desc => "Array of allowable values", :optional => true do |c|
+    c.string :name,  :desc => "Display name", :optional => true
+    c.string :value, :desc => "Value of this option"
+  end
+
   resource :attributes, "Kiwi::Resource::Attribute",
     :collection => true, :optional => true,
     :desc => "Unfolds embedded attributes for anonymous sub-views"

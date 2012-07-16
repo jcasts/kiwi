@@ -87,7 +87,6 @@ class Kiwi::Resource
   # Single link for this resource, for a method and id.
 
   def self.link_for mname, id=nil
-    id  ||= identifier.inspect
     mname = mname.to_sym
 
     raise Kiwi::MethodNotAllowed,
@@ -102,7 +101,7 @@ class Kiwi::Resource
       href << ".#{mname}"
     end
 
-    href << "#{Kiwi::Route.delimiter}#{id}" if
+    href << "#{Kiwi::Route.delimiter}#{id || identifier.inspect}" if
       id_resource_methods.include?(mname)
 
     Kiwi::Link.new mname, href, params_for_method(mname)

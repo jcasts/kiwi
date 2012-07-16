@@ -4,7 +4,7 @@
 
 class Kiwi::Validator::Attribute
 
-  attr_reader :name, :collection, :optional, :default, :desc
+  attr_reader :name, :collection, :optional, :default, :desc, :values
 
   ##
   # Create a new attribute with a name and data type.
@@ -23,7 +23,14 @@ class Kiwi::Validator::Attribute
     @has_default = opts.has_key?(:default)
     @default     = opts[:default]
 
-    @values      = (Array(opts[:values]) if opts[:values])
+    @values = nil
+    if opts[:values]
+      if Hash === opts[:values]
+        @values = opts[:values].map{|k, v| {:name => k, :value => v}}
+      else
+        @values = Array(opts[:values]).map{|v| {:value => v} }
+      end
+    end
 
     raise ArgumentError, "Invalid type #{@type.inspect} must be a Class" unless
       Module === @type || String === @type || Kiwi::Validator === @type
@@ -55,9 +62,12 @@ class Kiwi::Validator::Attribute
       hash[:type] = self.type.to_s
     end
 
+    hash[:values] = @values.map do |h|
+      h.merge(:value => h[:value].to_s)
+    end if @values
+
     hash[:desc]       = @desc               if @desc
     hash[:default]    = @default.to_s       if @has_default
-    hash[:values]     = @values.map(:to_s)  if @values
     hash[:collection] = @collection         if @collection
     hash[:optional]   = @optional           if @optional
     hash
@@ -149,7 +159,7 @@ class Kiwi::Validator::Attribute
 
   def validate_value val
     raise Kiwi::BadValueError,
-      "Value #{val.inspect} must be in #{@values.inspect}" unless
-        @values.include?(val)
+      "Value #{val.inspect} must be in #{@values.map{|h| h[:value]}.inspect}" unless
+        @values.any?{|h| h[:value] == val}
   end
 end

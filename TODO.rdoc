@@ -1,8 +1,11 @@
 = TODO
 
 * Show rerouted resource methods in the resource links.
-* Allow setting a description for every resource action.
-* Differentiate between executable link and buildable link.
+* Should half-built links or param pre-set values be allowed?
+* Should error messages be more end-user friendly?
+* How can hidden html fields be conveyed?
+
+* Use a 300 response or return html when no Accept header is given?
 * Implement triggers/hooks
 * Implement multi-app class
   * Allow multi-app to describe all available apps
@@ -30,3 +33,5 @@
   * Swappable route parser
   * OPTIONS and GET methods in Kiwi::Resource should refer to the Kiwi routes
 * Kiwi apps should run standalone as a command line app with options.
+* Allow setting a description for every resource action.
+* Differentiate between executable link and buildable link. (kinda done)
