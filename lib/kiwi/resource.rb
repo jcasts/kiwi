@@ -109,7 +109,8 @@ class Kiwi::Resource
 
 
   ##
-  # Single link to a specific resource and method.
+  # Single link to a specific resource and method. Raises a ValidationError
+  # if not all required params are provided.
 
   def self.link_to mname, params=nil
     link_for(mname).build(params)

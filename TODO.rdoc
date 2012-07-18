@@ -1,26 +1,22 @@
 = TODO
 
-* Show rerouted resource methods in the resource links.
-* Should half-built links or param pre-set values be allowed?
-* Should error messages be more end-user friendly?
-* How can hidden html fields be conveyed?
-
-* Use a 300 response or return html when no Accept header is given?
 * Implement triggers/hooks
 * Implement multi-app class
   * Allow multi-app to describe all available apps
-* Support in-Kiwi middleware (Kiwi::App attribute)
-  * Middleware request is called after Resource has been identified and assigned
-    to env['kiwi.resource']
-  * Middleware response is pre-body serialization (and pre-validation?)
-  * Serializer gets assigned to env['kiwi.serializer']
 * HTML, JSON, PLIST, XML, YAML serializers (Kiwi::App attribute)
   * May require layout implementation. (HTML, XML)
 * Kiwi apps should be easily self-encapsulated, deployable, and bootable.
+
+* Use a 300 response or return html when no Accept header is given?
+* How can hidden html fields be conveyed?
+* Routes should be global and point to a resource.
+  * Show rerouted resource methods in the resource links.
 * Support streaming
 
 == Done
 
+* Allow param pre-set values
+* More end-user friendly error messages (especially on 400s)
 * Include the _type (and optional _link) attribute automatically on known
   sub-resources
 * Implement param type coersion from String
@@ -28,6 +24,12 @@
 * Return 400 when non-supported param is given
 
 == Maybe
+
+* Support in-Kiwi middleware (Kiwi::App attribute)
+  * Middleware request is called after Resource has been identified and assigned
+    to env['kiwi.resource']
+  * Middleware response is pre-body serialization (and pre-validation?)
+  * Serializer gets assigned to env['kiwi.serializer']
 
 * HTTP Method route mapping per app
   * Swappable route parser

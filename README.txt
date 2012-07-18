@@ -1,6 +1,6 @@
-= kiwi
+= Kiwi
 
-* FIX (url)
+* http://kiwirb.com
 
 == DESCRIPTION:
 
@@ -10,17 +10,15 @@ FIX (describe your package)
 
 * FIX (list of features or problems)
 
-== SYNOPSIS:
-
-  FIX (code sample of usage)
-
 == REQUIREMENTS:
 
-* FIX (list of requirements)
+* rack gem
+
+* json gem
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+* gem install kiwi
 
 == DEVELOPERS:
 
@@ -35,7 +33,7 @@ and generate the RDoc.
 
 (The MIT License)
 
-Copyright (c) 2012 FIX
+Copyright (c) 2012 Jeremie Castagna
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

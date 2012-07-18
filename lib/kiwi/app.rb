@@ -159,7 +159,7 @@ class Kiwi::App
     app = self.clone env
 
     app.data( rsc_klass.new(app).
-      call env['REQUEST_METHOD'].downcase.to_sym, env['PATH_INFO'], app.params )
+      call(env['REQUEST_METHOD'].downcase.to_sym, env['PATH_INFO'], app.params) )
 
     app.response
 
