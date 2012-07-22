@@ -174,8 +174,7 @@ class Kiwi::App
     raise Kiwi::RouteNotFound,
       "No resource for `#{env['PATH_INFO']}'" unless env['kiwi.resource']
 
-    rsc = env['kiwi.resource'].new(self)
-
+    rsc      = env['kiwi.resource'].new(self)
     res_data = rsc.call env['kiwi.method'], env['kiwi.path'], env['kiwi.params']
 
     # TODO: Catch and build error resources from exceptions
