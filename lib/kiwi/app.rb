@@ -86,13 +86,12 @@ class Kiwi::App
   ##
   # Define a single resource path.
 
-  def self.resource resource_klass
+  def self.resource rsc_klass
     raise ArgumentError, "Kiwi::Resource class must be given" unless
-      resource_klass.ancestors.include? Kiwi::Resource
+      rsc_klass.ancestors.include? Kiwi::Resource
 
-    self.resources << resource_klass
+    self.resources << rsc_klass
   end
-
 
 
   extend Kiwi::Hooks
@@ -151,17 +150,33 @@ class Kiwi::App
       "Accept header `#{env['HTTP_ACCEPT']}' invalid" unless
         accept?(env['HTTP_ACCEPT'])
 
-    rsc_klass = self.class.resources.find{|rsc| rsc.routes? env['PATH_INFO']}
+    env['kiwi.resource'] =
+      self.class.resources.find{|rsc| rsc.routes? env['PATH_INFO']}
+
+    # TODO: Set serializer here
+    # env['kiwi.serializer']
+
+    trigger :before, env
 
     raise Kiwi::RouteNotFound,
-      "No resource for `#{env['PATH_INFO']}'" unless rsc_klass
+      "No resource for `#{env['PATH_INFO']}'" unless env['kiwi.resource']
 
     app = self.clone env
+    rsc = env['kiwi.resource'].new(app)
 
-    app.data( rsc_klass.new(app).
-      call(env['REQUEST_METHOD'].downcase.to_sym, env['PATH_INFO'], app.params) )
+    rsc_method = env['REQUEST_METHOD'].downcase.to_sym
+    rsc_path   = env['PATH_INFO']
+    rsc_params = Rack::Request.new env
 
-    app.response
+    res_data = rsc.call(rsc_method, rsc_path, rsc_params)
+
+    # TODO: Catch and build error resources from exceptions
+    # TODO: Make serializer!
+    body = env['kiwi.serializer'].call res_data
+    resp = [200, {'Content-Type' => app.content_type}, body]
+    trigger :after, resp
+
+    resp
 
   rescue => e
     code = e.class::STATUS rescue 500

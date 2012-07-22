@@ -4,15 +4,17 @@
 module Kiwi::Hooks
 
   ##
-  # Called after action is called, before render is called.
+  # Create an after filter. Called after serialization, once
+  # the Rack response is built.
 
   def after &block
     hook(:after, &block)
   end
 
+
   ##
-  # Called before routing exceptions and action is called, but after
-  # endpoint has been determined (or found non-existant).
+  # Create a before filter. Called after after resource and
+  # serializer have been identified.
 
   def before &block
     hook(:before, &block)
