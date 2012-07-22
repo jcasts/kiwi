@@ -182,7 +182,10 @@ class Kiwi::App
 
     # TODO: Catch and build error resources from exceptions
     body = env['kiwi.serializer'].call res_data
-    env['kiwi.response'][2] = [ body ]
+    body = [ body ] unless body.respond_to? :each
+
+    env['kiwi.response'][2] = body
+
     trigger :after, env
 
     env['kiwi.response']
