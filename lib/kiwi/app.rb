@@ -154,15 +154,13 @@ class Kiwi::App
   # Make handle the request.
 
   def dispatch! env
-    evn = Kiwi::Adapter::Rack.call env
+    adapter = Kiwi::Adapter::Rack
+    env     = adapter.request env
 
     env['kiwi.format']     ||= env['kiwi.mime'].to_s.sub(%r{^\w+/\w+\+?}, '')
     env['kiwi.serializer'] ||= Kiwi.serializers[env['kiwi.format'].to_sym]
     env['kiwi.resource']   ||=
       self.class.resources.find{|rsc| rsc.routes? env['kiwi.path']}
-
-    ctype = "#{self.class.media_type}/#{self.class.api_name}+#{env['kiwi.format']}"
-    env['kiwi.response'] ||= [200, {'Content-Type' => ctype}, [""]]
 
     trigger :before, env
 
@@ -178,14 +176,15 @@ class Kiwi::App
     res_data = rsc.call env['kiwi.method'], env['kiwi.path'], env['kiwi.params']
 
     # TODO: Catch and build error resources from exceptions
-    body = env['kiwi.serializer'].call res_data
-    body = [ body ] unless body.respond_to? :each
+    env['kiwi.status']       ||= 200
+    env['kiwi.content_type'] ||=
+      "#{self.class.media_type}/#{self.class.api_name}+#{env['kiwi.format']}"
 
-    env['kiwi.response'][2] = body
+    body = env['kiwi.serializer'].call res_data
 
     trigger :after, env
 
-    env['kiwi.response']
+    adapter.response env, body
   end
 
 
