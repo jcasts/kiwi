@@ -157,9 +157,12 @@ class Kiwi::App
     adapter = Kiwi::Adapter::Rack
     env     = adapter.request env
 
-    env['kiwi.format']     ||= env['kiwi.mime'].to_s.sub(%r{^\w+/\w+\+?}, '')
-    env['kiwi.serializer'] ||= Kiwi.serializers[env['kiwi.format'].to_sym]
-    env['kiwi.resource']   ||=
+    env['kiwi.format']       ||= env['kiwi.mime'].to_s.sub(%r{^\w+/\w+\+?}, '')
+    env['kiwi.serializer']   ||= Kiwi.serializers[env['kiwi.format'].to_sym]
+    env['kiwi.status']       ||= 200 #TODO: replace with constants or Kiwi.status[:ok]
+    env['kiwi.content_type'] ||=
+      "#{self.class.media_type}/#{self.class.api_name}+#{env['kiwi.format']}"
+    env['kiwi.resource']     ||=
       self.class.resources.find{|rsc| rsc.routes? env['kiwi.path']}
 
     trigger :before, env
@@ -176,10 +179,6 @@ class Kiwi::App
     res_data = rsc.call env['kiwi.method'], env['kiwi.path'], env['kiwi.params']
 
     # TODO: Catch and build error resources from exceptions
-    env['kiwi.status']       ||= 200
-    env['kiwi.content_type'] ||=
-      "#{self.class.media_type}/#{self.class.api_name}+#{env['kiwi.format']}"
-
     body = env['kiwi.serializer'].call res_data
 
     trigger :after, env
