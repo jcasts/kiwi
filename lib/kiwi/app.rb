@@ -146,8 +146,7 @@ class Kiwi::App
   # Rack-compliant call method.
 
   def call env
-    app = self.dup
-    app.dispatch! env
+    dispatch! env
   end
 
 
@@ -162,8 +161,11 @@ class Kiwi::App
     env['kiwi.resource'] =
       self.class.resources.find{|rsc| rsc.routes? env['PATH_INFO']}
 
-    # TODO: Set serializer here
-    # env['kiwi.serializer']
+    env['kiwi.format']     = env['HTTP_ACCEPT'].to_s.sub(%r{^\w+/\w+\+?}, '')
+    env['kiwi.serializer'] = Kiwi.serializers[env['kiwi.format'].to_sym]
+
+    ctype = "#{self.class.media_type}/#{self.class.api_name}+#{env['kiwi.format']}"
+    env['kiwi.response'] = [200, {'Content-Type' => ctype}, [""]]
 
     trigger :before, env
 
@@ -174,26 +176,16 @@ class Kiwi::App
 
     rsc_method = env['REQUEST_METHOD'].downcase.to_sym
     rsc_path   = env['PATH_INFO']
-    rsc_params = Rack::Request.new env
+    rsc_params = Rack::Request.new(env).params
 
     res_data = rsc.call(rsc_method, rsc_path, rsc_params)
 
     # TODO: Catch and build error resources from exceptions
-    # TODO: Make serializer!
     body = env['kiwi.serializer'].call res_data
-    resp = [200, {'Content-Type' => self.content_type}, body]
-    trigger :after, resp
+    env['kiwi.response'][2] = [ body ]
+    trigger :after, env
 
-    resp
-  end
-
-
-  ##
-  # Fully formed content type.
-
-  def content_type
-    return unless @env
-    "#{self.class.media_type}/#{self.class.api_name}+#{format}"
+    env['kiwi.response']
   end
 
 
@@ -203,16 +195,6 @@ class Kiwi::App
   def find_resource str
     rsc = Kiwi.find_const str
     return rsc if resources.include?(rsc)
-  end
-
-
-  ##
-  # Returns the format requested by the client.
-
-  def format
-    return unless @env
-    f = env['HTTP_ACCEPT'].to_s.sub(%r{^\w+/\w+\+?}, '')
-    f.empty? ? self.class.formats.first : f.to_sym
   end
 
 
