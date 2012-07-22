@@ -154,18 +154,15 @@ class Kiwi::App
   # Make handle the request.
 
   def dispatch! env
-    env['kiwi.mime']       = env['HTTP_ACCEPT']
-    env['kiwi.format']     = env['HTTP_ACCEPT'].to_s.sub(%r{^\w+/\w+\+?}, '')
-    env['kiwi.serializer'] = Kiwi.serializers[env['kiwi.format'].to_sym]
-    env['kiwi.params']     = Rack::Request.new(env).params
-    env['kiwi.path']       = env['PATH_INFO']
-    env['kiwi.method']     = env['REQUEST_METHOD'].downcase.to_sym
+    evn = Kiwi::Adapter::Rack.call env
 
-    env['kiwi.resource'] =
+    env['kiwi.format']     ||= env['kiwi.mime'].to_s.sub(%r{^\w+/\w+\+?}, '')
+    env['kiwi.serializer'] ||= Kiwi.serializers[env['kiwi.format'].to_sym]
+    env['kiwi.resource']   ||=
       self.class.resources.find{|rsc| rsc.routes? env['kiwi.path']}
 
     ctype = "#{self.class.media_type}/#{self.class.api_name}+#{env['kiwi.format']}"
-    env['kiwi.response'] = [200, {'Content-Type' => ctype}, [""]]
+    env['kiwi.response'] ||= [200, {'Content-Type' => ctype}, [""]]
 
     trigger :before, env
 
