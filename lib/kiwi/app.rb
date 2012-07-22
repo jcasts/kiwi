@@ -146,6 +146,15 @@ class Kiwi::App
   # Rack-compliant call method.
 
   def call env
+    app = self.dup
+    app.dispatch! env
+  end
+
+
+  ##
+  # Make handle the request.
+
+  def dispatch! env
     raise Kiwi::NotAcceptable,
       "Accept header `#{env['HTTP_ACCEPT']}' invalid" unless
         accept?(env['HTTP_ACCEPT'])
@@ -161,8 +170,7 @@ class Kiwi::App
     raise Kiwi::RouteNotFound,
       "No resource for `#{env['PATH_INFO']}'" unless env['kiwi.resource']
 
-    app = self.clone env
-    rsc = env['kiwi.resource'].new(app)
+    rsc = env['kiwi.resource'].new(self)
 
     rsc_method = env['REQUEST_METHOD'].downcase.to_sym
     rsc_path   = env['PATH_INFO']
@@ -173,30 +181,10 @@ class Kiwi::App
     # TODO: Catch and build error resources from exceptions
     # TODO: Make serializer!
     body = env['kiwi.serializer'].call res_data
-    resp = [200, {'Content-Type' => app.content_type}, body]
+    resp = [200, {'Content-Type' => self.content_type}, body]
     trigger :after, resp
 
     resp
-
-  rescue => e
-    code = e.class::STATUS rescue 500
-    app.status(code)
-    app.data(self.class.error.build e)
-    app.response
-  end
-
-
-  ##
-  # Clone the app instance and assign instance variables based on env.
-
-  def clone env
-    app = self.dup
-
-    app.env      = env
-    app.request  = Rack::Request.new env
-    app.response = [200, {'Content-Type' => app.content_type }, ['']]
-
-    app
   end
 
 
@@ -225,48 +213,6 @@ class Kiwi::App
     return unless @env
     f = env['HTTP_ACCEPT'].to_s.sub(%r{^\w+/\w+\+?}, '')
     f.empty? ? self.class.formats.first : f.to_sym
-  end
-
-
-  ##
-  # Sugar for request.params
-
-  def params
-    return unless @request
-    @request.params
-  end
-
-
-  ##
-  # Assign the response body.
-
-  def body resp
-    resp = [resp] unless resp.respond_to?(:each)
-    @response[2] = resp
-  end
-
-
-  ##
-  # Assign the response body from data.
-
-  def data obj
-    body obj.to_json
-  end
-
-
-  ##
-  # Assign the status code of the response.
-
-  def status num
-    @response[0] = num
-  end
-
-
-  ##
-  # Assign the response headers.
-
-  def headers hash
-    @response[1].merge! hash
   end
 
 

@@ -1,6 +1,7 @@
 = TODO
 
 * Fix errors to have a "status" method.
+* Fix content-type and accept headers in App.
 * Implement triggers/hooks
 * Implement multi-app class
   * Allow multi-app to describe all available apps

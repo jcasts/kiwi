@@ -5,42 +5,6 @@ class Kiwi
   # This gem's version.
   VERSION = '1.0.0'
 
-  # Standard Kiwi runtime error.
-  class Error < RuntimeError; end
-
-  # Error while validating input or output field.
-  class ValidationError < Error; end
-
-  # Value was not valid according to requirements.
-  class InvalidTypeError < ValidationError; end
-
-  # Value was not in the specified set.
-  class BadValueError < ValidationError; end
-
-  # Value was missing or nil.
-  class RequiredValueError < ValidationError; end
-
-  # Unexpected param was given to a ParamSet
-  class InvalidParam < ValidationError; end
-
-  # Something bad happenned with the request.
-  class HTTPError < Error;                STATUS = 500; end
-
-  # The request made to the endpoint was invalid.
-  class BadRequest < HTTPError;           STATUS = 400; end
-
-  # The route requested does not exist.
-  class RouteNotFound < HTTPError;        STATUS = 404; end
-
-  # The method requested is not available for the given resource.
-  class MethodNotAllowed < HTTPError;     STATUS = 405; end
-
-  # The Accept header type is not available for the given resource.
-  class NotAcceptable < HTTPError;        STATUS = 406; end
-
-  # The route requested exists but has no controller.
-  class RouteNotImplemented < HTTPError;  STATUS = 501; end
-
 
   class << self
     attr_accessor :trace
@@ -77,6 +41,7 @@ class Kiwi
 end
 
 require 'kiwi/core_ext'
+require 'kiwi/error'
 require 'kiwi/validator'
 require 'kiwi/validator/attribute'
 require 'kiwi/param'

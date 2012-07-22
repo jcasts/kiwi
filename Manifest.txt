@@ -9,6 +9,7 @@ bin/kiwi
 lib/kiwi.rb
 lib/kiwi/app.rb
 lib/kiwi/core_ext.rb
+lib/kiwi/error.rb
 lib/kiwi/hooks.rb
 lib/kiwi/init.rb
 lib/kiwi/link.rb
