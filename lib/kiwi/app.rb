@@ -36,12 +36,12 @@ class Kiwi::App
 
   ##
   # Enforces an exact match on the Accept header or not, defaults to
-  # Kiwi.force_accept_header. When set to false, will accept wildcards
-  # in the HTTP_ACCEPT env value.
+  # Kiwi.force_mime_type. When set to false, will accept wildcards
+  # in the kiwi.mime env value.
 
-  def self.force_accept_header val=nil
-    @force_accept_header = !!val unless val.nil?
-    @force_accept_header.nil? ? Kiwi.force_accept_header : @force_accept_header
+  def self.force_mime_type val=nil
+    @force_mime_type = !!val unless val.nil?
+    @force_mime_type.nil? ? Kiwi.force_mime_type : @force_mime_type
   end
 
 
@@ -110,7 +110,7 @@ class Kiwi::App
   # Returns true if this app can return the given content type.
 
   def accept? ctype
-    unless self.class.force_accept_header
+    unless self.class.force_mime_type
       ctype = Regexp.escape ctype
       ctype = ctype.gsub("\\*", "[^/]*")
       matcher = %r{#{ctype}}
@@ -146,7 +146,7 @@ class Kiwi::App
   # Rack-compliant call method.
 
   def call env
-    dispatch! env
+    app.dup.dispatch! env
   end
 
 
@@ -154,31 +154,31 @@ class Kiwi::App
   # Make handle the request.
 
   def dispatch! env
-    raise Kiwi::NotAcceptable,
-      "Accept header `#{env['HTTP_ACCEPT']}' invalid" unless
-        accept?(env['HTTP_ACCEPT'])
-
-    env['kiwi.resource'] =
-      self.class.resources.find{|rsc| rsc.routes? env['PATH_INFO']}
-
+    env['kiwi.mime']       = env['HTTP_ACCEPT']
     env['kiwi.format']     = env['HTTP_ACCEPT'].to_s.sub(%r{^\w+/\w+\+?}, '')
     env['kiwi.serializer'] = Kiwi.serializers[env['kiwi.format'].to_sym]
+    env['kiwi.params']     = Rack::Request.new(env).params
+    env['kiwi.path']       = env['PATH_INFO']
+    env['kiwi.method']     = env['REQUEST_METHOD'].downcase.to_sym
+
+    env['kiwi.resource'] =
+      self.class.resources.find{|rsc| rsc.routes? env['kiwi.path']}
 
     ctype = "#{self.class.media_type}/#{self.class.api_name}+#{env['kiwi.format']}"
     env['kiwi.response'] = [200, {'Content-Type' => ctype}, [""]]
 
     trigger :before, env
 
+    raise Kiwi::NotAcceptable,
+      "Invalid request format `#{env['kiwi.mime']}'" unless
+        accept?(env['kiwi.mime'])
+
     raise Kiwi::RouteNotFound,
       "No resource for `#{env['PATH_INFO']}'" unless env['kiwi.resource']
 
     rsc = env['kiwi.resource'].new(self)
 
-    rsc_method = env['REQUEST_METHOD'].downcase.to_sym
-    rsc_path   = env['PATH_INFO']
-    rsc_params = Rack::Request.new(env).params
-
-    res_data = rsc.call(rsc_method, rsc_path, rsc_params)
+    res_data = rsc.call env['kiwi.method'], env['kiwi.path'], env['kiwi.params']
 
     # TODO: Catch and build error resources from exceptions
     body = env['kiwi.serializer'].call res_data
