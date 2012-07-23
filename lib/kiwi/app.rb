@@ -202,7 +202,9 @@ class Kiwi::App
 
   def trigger hook, *args
     return unless self.class.hooks[hook]
-    instance_exec(*args, &self.class.hooks[hook])
+    self.class.hooks[hook].each do |block|
+      instance_exec(*args, &block)
+    end
   end
 
 

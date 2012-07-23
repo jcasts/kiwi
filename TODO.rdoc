@@ -1,6 +1,9 @@
 = TODO
 
 * Implement error hooks and handling
+* Implement framework-wide modable status codes
+* Implement adapter picking, and one more adapter (thrift?)
+* Investigate in-framework multithreaded/evented/fork model.
 * Implement multi-app class
   * Allow multi-app to describe all available apps
 * HTML, JSON, PLIST, XML, YAML serializers (Kiwi::App attribute)
