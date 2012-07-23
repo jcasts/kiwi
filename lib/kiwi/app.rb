@@ -146,7 +146,7 @@ class Kiwi::App
   # Rack-compliant call method.
 
   def call env
-    app.dup.dispatch! env
+    self.dup.dispatch! env
   end
 
 
@@ -177,10 +177,12 @@ class Kiwi::App
     rsc      = env['kiwi.resource'].new(self)
     res_data = rsc.call env['kiwi.method'], env['kiwi.path'], env['kiwi.params']
 
+    trigger :postprocess, env, res_data
+
     # TODO: Catch and build error resources from exceptions
     body = env['kiwi.serializer'].call res_data
 
-    trigger :after, env
+    trigger :after, env, body
 
     adapter.response env, body
   end

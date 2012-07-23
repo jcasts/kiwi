@@ -13,11 +13,20 @@ module Kiwi::Hooks
 
 
   ##
-  # Create a before filter. Called after after resource and
+  # Create a before filter. Called after resource and
   # serializer have been identified.
 
   def before &block
     hook(:before, &block)
+  end
+
+
+  ##
+  # Create a post-processing filter. Called after resource returns state,
+  # but before serialization.
+
+  def postprocess &block
+    hook(:postprocess, &block)
   end
 
 
@@ -42,9 +51,9 @@ module Kiwi::Hooks
   def hook *names, &block
     names.each do |name|
       if Range === name
-        name.each{|n| hooks[n] = block }
+        name.each{|n| (hooks[n] ||= []) << block }
       else
-        hooks[name] = block
+        (hooks[name] ||= []) << block
       end
     end
   end

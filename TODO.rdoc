@@ -1,8 +1,6 @@
 = TODO
 
-* Fix errors to have a "status" method.
-* Fix content-type and accept headers in App.
-* Implement triggers/hooks
+* Implement error hooks and handling
 * Implement multi-app class
   * Allow multi-app to describe all available apps
 * HTML, JSON, PLIST, XML, YAML serializers (Kiwi::App attribute)
@@ -18,6 +16,9 @@
 
 == Done
 
+* Fix errors to have a "status" method.
+* Fix content-type and accept headers in App.
+* Implement triggers/hooks
 * Allow param pre-set values
 * More end-user friendly error messages (especially on 400s)
 * Include the _type (and optional _link) attribute automatically on known
