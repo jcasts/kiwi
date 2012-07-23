@@ -171,8 +171,8 @@ class Kiwi::App
       "Invalid request format `#{env['kiwi.mime']}'" unless
         accept?(env['kiwi.mime'])
 
-    raise Kiwi::RouteNotFound,
-      "No resource for `#{env['PATH_INFO']}'" unless env['kiwi.resource']
+    raise Kiwi::ResourceNotFound,
+      "No resource for `#{env['kiwi.path']}'" unless env['kiwi.resource']
 
     rsc      = env['kiwi.resource'].new(self)
     res_data = rsc.call env['kiwi.method'], env['kiwi.path'], env['kiwi.params']
@@ -185,6 +185,10 @@ class Kiwi::App
     trigger :after, env, body
 
     adapter.response env, body
+
+  rescue => e
+    trigger e.class
+    trigger e.status if e.respond_to?(:status)
   end
 
 

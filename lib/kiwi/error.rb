@@ -27,7 +27,7 @@ class Kiwi
   end
 
   # Error while validating input or output field.
-  class ValidationError < Error; end
+  class ValidationError < Error; STATUS = 400; end
 
   # Value was not valid according to requirements.
   class InvalidTypeError < ValidationError; end
@@ -48,7 +48,7 @@ class Kiwi
   class BadRequest < HTTPError;           STATUS = 400; end
 
   # The route requested does not exist.
-  class RouteNotFound < HTTPError;        STATUS = 404; end
+  class ResourceNotFound < HTTPError;     STATUS = 404; end
 
   # The method requested is not available for the given resource.
   class MethodNotAllowed < HTTPError;     STATUS = 405; end
@@ -57,5 +57,5 @@ class Kiwi
   class NotAcceptable < HTTPError;        STATUS = 406; end
 
   # The route requested exists but has no controller.
-  class RouteNotImplemented < HTTPError;  STATUS = 501; end
+  class NotImplemented < HTTPError;       STATUS = 501; end
 end
