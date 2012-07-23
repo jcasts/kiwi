@@ -1,16 +1,16 @@
 class Kiwi::Link
 
-  attr_reader :params, :path, :http_method
+  attr_reader :params, :path, :rsc_method
 
-  def initialize http_method, path, params=[]
-    @http_method = http_method.to_s.upcase
-    @path        = path
-    @params      = params
+  def initialize rsc_method, path, params=[]
+    @rsc_method = rsc_method.to_s.downcase
+    @path       = path
+    @params     = params
   end
 
 
   ##
-  # Builds the full link url and http method
+  # Builds the full link url and resource method
 
   def build params=nil
     pvalues = {}
@@ -29,8 +29,23 @@ class Kiwi::Link
 
     query = "?#{build_query(pvalues)}" unless pvalues.empty?
 
-    {:href => "#{path}#{query}", :method => @http_method}
+    {:href => "#{path}#{query}", :method => @rsc_method}
   end
+
+
+  ##
+  # Hash representation of this link.
+
+  def to_hash
+    {
+      :href   => @path,
+      :method => @rsc_method,
+      :params => @params.map(&:to_hash)
+    }
+  end
+
+
+  private
 
 
   ##
@@ -59,17 +74,5 @@ class Kiwi::Link
     else
       "#{param}=#{data}"
     end
-  end
-
-
-  ##
-  # Hash representation of this link.
-
-  def to_hash
-    {
-      :href   => @path,
-      :method => @http_method,
-      :params => @params.map(&:to_hash)
-    }
   end
 end

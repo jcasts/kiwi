@@ -86,10 +86,10 @@ class TestKiwiResource < Test::Unit::TestCase
   def test_links_id
     expected = [
      {:href=>"/foo_resource/123",
-      :method=>"GET",
+      :method=>"get",
       :params=>[{:name=>"id", :type=>"String", :desc=>"Id of the resource"}]},
      {:href=>"/foo_resource",
-      :method=>"LIST",
+      :method=>"list",
       :params=>[]}]
 
     assert_equal expected, FooResource.links('123').map(&:to_hash)
@@ -99,10 +99,10 @@ class TestKiwiResource < Test::Unit::TestCase
   def test_links_generic
     expected = [
      {:href=>"/foo_resource/:id",
-      :method=>"GET",
+      :method=>"get",
       :params=>[{:name=>"id", :type=>"String", :desc=>"Id of the resource"}]},
      {:href=>"/foo_resource",
-      :method=>"LIST",
+      :method=>"list",
       :params=>[]}]
 
     assert_equal expected, FooResource.links(nil).map(&:to_hash)
@@ -113,12 +113,12 @@ class TestKiwiResource < Test::Unit::TestCase
   def test_link_for_generic
     expected_get =
      {:href=>"/foo_resource/:id",
-      :method=>"GET",
+      :method=>"get",
       :params=>[{:name=>"id", :type=>"String", :desc=>"Id of the resource"}]}
 
     expected_list =
      {:href=>"/foo_resource",
-      :method=>"LIST",
+      :method=>"list",
       :params=>[]}
 
     assert_equal expected_get, FooResource.link_for(:get, nil).to_hash
@@ -131,12 +131,12 @@ class TestKiwiResource < Test::Unit::TestCase
   def test_link_for_generic
     expected_get =
      {:href=>"/foo_resource/123",
-      :method=>"GET",
+      :method=>"get",
       :params=>[{:name=>"id", :type=>"String", :desc=>"Id of the resource"}]}
 
     expected_list =
      {:href=>"/foo_resource",
-      :method=>"LIST",
+      :method=>"list",
       :params=>[]}
 
     assert_equal expected_get, FooResource.link_for(:get, "123").to_hash
@@ -154,10 +154,10 @@ class TestKiwiResource < Test::Unit::TestCase
   def test_link_to
     FooResource.param.string :bar, :optional => true
 
-    expected = {:href => "/foo_resource/123?bar=1", :method => "GET"}
+    expected = {:href => "/foo_resource/123?bar=1", :method => "get"}
     assert_equal expected, FooResource.link_to(:get, :id => "123", :bar => "1")
 
-    expected = {:href => "/foo_resource?bar=1", :method => "LIST"}
+    expected = {:href => "/foo_resource?bar=1", :method => "list"}
     assert_equal expected, FooResource.link_to(:list, :id => "123", :bar => "1")
   end
 
@@ -282,12 +282,12 @@ class TestKiwiResource < Test::Unit::TestCase
   def test_to_hash
     expected =
 {:name=>"FooResource",
- :details=>{:href=>"/_resource/FooResource", :method=>"GET"},
+ :details=>{:href=>"/_resource/FooResource", :method=>"get"},
  :links=>
   [{:href=>"/foo_resource/:id",
-    :method=>"GET",
+    :method=>"get",
     :params=>[{:name=>"id", :type=>"String", :desc=>"Id of the resource"}]},
-   {:href=>"/foo_resource", :method=>"LIST", :params=>[]}],
+   {:href=>"/foo_resource", :method=>"list", :params=>[]}],
  :attributes=>
   [{:name=>"_type", :type=>"String", :optional=>true},
    {:name=>"_links",
@@ -305,7 +305,7 @@ class TestKiwiResource < Test::Unit::TestCase
   def test_resource_to_hash
     expected = {
       :name       => "Kiwi::Resource",
-      :details    => {:href=>"/_resource/Kiwi::Resource", :method=>"GET"},
+      :details    => {:href=>"/_resource/Kiwi::Resource", :method=>"get"},
       :links      => [],
       :attributes => []
     }

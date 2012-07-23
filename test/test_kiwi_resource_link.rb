@@ -6,7 +6,7 @@ class TestKiwiResourceLink < Kiwi::Test::Resource
     expected = {
      :_type=>"Kiwi::Resource::Link",
      :id=>"Kiwi::Resource::Link-get",
-     :method=>"GET",
+     :method=>"get",
      :href=>"/_link/:id",
      :params=>
       [{:_type=>"Kiwi::Resource::Attribute",
@@ -26,7 +26,7 @@ class TestKiwiResourceLink < Kiwi::Test::Resource
   def test_link_links
     expected = [
      {:_type=>"Kiwi::Resource::Link",
-      :method=>"GET",
+      :method=>"get",
       :href=>"/_link/:id",
       :params=>
        [{:_type=>"Kiwi::Resource::Attribute",
@@ -39,7 +39,7 @@ class TestKiwiResourceLink < Kiwi::Test::Resource
          :desc=>"Id of a resource instance to get a link for",
          :optional=>true}]},
      {:_type=>"Kiwi::Resource::Link",
-      :method=>"LIST",
+      :method=>"list",
       :href=>"/_link",
       :params=>
        [{:_type=>"Kiwi::Resource::Attribute",

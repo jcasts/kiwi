@@ -94,10 +94,10 @@ class Kiwi::Resource
         resource_methods.include?(mname) || self.reroutes[mname]
 
     href = route.path.dup
-    http_method = mname
+    rsc_method = mname
 
     unless Kiwi.http_verbs.include?(mname)
-      http_method = Kiwi.default_http_verb
+      rsc_method = Kiwi.default_http_verb
       href << ".#{mname}"
     end
 

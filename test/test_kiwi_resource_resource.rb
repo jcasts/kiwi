@@ -9,11 +9,11 @@ class TestKiwiResourceResource < Kiwi::Test::Resource
  :desc=>"Foo Resource",
  :details=>
   {:_type=>"Kiwi::Resource::Link",
-   :method=>"GET",
+   :method=>"get",
    :href=>"/_resource/FooResource"},
  :links=>
   [{:_type=>"Kiwi::Resource::Link",
-    :method=>"GET",
+    :method=>"get",
     :href=>"/foo_resource/:id",
     :params=>
      [{:_type=>"Kiwi::Resource::Attribute",
@@ -21,7 +21,7 @@ class TestKiwiResourceResource < Kiwi::Test::Resource
        :type=>"String",
        :desc=>"Id of the resource"}]},
    {:_type=>"Kiwi::Resource::Link",
-    :method=>"LIST",
+    :method=>"list",
     :href=>"/foo_resource",
     :params=>[]}],
  :attributes=>
@@ -51,11 +51,11 @@ class TestKiwiResourceResource < Kiwi::Test::Resource
  :desc=>"Show the links and attributes of any resource.",
  :details=>
   {:_type=>"Kiwi::Resource::Link",
-   :method=>"GET",
+   :method=>"get",
    :href=>"/_resource/Kiwi::Resource::Resource"},
  :links=>
   [{:_type=>"Kiwi::Resource::Link",
-    :method=>"GET",
+    :method=>"get",
     :href=>"/_resource/:id",
     :params=>
      [{:_type=>"Kiwi::Resource::Attribute",
@@ -63,7 +63,7 @@ class TestKiwiResourceResource < Kiwi::Test::Resource
        :type=>"String",
        :desc=>"The Resource type identifier"}]},
    {:_type=>"Kiwi::Resource::Link",
-    :method=>"LIST",
+    :method=>"list",
     :href=>"/_resource",
     :params=>[]}],
  :attributes=>
