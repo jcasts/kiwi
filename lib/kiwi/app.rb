@@ -199,8 +199,8 @@ class Kiwi::App
   ##
   # Set or get the response status code.
 
-  def status s=nil
-    @env['kiwi.status'] = s if s
+  def status st=nil
+    @env['kiwi.status'] = st if st
     @env['kiwi.status']
   end
 
