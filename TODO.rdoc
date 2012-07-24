@@ -1,6 +1,7 @@
 = TODO
 
 * Implement error hooks and handling
+* Implement logger
 * Implement framework-wide modable status codes
 * Implement adapter picking, and one more adapter (thrift?)
 * Investigate in-framework multithreaded/evented/fork model.

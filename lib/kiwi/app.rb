@@ -97,11 +97,10 @@ class Kiwi::App
   extend Kiwi::Hooks
 
 
-  attr_accessor :env, :request, :response
+  attr_accessor :env, :adapter
 
   def initialize
-    @response  = nil
-    @request   = nil
+    @adapter   = nil
     @env       = nil
   end
 
@@ -154,41 +153,55 @@ class Kiwi::App
   # Make handle the request.
 
   def dispatch! env
-    adapter = Kiwi::Adapter::Rack
-    env     = adapter.request env
+    @adapter = Kiwi::Adapter::Rack
+    @env     = adapter.request env
 
-    env['kiwi.format']       ||= env['kiwi.mime'].to_s.sub(%r{^\w+/\w+\+?}, '')
-    env['kiwi.serializer']   ||= Kiwi.serializers[env['kiwi.format'].to_sym]
-    env['kiwi.status']       ||= 200 #TODO: replace with constants or Kiwi.status[:ok]
-    env['kiwi.content_type'] ||=
-      "#{self.class.media_type}/#{self.class.api_name}+#{env['kiwi.format']}"
-    env['kiwi.resource']     ||=
-      self.class.resources.find{|rsc| rsc.routes? env['kiwi.path']}
+    setup_env
 
-    trigger :before, env
+    trigger :before
 
-    raise Kiwi::NotAcceptable,
-      "Invalid request format `#{env['kiwi.mime']}'" unless
-        accept?(env['kiwi.mime'])
+    validate_env!
 
-    raise Kiwi::ResourceNotFound,
-      "No resource for `#{env['kiwi.path']}'" unless env['kiwi.resource']
+    render call_resource
 
-    rsc      = env['kiwi.resource'].new(self)
-    res_data = rsc.call env['kiwi.method'], env['kiwi.path'], env['kiwi.params']
+  rescue => err
+    @env['kiwi.error'] = err
 
-    trigger :postprocess, env, res_data
+    trigger err.class, err
+    trigger err.status, err if err.respond_to?(:status)
 
-    # TODO: Catch and build error resources from exceptions
-    body = env['kiwi.serializer'].call res_data
+    render Kiwi::Resource::Error.build(err.to_hash)
+  end
 
-    trigger :after, env, body
 
-    adapter.response env, body
+  ##
+  # Call post triggers and output the response according to the adapter.
 
-  rescue => e
-    trigger e.class
-    trigger e.status if e.respond_to?(:status)
+  def render res_data
+    trigger :postprocess, res_data
+
+    body = @env['kiwi.serializer'].call res_data
+    trigger :after, body
+
+    @adapter.response @env, body
+  end
+
+
+  ##
+  # Set or get the content type for the response.
+
+  def content_type ctype=nil
+    @env['kiwi.content_type'] = ctype if ctype
+    @env['kiwi.content_type']
+  end
+
+
+  ##
+  # Set or get the response status code.
+
+  def status s=nil
+    @env['kiwi.status'] = s if s
+    @env['kiwi.status']
   end
 
 
@@ -217,5 +230,45 @@ class Kiwi::App
 
   def resources
     self.class.resources
+  end
+
+
+  private
+
+  ##
+  # Setup the environment from the request env.
+
+  def setup_env
+    @env['kiwi.format']       ||= @env['kiwi.mime'].to_s.sub(%r{^\w+/\w+\+?}, '')
+    @env['kiwi.serializer']   ||= Kiwi.serializers[@env['kiwi.format'].to_sym]
+    @env['kiwi.status']       ||= 200 #TODO: replace with constants or Kiwi.status[:OK]
+    @env['kiwi.content_type'] ||=
+      "#{self.class.media_type}/#{self.class.api_name}+#{@env['kiwi.format']}"
+    @env['kiwi.resource']     ||=
+      self.class.resources.find{|rsc| rsc.routes? @env['kiwi.path']}
+  end
+
+
+  ##
+  # Ensure we have a valid requested mime-type and resource path.
+  # Raises Kiwi::NotAcceptable if mime-type is invalid.
+  # Raises Kiwi::ResourceNotFound if path could not be matched to a resource.
+
+  def validate_env!
+    raise Kiwi::NotAcceptable,
+      "Invalid request format `#{@env['kiwi.mime']}'" unless
+        accept?(@env['kiwi.mime'])
+
+    raise Kiwi::ResourceNotFound,
+      "No resource for `#{@env['kiwi.path']}'" unless @env['kiwi.resource']
+  end
+
+
+  ##
+  # Make the call to the resource.
+
+  def call_resource
+    @env['kiwi.resource'].new(self).
+      call(@env['kiwi.method'], @env['kiwi.path'], @env['kiwi.params'])
   end
 end
