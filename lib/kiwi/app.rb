@@ -209,8 +209,7 @@ class Kiwi::App
   # Find a resource from its string representation.
 
   def find_resource str
-    rsc = Kiwi.find_const str
-    return rsc if resources.include?(rsc)
+    resources.find{|rsc_klass| rsc_klass.to_s == str }
   end
 
 
