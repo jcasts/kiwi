@@ -1,6 +1,5 @@
 = TODO
 
-* Implement error hooks and handling
 * Implement logger
 * Implement framework-wide modable status codes
 * Implement adapter picking, and one more adapter (thrift?)
@@ -20,6 +19,7 @@
 
 == Done
 
+* Implement error hooks and handling
 * Fix errors to have a "status" method.
 * Fix content-type and accept headers in App.
 * Implement triggers/hooks
