@@ -97,11 +97,11 @@ class Kiwi::App
   extend Kiwi::Hooks
 
 
-  attr_accessor :env, :adapter
+  attr_accessor :env, :headers
 
   def initialize
-    @adapter   = nil
-    @env       = nil
+    @headers = {}
+    @env     = nil
   end
 
 
@@ -153,9 +153,7 @@ class Kiwi::App
   # Make handle the request.
 
   def dispatch! env
-    @adapter = Kiwi::Adapter::Rack
-    @env     = adapter.request env
-
+    @env = env
     setup_env
 
     trigger :before
@@ -175,7 +173,7 @@ class Kiwi::App
 
 
   ##
-  # Call post triggers and output the response according to the adapter.
+  # Call post triggers and output the response.
 
   def render res_data
     trigger :postprocess, res_data
@@ -183,7 +181,7 @@ class Kiwi::App
     body = @env['kiwi.serializer'].call res_data
     trigger :after, body
 
-    @adapter.response @env, body
+    [@status, @headers, body]
   end
 
 
@@ -191,8 +189,9 @@ class Kiwi::App
   # Set or get the content type for the response.
 
   def content_type ctype=nil
-    @env['kiwi.content_type'] = ctype if ctype
-    @env['kiwi.content_type']
+    @content_type   = ctype if ctype
+    @content_type ||=
+      "#{self.class.media_type}/#{self.class.api_name}+#{@env['kiwi.format']}"
   end
 
 
@@ -200,8 +199,8 @@ class Kiwi::App
   # Set or get the response status code.
 
   def status st=nil
-    @env['kiwi.status'] = st if st
-    @env['kiwi.status']
+    @status   = st if st
+    @status ||= 200 #TODO: replace with constants or Kiwi.status[:OK]
   end
 
 
@@ -238,12 +237,13 @@ class Kiwi::App
   # Setup the environment from the request env.
 
   def setup_env
-    @env['kiwi.format']       ||= @env['kiwi.mime'].to_s.sub(%r{^\w+/\w+\+?}, '')
-    @env['kiwi.serializer']   ||= Kiwi.serializers[@env['kiwi.format'].to_sym]
-    @env['kiwi.status']       ||= 200 #TODO: replace with constants or Kiwi.status[:OK]
-    @env['kiwi.content_type'] ||=
-      "#{self.class.media_type}/#{self.class.api_name}+#{@env['kiwi.format']}"
-    @env['kiwi.resource']     ||=
+    @env['kiwi.mime']   = @env['HTTP_ACCEPT']
+    @env['kiwi.params'] = ::Rack::Request.new(@env).params
+    @env['kiwi.path']   = @env['PATH_INFO']
+    @env['kiwi.method'] = @env['REQUEST_METHOD'].downcase.to_sym
+    @env['kiwi.format']     ||= @env['kiwi.mime'].to_s.sub(%r{^\w+/\w+\+?}, '')
+    @env['kiwi.serializer'] ||= Kiwi.serializers[@env['kiwi.format'].to_sym]
+    @env['kiwi.resource']   ||=
       self.class.resources.find{|rsc| rsc.routes? @env['kiwi.path']}
   end
 
