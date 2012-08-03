@@ -1,16 +1,24 @@
 class Kiwi::Resource
 
   def self.inherited subclass
-    subclass.reroute :options, Kiwi::Resource::Resource, :get do |params|
-      params[Kiwi::Resource::Resource.identifier] = self.class.name
-    end
+    subclass.init
+  end
 
-    subclass.instance_eval do
+
+  def self.init
+    reroute :options, Kiwi::Resource::Resource, :get do |params|
+      params[Kiwi::Resource::Resource.identifier] = self.class.name
+    end if defined? Kiwi::Resource::Resource
+
+    instance_eval do
+      @desc       = nil
+      @identifier = nil
       @route      = nil
       @view       = nil
-      @identifier = nil
     end
   end
+
+  init
 
 
   ##
