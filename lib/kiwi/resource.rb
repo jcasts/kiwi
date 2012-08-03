@@ -8,7 +8,7 @@ class Kiwi::Resource
   def self.init
     reroute :options, Kiwi::Resource::Resource, :get do |params|
       params[Kiwi::Resource::Resource.identifier] = self.class.name
-    end if defined? Kiwi::Resource::Resource
+    end
 
     instance_eval do
       @desc       = nil
@@ -17,8 +17,6 @@ class Kiwi::Resource
       @view       = nil
     end
   end
-
-  init
 
 
   ##
@@ -64,8 +62,6 @@ class Kiwi::Resource
 
     out
   end
-
-  identifier :id
 
 
   class << self
@@ -261,6 +257,11 @@ class Kiwi::Resource
     out[:desc] = @desc if @desc
     out
   end
+
+
+  identifier :id
+  require 'kiwi/resource/resource'
+  init
 
 
   ##
