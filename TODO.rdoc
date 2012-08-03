@@ -1,5 +1,8 @@
 = TODO
 
+* Make sure routing is robust and flexible.
+  * Revisit how OPTIONS is implemented.
+
 * Implement logger
 * Implement framework-wide modable status codes
 * Implement adapter picking, and one more adapter (thrift?)
