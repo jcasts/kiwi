@@ -43,6 +43,8 @@ end
 TEST_APP = TestApp.new
 
 
+class Kiwi::Test; end
+
 class Kiwi::Test::Resource < Test::Unit::TestCase
 
   private

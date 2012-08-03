@@ -128,7 +128,7 @@ class TestKiwiResource < Test::Unit::TestCase
   end
 
 
-  def test_link_for_generic
+  def test_link_for_id
     expected_get =
      {:href=>"/foo_resource/123",
       :method=>"get",
