@@ -28,7 +28,11 @@ class Kiwi::Resource
 
 
   ##
-  # Add a label to an public method.
+  # Add a label to the next defined public instance method:
+  #   label "Update this resource!"
+  #   def put(id)
+  #     # do something
+  #   end
 
   def self.label str
     @c_label = str
