@@ -13,9 +13,33 @@ class Kiwi::Resource
     instance_eval do
       @desc       = nil
       @identifier = nil
+      @labels     = {}
       @route      = nil
       @view       = nil
+      @c_label    = nil
+
+      def method_added mname
+        return unless resource_methods.include? mname
+        @labels[mname] = @c_label
+        @c_label = nil
+      end
     end
+  end
+
+
+  ##
+  # Add a label to an public method.
+
+  def self.label str
+    @c_label = str
+  end
+
+
+  ##
+  # Returns a mapping of method names to labels.
+
+  def self.labels
+    @labels
   end
 
 
@@ -80,7 +104,9 @@ class Kiwi::Resource
     links = []
 
     resource_methods.each do |mname|
-      links << link_for(mname, id)
+      link = link_for(mname, id)
+      link.label = labels[mname]
+      links << link
     end
 
     links
@@ -259,11 +285,6 @@ class Kiwi::Resource
   end
 
 
-  identifier :id
-  require 'kiwi/resource/resource'
-  init
-
-
   ##
   # New Resource instance with the app object that called it.
 
@@ -376,4 +397,9 @@ class Kiwi::Resource
 
     params.merge( path_params )
   end
+
+
+  identifier :id
+  require 'kiwi/resource/resource'
+  init
 end

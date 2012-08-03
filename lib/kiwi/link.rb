@@ -1,11 +1,13 @@
 class Kiwi::Link
 
   attr_reader :params, :path, :rsc_method
+  attr_accessor :label
 
   def initialize rsc_method, path, params=[]
     @rsc_method = rsc_method.to_s.downcase
     @path       = path
     @params     = params
+    @label      = nil
   end
 
 
@@ -29,7 +31,10 @@ class Kiwi::Link
 
     query = "?#{build_query(pvalues)}" unless pvalues.empty?
 
-    {:href => "#{path}#{query}", :method => @rsc_method}
+    hash = {:href => "#{path}#{query}", :method => @rsc_method}
+    hash[:label] = @label if @label
+
+    hash
   end
 
 
@@ -37,11 +42,15 @@ class Kiwi::Link
   # Hash representation of this link.
 
   def to_hash
-    {
+    hash = {
       :href   => @path,
       :method => @rsc_method,
       :params => @params.map(&:to_hash)
     }
+
+    hash[:label] = @label if @label
+
+    hash
   end
 
 
