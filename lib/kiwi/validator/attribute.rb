@@ -158,8 +158,9 @@ class Kiwi::Validator::Attribute
 
 
   def validate_value val
+    return true if @values.any?{|h| h[:value] == val}
+
     raise Kiwi::BadValueError,
-      "Value #{val.inspect} must be in #{@values.map{|h| h[:value]}.inspect}" unless
-        @values.any?{|h| h[:value] == val}
+      "Value #{val.inspect} must be in #{@values.map{|h| h[:value]}.inspect}"
   end
 end
