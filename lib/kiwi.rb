@@ -8,9 +8,7 @@ class Kiwi
 
   class << self
     attr_accessor :trace
-    attr_accessor :enforce_desc
     attr_accessor :input_types
-    attr_accessor :http_verbs
     attr_accessor :default_http_verb
     attr_accessor :route_delim
     attr_accessor :serializers

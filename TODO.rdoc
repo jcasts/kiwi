@@ -2,7 +2,10 @@
 
 # route :get => :get
 # route :post => :post
-# route "POST :route/update/:id" => :put
+# route "POST :route/update" => :put
+# map_request [:post, ":route/update", {:param_foo => 'bar'}], :put
+# map_request [:post, ":route.:method"], "%method"
+# map_request [:post, {:_method => ':method'}], "%method"
 
 * Look at what configs to move from Kiwi to Kiwi::App
 * Investigate difference between action and link.

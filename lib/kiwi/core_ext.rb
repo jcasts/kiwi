@@ -1,11 +1,20 @@
-unless defined?(Boolean)
+if defined?(Boolean)
+  $stderr.puts \
+   "WARNING! Boolean is already defined. Kiwi may not work correctly."
+
+else
   module Boolean; end
   TrueClass.send :include, Boolean
   FalseClass.send :include, Boolean
 end
 
+
 class Exception
-unless instance_methods.include?(:to_hash)
+if instance_methods.include?(:to_hash)
+  $stderr.puts \
+   "WARNING! Exception#to_hash is already defined. Kiwi may not work correctly."
+
+else
   def to_hash
     hash = {
       # TODO: replace 500 with Kiwi.status[:INTERNAL_ERROR]

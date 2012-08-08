@@ -29,9 +29,11 @@ class Kiwi::Link
       pvalues[param.name] = val unless val.nil? && param.optional
     end if params
 
-    query = "?#{build_query(pvalues)}" unless pvalues.empty?
+    query = self.class.build_query(pvalues) unless pvalues.empty?
 
-    hash = {:href => "#{path}#{query}", :method => @rsc_method}
+    path << (path.include?("?") ? "&#{query}" : "?#{query}") if query
+
+    hash = {:href => path, :method => @rsc_method}
     hash[:label] = @label if @label
 
     hash
@@ -54,13 +56,10 @@ class Kiwi::Link
   end
 
 
-  private
-
-
   ##
   # Builds a nested URI query.
 
-  def build_query data, param=nil
+  def self.build_query data, param=nil
     return data.to_s unless param || Hash === data
 
     case data

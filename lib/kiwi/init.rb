@@ -13,6 +13,4 @@ Kiwi.serializers = {
   :json => lambda{|data| require 'json'; data.to_json }
 }
 
-Kiwi.default_http_verb = :get
-Kiwi.http_verbs =
-  [:get, :put, :patch, :delete, :post, :list, :options, :trace]
+Kiwi.default_http_verb = :post
