@@ -1,19 +1,12 @@
 = TODO
 
-# route :get => :get
-# route :post => :post
-# route "POST :route/update" => :put
-# map_request [:post, ":route/update", {:param_foo => 'bar'}], :put
-# map_request [:post, ":route.:method"], "%method"
-# map_request [:post, {:_method => ':method'}], "%method"
-
-* Look at what configs to move from Kiwi to Kiwi::App
+* Resource: move to_hash, build, links, link_to, link_for to the instance?
+* Keep a Resource instance @state?
 * Investigate difference between action and link.
   * E.g. OPTIONS implementation is a link, not an action.
 
 * Implement logger
 * Implement framework-wide modable status codes
-* Implement adapter picking, and one more adapter (thrift?)
 * Investigate in-framework multithreaded/evented/fork model.
 * Implement multi-app class
   * Allow multi-app to describe all available apps
@@ -29,6 +22,7 @@
 
 == Done
 
+* Look at what configs to move from Kiwi to Kiwi::App
 * Implement error hooks and handling
 * Fix errors to have a "status" method.
 * Fix content-type and accept headers in App.
@@ -54,3 +48,14 @@
 * Kiwi apps should run standalone as a command line app with options.
 * Allow setting a description for every resource action.
 * Differentiate between executable link and buildable link. (kinda done)
+
+
+== Goals
+
+* Simplicity and Explicitness!
+* No-internal-cache-needed fast framework.
+* Aside from logging, runs exactly the same in prod mode as in dev mode.
+* Easily build, boot, and deploy new apps.
+* Built-in documentation and validation.
+* No rakes, no user-end bundle execs.
+* Build and deploy apps as a gem (support defining gem server).
