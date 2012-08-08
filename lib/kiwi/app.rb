@@ -41,7 +41,7 @@ class Kiwi::App
 
   def self.force_mime_type val=nil
     @force_mime_type = !!val unless val.nil?
-    @force_mime_type.nil? ? Kiwi.force_mime_type : @force_mime_type
+    @force_mime_type
   end
 
 
@@ -150,7 +150,7 @@ class Kiwi::App
 
 
   ##
-  # Make handle the request.
+  # Handle the request.
 
   def dispatch! env
     @env = env
@@ -237,6 +237,7 @@ class Kiwi::App
   # Setup the environment from the request env.
 
   def setup_env
+    @env['kiwi.app']    = self
     @env['kiwi.mime']   = @env['HTTP_ACCEPT']
     @env['kiwi.params'] = ::Rack::Request.new(@env).params
     @env['kiwi.path']   = @env['PATH_INFO']

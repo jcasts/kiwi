@@ -1,7 +1,5 @@
-Kiwi.trace            = !!(ENV['RACK_ENV'] =~ /^dev/i)
-Kiwi.force_mime_type  = true
-Kiwi.param_validation = true
-Kiwi.route_delim      = "/"
+Kiwi.trace       = !!(ENV['RACK_ENV'] =~ /^dev/i)
+Kiwi.route_delim = "/"
 
 Kiwi.input_types = {
   String  => :to_s,

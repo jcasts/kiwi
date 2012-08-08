@@ -1,7 +1,12 @@
 = TODO
 
-* Make sure routing is robust and flexible.
-  * Revisit how OPTIONS is implemented.
+# route :get => :get
+# route :post => :post
+# route "POST :route/update/:id" => :put
+
+* Look at what configs to move from Kiwi to Kiwi::App
+* Investigate difference between action and link.
+  * E.g. OPTIONS implementation is a link, not an action.
 
 * Implement logger
 * Implement framework-wide modable status codes
@@ -13,7 +18,6 @@
   * May require layout implementation. (HTML, XML)
 * Kiwi apps should be easily self-encapsulated, deployable, and bootable.
 
-* Use a 300 response or return html when no Accept header is given?
 * How can hidden html fields be conveyed?
 * Routes should be global and point to a resource.
   * Show rerouted resource methods in the resource links.
@@ -44,7 +48,6 @@
 
 * HTTP Method route mapping per app
   * Swappable route parser
-  * OPTIONS and GET methods in Kiwi::Resource should refer to the Kiwi routes
 * Kiwi apps should run standalone as a command line app with options.
 * Allow setting a description for every resource action.
 * Differentiate between executable link and buildable link. (kinda done)
