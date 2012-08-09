@@ -12,6 +12,8 @@ class Kiwi::Validator::Attribute
   # :collection:: Bool - Is this an Array of attributes.
   # :default::    VALUE - The default value to use if none is set.
   # :optional::   Bool - Required or not.
+  # :values::     Array|Hash - Supported values for this attribute.
+  #               Hash must be of form {:name => "", :value => ""}
 
   def initialize name, type, opts={}
     self.name    = name
