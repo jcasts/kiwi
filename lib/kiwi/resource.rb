@@ -14,7 +14,6 @@ class Kiwi::Resource
       @desc       = nil
       @identifier = nil
       @labels     = {}
-      @route      = nil
       @view       = nil
       @c_label    = nil
 
@@ -44,24 +43,6 @@ class Kiwi::Resource
 
   def self.labels
     @labels
-  end
-
-
-  ##
-  # Build and validate a Resource hash from a data hash.
-
-  def self.build data, opts={}
-    data = data.dup
-    id = data[identifier]      ||
-         data[identifier.to_s] ||
-         opts[identifier]
-
-    # TODO: Revisit this when link_to is implemented
-    data[:_links]    ||= self.links(id).map(&:to_hash) if opts[:append_links]
-    data[:_type]     ||= self.name
-    data[identifier] ||= id if id
-
-    view_from(data)
   end
 
 
@@ -98,56 +79,6 @@ class Kiwi::Resource
       Kiwi::Param.new self.identifier, String,
         :desc => "Id of the resource"
     end
-  end
-
-
-  ##
-  # Array of links for this resource.
-
-  def self.links id=nil
-    links = []
-
-    resource_methods.each do |mname|
-      link = link_for(mname, id)
-      link.label = labels[mname]
-      links << link
-    end
-
-    links
-  end
-
-
-  ##
-  # Single link for this resource, for a method and id.
-
-  def self.link_for mname, id=nil
-    mname = mname.to_sym
-
-    raise Kiwi::MethodNotAllowed,
-      "Method not supported `#{mname}' for #{self.name}" unless
-        resource_methods.include?(mname) || self.reroutes[mname]
-
-    href = route.path.dup
-    rsc_method = mname
-
-    unless Kiwi.http_verbs.include?(mname)
-      rsc_method = Kiwi.default_http_verb
-      href << ".#{mname}"
-    end
-
-    href << "#{Kiwi::Route.delimiter}#{id || identifier.inspect}" if
-      id_resource_methods.include?(mname)
-
-    Kiwi::Link.new mname, href, params_for_method(mname)
-  end
-
-
-  ##
-  # Single link to a specific resource and method. Raises a ValidationError
-  # if not all required params are provided.
-
-  def self.link_to mname, params=nil
-    link_for(mname).build(params)
   end
 
 
@@ -226,36 +157,6 @@ class Kiwi::Resource
 
 
   ##
-  # The route to access this resource. Defaults to the underscored version
-  # of the class name. Pass multiple parts as arguments to use the preset
-  # Kiwi route delimiter:
-  #   MyResource.route "foo", "bar"
-  #   #=> "/foo/bar"
-
-  def self.route *parts
-    return @route if @route && parts.empty?
-
-    if parts.empty?
-      new_route = self.name.gsub(/([A-Za-z0-9])([A-Z])/,'\1_\2').downcase
-      parts     = new_route.split("::")
-    end
-
-    @route = Kiwi::Route.new(*parts) do |key|
-      next if key == Kiwi::Route.tmp_id
-      self.param.string key
-    end
-  end
-
-
-  ##
-  # Check if this resource routes the given path.
-
-  def self.routes? path
-    self.route.routes? path
-  end
-
-
-  ##
   # Define the view to render for this resource.
   # Used by default on all methods but list.
 
@@ -274,14 +175,32 @@ class Kiwi::Resource
 
 
   ##
+  # Build and validate a Resource hash from a data hash.
+
+  def self.build data, opts={}
+    data = data.dup
+    id = data[self.identifier]      ||
+         data[self.identifier.to_s] ||
+         opts[self.identifier]
+
+    # TODO: Revisit this when link_to is implemented
+    #data[:_links] ||= self.links(id).map(&:to_hash) if opts[:append_links]
+    data[:_type] ||= self.name
+    data[self.identifier] ||= id if id
+
+    self.view_from(data)
+  end
+
+
+  ##
   # Create a hash for display purposes.
 
   def self.to_hash
     out = {
       :name       => self.name,
-      :details    => Kiwi::Resource::Resource.link_to(:get,
-        Kiwi::Resource::Resource.identifier => self.name).to_hash,
-      :links      => self.links.map(&:to_hash),
+      #:details    => Kiwi::Resource::Resource.link_to(:get,
+      #  Kiwi::Resource::Resource.identifier => self.name).to_hash,
+      #:links      => self.links.map(&:to_hash),
       :attributes => self.view.to_a
     }
     out[:desc] = @desc if @desc
@@ -294,6 +213,7 @@ class Kiwi::Resource
 
   def initialize app=nil
     @app          = app
+    @params       = {}
     @append_links = false
   end
 
@@ -309,18 +229,17 @@ class Kiwi::Resource
   ##
   # Call the resource with a method name and params.
 
-  def call mname, path, params
-    params = merge_path_params! path, params
+  def call mname, params={}
     return follow_reroute(mname, params) if reroute? mname
 
-    @params, args = validate! mname, path, params
+    @params, args = validate! mname, params
     data = __send__(mname, *args)
 
     return unless data
 
     opts = {
       self.class.identifier => @params[self.class.identifier],
-      :append_links => @append_links
+      :append_links         => @append_links
     }
 
     if Array === data
@@ -337,10 +256,43 @@ class Kiwi::Resource
 
 
   ##
+  # Array of links for this resource.
+
+  def links id=nil
+    links = []
+
+    self.class.resource_methods.each do |mname|
+      link = link_for(mname, id)
+      link.label = self.class.labels[mname]
+      links << link
+    end
+
+    links
+  end
+
+
+  ##
+  # Single link for this resource, for a method and id.
+
+  def link_for mname, id=nil
+    @app.link_for self.class, mname, id
+  end
+
+
+  ##
+  # Single link to a specific resource and method. Raises a ValidationError
+  # if not all required params are provided.
+
+  def link_to mname, params=nil
+    link_for(mname).build(params)
+  end
+
+
+  ##
   # Validate the incoming request. Returns the validated params hash
   # and the arguments for the method.
 
-  def validate! mname, path, params
+  def validate! mname, params
     meth = resource_method mname
 
     raise Kiwi::MethodNotAllowed,
@@ -387,19 +339,6 @@ class Kiwi::Resource
     instance_exec(params, &rdir[:proc]) if rdir[:proc]
 
     rdir[:resource].new(@app).call rdir[:method], params
-  end
-
-
-  ##
-  # Merge the params from the path into the params hash.
-
-  def merge_path_params! path, params={}
-    path_params = self.class.route.parse(path)
-
-    params[self.class.identifier] = path_params.delete(Kiwi::Route.tmp_id) if
-      path_params.has_key?(Kiwi::Route.tmp_id)
-
-    params.merge( path_params )
   end
 
 

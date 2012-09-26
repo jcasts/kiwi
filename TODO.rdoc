@@ -1,7 +1,65 @@
 = TODO
 
+* Attempt to stop caring about IDs
+* Resources implement #to_media(type)
+* Define a media type:
+    MyResource.media('vnd.kiwi+json') do |rsc_obj|
+      @state
+    end
+
+
+class FooApp < Kiwi::App
+
+  # Special concepts: %route, %id
+  # Param names:      :route, :id
+
+  map_request [:post, "*/update"], :put
+  map_request [:post, "*/patch"],  :patch
+  map_request [:post, "*/delete"], :delete
+
+  resource AppResource, "/"
+  resource BarResource
+  resource BarResource, "/bar/:id?"
+end
+
+ResourceResource
+  _meta_
+    class: Resource
+    rel: /_resource/Kiwi::Resource::Resource
+  id: MyResource
+  route: /my_resource/:id?
+  attributes: [ ... ]
+  actions: [ ... ]
+  desc: String
+  
+
+MyResource
+  _meta_
+    class: MyResource
+    rel: /_resource/MyResource
+  user-defined-attributes (including links/actions etc)
+
+What all resources have:
+Class level:
+* action definition
+* param definition
+* view (response definition w/ attributes)
+* name
+Instance level:
+* app instance
+* params instance
+* linked actions
+* links
+* state (data representation of the resource)
+
+What is a resource? A queryable interface from the outside world.
+* Domain-specific classes
+* App, Resource, Error, Link, [Attribute]
+
+
+* Handle all the links/routes in the App class! :)
+
 * Resource: move to_hash, build, links, link_to, link_for to the instance?
-* Keep a Resource instance @state?
 * Investigate difference between action and link.
   * E.g. OPTIONS implementation is a link, not an action.
 

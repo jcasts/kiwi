@@ -2,7 +2,6 @@ class Kiwi::Resource::App < Kiwi::Resource
 
   FILTER = [:name, :details, :desc]
 
-  route Kiwi::Route.delimiter
   desc  "A resource representation of this application"
 
   view Kiwi::View::App
