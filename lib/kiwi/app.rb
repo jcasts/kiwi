@@ -247,9 +247,15 @@ class Kiwi::App
   rescue => err
     @env['kiwi.error'] = err
 
-    trigger err.class, err
-    trigger err.status, err if err.respond_to?(:status)
+    if err.respond_to?(:status)
+      status err.status
+      trigger err.status, err
+    else
+      status 500 # TODO: Default Status
+      trigger err.class, err
+    end
 
+    # TODO: Only use backtrace if not in prod mode
     render Kiwi::Resource::Error.build(err.to_hash)
   end
 
@@ -263,7 +269,10 @@ class Kiwi::App
     body = @env['kiwi.serializer'].call res_data
     trigger :after, body
 
-    [@status, @headers, body]
+    content_type
+    @headers['Content-Length'] = body.bytesize if body.respond_to?(:bytesize)
+
+    [status, @headers, [body]]
   end
 
 
@@ -273,9 +282,11 @@ class Kiwi::App
   # `Accept' header sent with the request.
 
   def content_type ctype=nil
-    @content_type   = ctype if ctype
-    @content_type ||=
+    @headers['Content-Type']   = ctype if ctype
+    @headers['Content-Type'] ||=
       "#{self.class.media_type}/#{self.class.api_name}+#{@env['kiwi.format']}"
+
+    @headers['Content-Type']
   end
 
 
@@ -374,8 +385,22 @@ class Kiwi::App
     @env['kiwi.format']     ||= @env['kiwi.mime'].to_s.sub(%r{^\w+/\w+\+?}, '')
     @env['kiwi.serializer'] ||= Kiwi.serializers[@env['kiwi.format'].to_sym]
 
-    @env['kiwi.route'], @env['kiwi.resource'] =
-      routes.find{|(route, rsc)| route.routes? @env['kiwi.path']}
+    id_route, id_rsc = nil
+
+    self.class.routes.each do |(route, rsc)|
+      if route.routes? @env['kiwi.path']
+        @env['kiwi.route']    = route
+        @env['kiwi.resource'] = rsc
+        break
+
+      elsif route.routes_with_id? @env['kiwi.path']
+        id_route ||= route
+        id_rsc   ||= rsc
+      end
+    end
+
+    @env['kiwi.route']    ||= id_route
+    @env['kiwi.resource'] ||= id_rsc
   end
 
 
@@ -398,6 +423,8 @@ class Kiwi::App
   # Make the call to the resource.
 
   def call_resource
+p @env['kiwi.resource']
+p @env['kiwi.route'].parse(@env['kiwi.path'])
     @env['kiwi.params'].merge! @env['kiwi.route'].parse(@env['kiwi.path'])
 
     @env['kiwi.resource'].new(self).

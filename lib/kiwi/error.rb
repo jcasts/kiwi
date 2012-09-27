@@ -7,14 +7,14 @@ class Kiwi
     # Error code to use. Typically a HTTP status code.
 
     def status
-      STATUS
+      self.class::STATUS
     end
 
 
     ##
     # Build the hash representation of the Error Resource.
 
-    def build backtrace=true
+    def to_hash backtrace=true
       hash = {
         :error   => self.class.name,
         :message => self.message,

@@ -57,9 +57,6 @@ What is a resource? A queryable interface from the outside world.
 * App, Resource, Error, Link, [Attribute]
 
 
-* Handle all the links/routes in the App class! :)
-
-* Resource: move to_hash, build, links, link_to, link_for to the instance?
 * Investigate difference between action and link.
   * E.g. OPTIONS implementation is a link, not an action.
 
