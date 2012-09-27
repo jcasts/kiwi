@@ -4,13 +4,13 @@
 class Kiwi::App
 
   # Set of default resources included with the app.
-  DEFAULT_RESOURCES = {
-    Kiwi::Resource::App       => "/",
-    Kiwi::Resource::Resource  => "/_resource",
-    Kiwi::Resource::Link      => "/_link",
-    Kiwi::Resource::Attribute => "/_attribute",
-    Kiwi::Resource::Error     => "/_error"
-  }
+  DEFAULT_RESOURCES = [
+    [Kiwi::Resource::App,       "/"],
+    [Kiwi::Resource::Resource,  "/_resource"],
+    [Kiwi::Resource::Link,      "/_link"],
+    [Kiwi::Resource::Attribute, "/_attribute"],
+    [Kiwi::Resource::Error,     "/_error"],
+  ]
 
 
   ##
@@ -22,7 +22,7 @@ class Kiwi::App
 
 
   def self.init # :nodoc:
-    DEFAULT_RESOURCES.each do |rsc_klass, path|
+    DEFAULT_RESOURCES.each do |(rsc_klass, path)|
       resource rsc_klass, path
     end
   end
