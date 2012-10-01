@@ -6,8 +6,8 @@ class Kiwi::App
   # Set of default resources included with the app.
   DEFAULT_RESOURCES = [
     [Kiwi::Resource::App,       "/"],
-    [Kiwi::Resource::Resource,  "/_resource"],
-    [Kiwi::Resource::Link,      "/_link"],
+    [Kiwi::Resource::Resource,  "/_resource/?:id"],
+    [Kiwi::Resource::Link,      "/_link/?:id"],
     [Kiwi::Resource::Attribute, "/_attribute"],
     [Kiwi::Resource::Error,     "/_error"],
   ]
@@ -151,7 +151,10 @@ class Kiwi::App
     raise ArgumentError, "Kiwi::Resource class must be given" unless
       rsc_klass.ancestors.include? Kiwi::Resource
 
-    path ||= rsc_klass.name.gsub(/([A-Za-z0-9])([A-Z])/,'\1_\2').downcase
+    if !path
+      path = rsc_klass.name.
+              gsub(/([A-Za-z0-9])([A-Z])/,'\1_\2').downcase + "/?:id"
+    end
 
     route = Kiwi::Route.new(path)
     routes.unshift [route, rsc_klass]
@@ -255,7 +258,12 @@ class Kiwi::App
       trigger err.class, err
     end
 
+    setup_mime self.class.mime_types.first unless accept?(@env['kiwi.mime'])
+p @env
+
     # TODO: Only use backtrace if not in prod mode
+    # TODO: Only render error if nothing was handled
+    # by the triggers to fix it. New response body?
     render Kiwi::Resource::Error.build(err.to_hash)
   end
 
@@ -378,29 +386,21 @@ class Kiwi::App
 
   def setup_env
     @env['kiwi.app']    = self
-    @env['kiwi.mime']   = @env['HTTP_ACCEPT']
     @env['kiwi.path']   = @env['PATH_INFO']
     @env['kiwi.method'] = @env['REQUEST_METHOD'].downcase.to_sym
     @env['kiwi.params'] = ::Rack::Request.new(@env).params
-    @env['kiwi.format']     ||= @env['kiwi.mime'].to_s.sub(%r{^\w+/\w+\+?}, '')
-    @env['kiwi.serializer'] ||= Kiwi.serializers[@env['kiwi.format'].to_sym]
 
-    id_route, id_rsc = nil
+    setup_mime @env['HTTP_ACCEPT']
 
-    self.class.routes.each do |(route, rsc)|
-      if route.routes? @env['kiwi.path']
-        @env['kiwi.route']    = route
-        @env['kiwi.resource'] = rsc
-        break
+    @env['kiwi.route'], @env['kiwi.resource'] =
+      self.class.routes.find{|(route, rsc)| route.routes? @env['kiwi.path']}
+  end
 
-      elsif route.routes_with_id? @env['kiwi.path']
-        id_route ||= route
-        id_rsc   ||= rsc
-      end
-    end
 
-    @env['kiwi.route']    ||= id_route
-    @env['kiwi.resource'] ||= id_rsc
+  def setup_mime mime_type
+    @env['kiwi.mime']       = mime_type
+    @env['kiwi.format']     = @env['kiwi.mime'].to_s.sub(%r{^\w+/\w+\+?}, '')
+    @env['kiwi.serializer'] = Kiwi.serializers[@env['kiwi.format'].to_sym]
   end
 
 
@@ -427,8 +427,13 @@ p @env['kiwi.resource']
 p @env['kiwi.route'].parse(@env['kiwi.path'])
     @env['kiwi.params'].merge! @env['kiwi.route'].parse(@env['kiwi.path'])
 
-    @env['kiwi.resource'].new(self).
+    resp = @env['kiwi.resource'].new(self).
       call(@env['kiwi.method'], @env['kiwi.params'])
+
+    raise Kiwi::ResourceNotFound,
+      "No resource for `#{@env['kiwi.path']}'" if resp.nil?
+
+    resp
   end
 
 

@@ -48,7 +48,7 @@ class Kiwi::Route
   end
 
 
-  attr_reader :path, :matcher, :id_matcher, :keys
+  attr_reader :path, :matcher, :keys
 
 
   ##
@@ -61,10 +61,7 @@ class Kiwi::Route
     @path  = string.sub(/^(#{delim})*/, self.class.delimiter).
                     sub(/([^#{delim}])(#{delim})?$/, '\1')
 
-    @matcher, = self.class.parse_path @path, &block
-
-    rpath = "#{@path}#{self.class.delimiter}?:#{self.class.tmp_id}?"
-    @id_matcher, @keys = self.class.parse_path rpath, &block
+    @matcher, @keys = self.class.parse_path @path, &block
   end
 
 
@@ -77,19 +74,11 @@ class Kiwi::Route
 
 
   ##
-  # Returns true if the given path with appended id matches this route.
-
-  def routes_with_id? path_str
-    path_str =~ @id_matcher
-  end
-
-
-  ##
   # Parses the given path and extracts any embedded path params.
   # Returns a hash of params if the path is parseable, otherwise returns nil.
 
   def parse path_str
-    match = @id_matcher.match path_str
+    match = @matcher.match path_str
     return unless match
 
     values = match.captures.to_a
