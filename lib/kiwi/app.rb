@@ -390,7 +390,6 @@ class Kiwi::App
     setup_route @env['REQUEST_METHOD'], @env['PATH_INFO']
 
     @env['kiwi.params'] = ::Rack::Request.new(@env).params
-p @env['kiwi.params']
     @env['kiwi.params'].merge! @env['kiwi.route_params']
   end
 
@@ -432,7 +431,7 @@ p @env['kiwi.params']
         accept?(@env['kiwi.mime'])
 
     raise Kiwi::ResourceNotFound,
-      "No resource for `#{@env['kiwi.path']}'" unless @env['kiwi.resource']
+      "No resource at path `#{@env['kiwi.path']}'" unless @env['kiwi.resource']
   end
 
 
@@ -440,15 +439,11 @@ p @env['kiwi.params']
   # Make the call to the resource.
 
   def call_resource
-p @env['kiwi.resource']
-p @env['kiwi.route_params']
-    #@env['kiwi.params'].merge! @env['kiwi.route'].parse(@env['kiwi.path'])
-
     resp = @env['kiwi.resource'].new(self).
       call(@env['kiwi.method'], @env['kiwi.params'])
 
     raise Kiwi::ResourceNotFound,
-      "No resource for `#{@env['kiwi.path']}'" if resp.nil?
+      "No resource at path `#{@env['kiwi.path']}'" if resp.nil?
 
     resp
   end
