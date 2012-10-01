@@ -259,7 +259,6 @@ class Kiwi::App
     end
 
     setup_mime self.class.mime_types.first unless accept?(@env['kiwi.mime'])
-p @env
 
     # TODO: Only use backtrace if not in prod mode
     # TODO: Only render error if nothing was handled
@@ -385,22 +384,40 @@ p @env
   # Setup the environment from the request env.
 
   def setup_env
-    @env['kiwi.app']    = self
-    @env['kiwi.path']   = @env['PATH_INFO']
-    @env['kiwi.method'] = @env['REQUEST_METHOD'].downcase.to_sym
+    @env['kiwi.app'] = self
+
+    setup_mime  @env['HTTP_ACCEPT']
+    setup_route @env['REQUEST_METHOD'], @env['PATH_INFO']
+
     @env['kiwi.params'] = ::Rack::Request.new(@env).params
-
-    setup_mime @env['HTTP_ACCEPT']
-
-    @env['kiwi.route'], @env['kiwi.resource'] =
-      self.class.routes.find{|(route, rsc)| route.routes? @env['kiwi.path']}
+p @env['kiwi.params']
+    @env['kiwi.params'].merge! @env['kiwi.route_params']
   end
 
+
+  ##
+  # Setup the mime type, format, and serializer.
 
   def setup_mime mime_type
     @env['kiwi.mime']       = mime_type
     @env['kiwi.format']     = @env['kiwi.mime'].to_s.sub(%r{^\w+/\w+\+?}, '')
     @env['kiwi.serializer'] = Kiwi.serializers[@env['kiwi.format'].to_sym]
+  end
+
+
+  ##
+  # Setup the route, method, and resource.
+
+  def setup_route mname, path
+    @env['kiwi.path']         = path
+    @env['kiwi.method']       = mname.downcase.to_sym
+
+    @env['kiwi.route'], @env['kiwi.resource'] =
+      self.class.routes.find do |(route, rsc)|
+        @env['kiwi.route_params'] = route.parse @env['kiwi.path']
+      end
+
+    @env['kiwi.route_params'] ||= {}
   end
 
 
@@ -424,8 +441,8 @@ p @env
 
   def call_resource
 p @env['kiwi.resource']
-p @env['kiwi.route'].parse(@env['kiwi.path'])
-    @env['kiwi.params'].merge! @env['kiwi.route'].parse(@env['kiwi.path'])
+p @env['kiwi.route_params']
+    #@env['kiwi.params'].merge! @env['kiwi.route'].parse(@env['kiwi.path'])
 
     resp = @env['kiwi.resource'].new(self).
       call(@env['kiwi.method'], @env['kiwi.params'])
