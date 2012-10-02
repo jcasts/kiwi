@@ -333,7 +333,9 @@ class Kiwi::App
       "Method not supported `#{mname}' for #{rsc_klass.name}" unless
         rsc_klass.resource_methods.include?(mname) || rsc_klass.reroutes[mname]
 
-    href       = route_for(rsc_klass).path.dup
+    href = self.class.route_prefix || ""
+    href << route_for(rsc_klass).path.dup
+
     rsc_method = mname
     map        = request_maps[mname]
 
