@@ -16,8 +16,10 @@
 * Kiwi apps should be easily self-encapsulated, deployable, and bootable.
 
 * How can hidden html fields be conveyed?
+* Support data pushing?
 * Support streaming
     def list
+      # item must be validated by view
       backend.on_data{|item| stream item }
     end
 
