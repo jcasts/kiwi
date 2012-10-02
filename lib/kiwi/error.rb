@@ -15,21 +15,11 @@ class Kiwi
     end
 
 
-    attr_writer :name
-
     ##
     # Error code to use. Typically a HTTP status code.
 
     def status
       self.class::STATUS
-    end
-
-
-    ##
-    # Accessor for class name.
-
-    def name
-      @name ||= self.class.name
     end
 
 
