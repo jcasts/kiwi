@@ -12,6 +12,30 @@ class Kiwi::App
     [Kiwi::Resource::Error,     "/_error"],
   ]
 
+  # Mapping of status codes. Defaults to HTTP status codes.
+  STATUS_CODES = {
+    'OK'                  => 200,
+    'Created'             => 201,
+    'Accepted'            => 202,
+    'NoContent'           => 204,
+    'Moved'               => 301,
+    'Found'               => 302,
+    'SeeOther'            => 303,
+    'NotModified'         => 304,
+    'TemporaryRedirect'   => 307,
+    'BadRequest'          => 400,
+    'Unauthorized'        => 401,
+    'Forbidden'           => 403,
+    'NotFound'            => 404,
+    'MethodNotAllowed'    => 405,
+    'NotAcceptable'       => 406,
+    'InternalServerError' => 500,
+    'NotImplemented'      => 501,
+    'BadGateway'          => 502,
+    'ServiceUnavailable'  => 503,
+    'GatewayTimeout'      => 504
+  }
+
 
   ##
   # Clone resource list when inheriting.
@@ -39,6 +63,20 @@ class Kiwi::App
     @api_name ||= "vnc.kiwi.#{self.name}"
     @api_name   = name if name
     @api_name
+  end
+
+
+  ##
+  # Turn debug on or off.
+  #   debug true
+  #   debug #=> true
+  #   debug false
+  #   debug #=> false
+
+  def self.debug active=nil
+    @debug = false  if @debug.nil?
+    @debug = active if !active.nil?
+    @debug
   end
 
 
@@ -258,8 +296,9 @@ class Kiwi::App
 
   rescue => err
     @env['kiwi.error'] = err
-    h_err = Kiwi::Error.to_hash(err)
-    h_err[:status] ||= 500 #TODO: Use default error status.
+    h_err = Kiwi::Error.to_hash(err, self.class.debug)
+    h_err[:status] = STATUS_CODES[h_err[:status]] ||
+                     STATUS_CODES['InternalServerError']
 
     status h_err[:status]
 
@@ -268,9 +307,6 @@ class Kiwi::App
 
     setup_mime self.class.mime_types.first unless accept?(@env['kiwi.mime'])
 
-    # TODO: Only use backtrace if not in prod mode
-    # TODO: Only render error if nothing was handled
-    # by the triggers to fix it. New response body?
     render Kiwi::Resource::Error.build(h_err)
   end
 
@@ -310,7 +346,7 @@ class Kiwi::App
 
   def status st=nil
     @status   = st if st
-    @status ||= 200 #TODO: replace with constants or Kiwi.status[:OK]
+    @status ||= STATUS_CODES['OK']
   end
 
 

@@ -1,7 +1,7 @@
 class Kiwi
   # Standard Kiwi runtime error.
   class Error < RuntimeError
-    STATUS = 500
+    STATUS = 'InternalServerError'
 
 
     ##
@@ -22,7 +22,7 @@ class Kiwi
   end
 
   # Error while validating input or output field.
-  class ValidationError < Error; STATUS = 400; end
+  class ValidationError < Error; STATUS = 'BadRequest'; end
 
   # Value was not valid according to requirements.
   class InvalidTypeError < ValidationError; end
@@ -40,17 +40,17 @@ class Kiwi
   class HTTPError < Error; end
 
   # The request made to the endpoint was invalid.
-  class BadRequest < HTTPError;           STATUS = 400; end
+  class BadRequest < HTTPError;           STATUS = 'BadRequest'; end
 
   # The route requested does not exist.
-  class ResourceNotFound < HTTPError;     STATUS = 404; end
+  class ResourceNotFound < HTTPError;     STATUS = 'NotFound'; end
 
   # The method requested is not available for the given resource.
-  class MethodNotAllowed < HTTPError;     STATUS = 405; end
+  class MethodNotAllowed < HTTPError;     STATUS = 'MethodNotAllowed'; end
 
   # The Accept header type is not available for the given resource.
-  class NotAcceptable < HTTPError;        STATUS = 406; end
+  class NotAcceptable < HTTPError;        STATUS = 'NotAcceptable'; end
 
   # The route requested exists but has no controller.
-  class NotImplemented < HTTPError;       STATUS = 501; end
+  class NotImplemented < HTTPError;       STATUS = 'NotImplemented'; end
 end
