@@ -393,8 +393,7 @@ class Kiwi::App
   # Setup the environment from the request env.
 
   def setup_env
-    @env['kiwi.app']          = self
-    @env['kiwi.route_params'] = {}
+    @env['kiwi.app'] = self
 
     setup_mime  @env['HTTP_ACCEPT']
     setup_route @env['REQUEST_METHOD'], @env['PATH_INFO']
@@ -418,6 +417,8 @@ class Kiwi::App
   # Setup the route, method, and resource.
 
   def setup_route mname, path
+    @env['kiwi.route_params'] = {}
+
     if self.class.route_prefix
       return unless path.index(self.class.route_prefix) == 0
       path = path[self.class.route_prefix.length..-1]
@@ -428,10 +429,9 @@ class Kiwi::App
 
     @env['kiwi.route'], @env['kiwi.resource'] =
       self.class.routes.find do |(route, rsc)|
-        @env['kiwi.route_params'] = route.parse @env['kiwi.path']
+        params = route.parse(@env['kiwi.path']) and
+          @env['kiwi.route_params'] = params
       end
-
-    @env['kiwi.route_params'] ||= {}
   end
 
 
