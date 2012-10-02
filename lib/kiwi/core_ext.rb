@@ -15,11 +15,10 @@ if instance_methods.include?(:to_hash)
    "WARNING! Exception#to_hash is already defined. Kiwi may not work correctly."
 
 else
-  def to_hash
+  def to_hash backtrace=true
     hash = {
-      # TODO: replace 500 with Kiwi.status[:INTERNAL_ERROR]
-      :status => (respond_to?(:status) ? status : 500),
-      :error  => self.class.name
+      :message => self.message,
+      :error   => self.class.name
     }
     hash[:backtrace] = self.backtrace if self.backtrace
 

@@ -259,6 +259,7 @@ class Kiwi::App
   rescue => err
     @env['kiwi.error'] = err
     h_err = Kiwi::Error.to_hash(err)
+    h_err[:status] ||= 500 #TODO: Use default error status.
 
     status h_err[:status]
 
