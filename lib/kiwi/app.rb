@@ -372,6 +372,7 @@ class Kiwi::App
   # Get a Resource class for a given path String.
 
   def resource_for path
+    #TODO: do we need to check for route_prefix here?
     Array(self.class.routes.find{|(route, rsc)| route.routes? path })[1]
   end
 

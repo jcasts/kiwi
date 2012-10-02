@@ -8,6 +8,7 @@ class Kiwi::Route
     @delimiter ||= "/"
   end
 
+
   ##
   # Normalize a path String.
 
