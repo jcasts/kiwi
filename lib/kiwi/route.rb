@@ -5,7 +5,7 @@ class Kiwi::Route
 
   def self.delimiter new_del=nil
     @delimiter   = new_del if new_del
-    @delimiter ||= Kiwi.route_delim || "/"
+    @delimiter ||= "/"
   end
 
   ##

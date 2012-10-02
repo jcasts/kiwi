@@ -10,7 +10,6 @@ class Kiwi
     attr_accessor :trace
     attr_accessor :input_types
     attr_accessor :default_http_verb
-    attr_accessor :route_delim
     attr_accessor :serializers
   end
 
