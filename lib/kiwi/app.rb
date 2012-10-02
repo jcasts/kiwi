@@ -177,7 +177,7 @@ class Kiwi::App
 
   attr_accessor :env, :headers
 
-  def initialize
+  def initialize environment="development"
     @headers = {}
     @env     = nil
   end
@@ -258,21 +258,19 @@ class Kiwi::App
 
   rescue => err
     @env['kiwi.error'] = err
+    h_err = Kiwi::Error.to_hash(err)
 
-    if err.respond_to?(:status)
-      status err.status
-      trigger err.status, err
-    else
-      status 500 # TODO: Default Status
-      trigger err.class, err
-    end
+    status h_err[:status]
+
+    trigger err.class,      err
+    trigger h_err[:status], err
 
     setup_mime self.class.mime_types.first unless accept?(@env['kiwi.mime'])
 
     # TODO: Only use backtrace if not in prod mode
     # TODO: Only render error if nothing was handled
     # by the triggers to fix it. New response body?
-    render Kiwi::Resource::Error.build(err.to_hash)
+    render Kiwi::Resource::Error.build(h_err)
   end
 
 

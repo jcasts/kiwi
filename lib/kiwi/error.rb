@@ -3,6 +3,20 @@ class Kiwi
   class Error < RuntimeError
     STATUS = 500
 
+    def self.to_hash err, backtrace=true
+      hash = {
+        :error   => err.class.name,
+        :message => err.message,
+        :status  => (err.respond_to?(:status) ? err.status : STATUS)
+      }
+      hash[:backtrace] = err.backtrace if backtrace && self.backtrace
+
+      hash
+    end
+
+
+    attr_writer :name
+
     ##
     # Error code to use. Typically a HTTP status code.
 
@@ -12,17 +26,18 @@ class Kiwi
 
 
     ##
+    # Accessor for class name.
+
+    def name
+      @name ||= self.class.name
+    end
+
+
+    ##
     # Build the hash representation of the Error Resource.
 
     def to_hash backtrace=true
-      hash = {
-        :error   => self.class.name,
-        :message => self.message,
-        :status  => self.status
-      }
-      hash[:backtrace] = self.backtrace if backtrace && self.backtrace
-
-      hash
+      self.class.to_hash self, backtrace
     end
   end
 
