@@ -1,43 +1,25 @@
 = TODO
 
-* Attempt to stop caring about IDs
 * Resources implement #to_media(type)
-* Define a media type:
-    MyResource.media('vnd.kiwi+json') do |rsc_obj|
-      @state
-    end
+
+* Investigate difference between action and link.
+  * E.g. OPTIONS implementation is a link, not an action.
+
+* Investigate App configs and environments.
+
+* Implement logger
+* Implement framework-wide modable status codes
+* Investigate in-framework multithreaded/evented/fork model.
+* Implement multi-app class
+  * Allow multi-app to describe all available apps
+* HTML, JSON, PLIST, XML, YAML serializers (Kiwi::App attribute)
+  * May require layout implementation. (HTML, XML)
+* Kiwi apps should be easily self-encapsulated, deployable, and bootable.
+
+* How can hidden html fields be conveyed?
+* Support streaming
 
 
-class FooApp < Kiwi::App
-
-  # Special concepts: %route, %id
-  # Param names:      :route, :id
-
-  map_request [:post, "*/update"], :put
-  map_request [:post, "*/patch"],  :patch
-  map_request [:post, "*/delete"], :delete
-
-  resource AppResource, "/"
-  resource BarResource
-  resource BarResource, "/bar/:id?"
-end
-
-ResourceResource
-  _meta_
-    class: Resource
-    rel: /_resource/Kiwi::Resource::Resource
-  id: MyResource
-  route: /my_resource/:id?
-  attributes: [ ... ]
-  actions: [ ... ]
-  desc: String
-  
-
-MyResource
-  _meta_
-    class: MyResource
-    rel: /_resource/MyResource
-  user-defined-attributes (including links/actions etc)
 
 What all resources have:
 Class level:
@@ -57,26 +39,10 @@ What is a resource? A queryable interface from the outside world.
 * App, Resource, Error, Link, [Attribute]
 
 
-* Investigate difference between action and link.
-  * E.g. OPTIONS implementation is a link, not an action.
-
-* Implement logger
-* Implement framework-wide modable status codes
-* Investigate in-framework multithreaded/evented/fork model.
-* Implement multi-app class
-  * Allow multi-app to describe all available apps
-* HTML, JSON, PLIST, XML, YAML serializers (Kiwi::App attribute)
-  * May require layout implementation. (HTML, XML)
-* Kiwi apps should be easily self-encapsulated, deployable, and bootable.
-
-* How can hidden html fields be conveyed?
-* Routes should be global and point to a resource.
-  * Show rerouted resource methods in the resource links.
-* Review errors raised by Resources to not be HTTP specific.
-* Support streaming
-
 == Done
 
+* Routes should be global and point to a resource.
+* Review errors raised by Resources to not be HTTP specific.
 * Look at what configs to move from Kiwi to Kiwi::App
 * Implement error hooks and handling
 * Fix errors to have a "status" method.
