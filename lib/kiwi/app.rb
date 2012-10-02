@@ -43,6 +43,15 @@ class Kiwi::App
 
 
   ##
+  # Base path for the app. All routes will be built under this prefix path.
+
+  def self.route_prefix path=nil
+    @route_prefix = Kiwi::Route.strip(path) if path
+    @route_prefix
+  end
+
+
+  ##
   # Enforces an exact match on the Accept header or not; defaults to true.
   # When set to false, will accept wildcards in the kiwi.mime env value.
 
@@ -384,7 +393,8 @@ class Kiwi::App
   # Setup the environment from the request env.
 
   def setup_env
-    @env['kiwi.app'] = self
+    @env['kiwi.app']          = self
+    @env['kiwi.route_params'] = {}
 
     setup_mime  @env['HTTP_ACCEPT']
     setup_route @env['REQUEST_METHOD'], @env['PATH_INFO']
@@ -408,8 +418,13 @@ class Kiwi::App
   # Setup the route, method, and resource.
 
   def setup_route mname, path
-    @env['kiwi.path']         = path
-    @env['kiwi.method']       = mname.downcase.to_sym
+    if self.class.route_prefix
+      return unless path.index(self.class.route_prefix) == 0
+      path = path[self.class.route_prefix.length..-1]
+    end
+
+    @env['kiwi.path']   = path
+    @env['kiwi.method'] = mname.downcase.to_sym
 
     @env['kiwi.route'], @env['kiwi.resource'] =
       self.class.routes.find do |(route, rsc)|

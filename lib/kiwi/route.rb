@@ -8,13 +8,16 @@ class Kiwi::Route
     @delimiter ||= Kiwi.route_delim || "/"
   end
 
-
   ##
-  # Temporary resource id param name. Defaults to _kiwi_id.
+  # Normalize a path String.
 
-  def self.tmp_id new_id=nil
-    @tmp_id   = new_id if new_id
-    @tmp_id ||= "_kiwi_id"
+  def self.strip path
+    path = path.strip
+    return "" if path.empty?
+
+    delim = Regexp.escape self.delimiter
+    path.sub(/^(#{delim})*/, self.delimiter).
+         sub(/([^#{delim}])(#{delim})?$/, '\1')
   end
 
 
@@ -57,10 +60,7 @@ class Kiwi::Route
 
   def initialize *parts, &block
     string = parts.join Kiwi.route_delim
-    delim  = Regexp.escape self.class.delimiter
-    @path  = string.sub(/^(#{delim})*/, self.class.delimiter).
-                    sub(/([^#{delim}])(#{delim})?$/, '\1')
-
+    @path  = self.class.strip string
     @matcher, @keys = self.class.parse_path @path, &block
   end
 
