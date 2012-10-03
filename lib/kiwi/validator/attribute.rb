@@ -61,7 +61,7 @@ class Kiwi::Validator::Attribute
 
     if Kiwi::Validator === self.type
       hash[:attributes] = self.type.v_attributes.values.map{|attr| attr.to_hash}
-      hash[:type] = '_embedded'
+      hash[:type] = 'Object'
     else
       hash[:type] = self.type.to_s
     end

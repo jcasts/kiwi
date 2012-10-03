@@ -27,7 +27,7 @@
 * Allow custom media types?
 
 * Investigate difference between action and link.
-  * E.g. OPTIONS implementation is a link, not an action.
+  E.g. OPTIONS implementation is a link, not an action.
 
 * Investigate App configs and environments.
 

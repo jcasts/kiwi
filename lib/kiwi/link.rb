@@ -68,6 +68,7 @@ class Kiwi::Link
     path
   end
 
+
   ##
   # Builds a nested URI query.
 
