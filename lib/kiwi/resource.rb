@@ -175,6 +175,15 @@ class Kiwi::Resource
 
 
   ##
+  # List of Strings representing the resource class and its ancestors.
+
+  def self.class_list
+    @class_list ||=
+      self.ancestors[0..self.ancestors.index(Kiwi::Resource)].map(&:to_s)
+  end
+
+
+  ##
   # Build and validate a Resource hash from a data hash.
 
   def self.build data, opts={}
@@ -185,7 +194,7 @@ class Kiwi::Resource
 
     # TODO: Revisit this when link_to is implemented
     #data[:_links] ||= self.links(id).map(&:to_hash) if opts[:append_links]
-    data[:_type] ||= self.name
+    data[:_class]         ||= self.class_list
     data[self.identifier] ||= id if id
 
     self.view_from(data)
@@ -197,7 +206,6 @@ class Kiwi::Resource
 
   def self.to_hash
     out = {
-      :name       => self.name,
       #:details    => Kiwi::Resource::Resource.link_to(:get,
       #  Kiwi::Resource::Resource.identifier => self.name).to_hash,
       #:links      => self.links.map(&:to_hash),

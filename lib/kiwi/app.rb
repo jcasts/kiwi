@@ -379,12 +379,10 @@ class Kiwi::App
       href       = map[:path].sub(":route", href) if map[:path]
     end
 
-    href << "#{Kiwi::Route.delimiter}#{id || rsc_klass.identifier.inspect}" if
-      rsc_klass.id_resource_methods.include?(mname)
-
     href << "?" << Kiwi::Link.build_query(map[:params]) if map && map[:params]
 
-    Kiwi::Link.new rsc_method, href, rsc_klass.params_for_method(mname)
+    Kiwi::Link.new rsc_method, href, rsc_klass,
+      rsc_klass.params_for_method(mname)
   end
 
 

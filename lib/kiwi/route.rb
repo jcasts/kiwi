@@ -60,7 +60,7 @@ class Kiwi::Route
   # If a block is given, will yield for every special key found.
 
   def initialize *parts, &block
-    string = parts.join Kiwi.route_delim
+    string = parts.join self.class.delimiter
     @path  = self.class.strip string
     @matcher, @keys = self.class.parse_path @path, &block
   end

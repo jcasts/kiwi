@@ -1,5 +1,29 @@
 = TODO
 
+* Kiwi dir structure:
+  - app_name/
+    - resources/
+      - my_resource.rb
+      - my_view.rb
+      - other_resource.rb
+      - other_view.rb
+    - public/
+      - js/
+      - css/
+      - img/
+    - lib/
+    - tests/
+      - functional/
+    - app_name.rb
+    - config.ru
+
+* Kiwi commands:
+  $ kiwi new <app_name>
+  $ kiwi resource <resource_name> <method-names>
+  $ kiwi test [sub-folder]
+  $ kiwi server
+  $ kiwi console
+
 * Allow custom media types?
 
 * Investigate difference between action and link.
@@ -8,7 +32,6 @@
 * Investigate App configs and environments.
 
 * Implement logger
-* Investigate in-framework multithreaded/evented/fork model.
 * Implement multi-app class
   * Allow multi-app to describe all available apps
 * HTML, JSON, PLIST, XML, YAML serializers (Kiwi::App attribute)

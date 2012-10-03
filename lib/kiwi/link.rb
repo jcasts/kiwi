@@ -1,12 +1,13 @@
 class Kiwi::Link
 
-  attr_reader :params, :path, :rsc_method
+  attr_reader :params, :path, :rsc_method, :rel
   attr_accessor :label
 
-  def initialize rsc_method, path, params=[]
+  def initialize rsc_method, path, rel, params=[]
     @rsc_method = rsc_method.to_s.downcase
     @path       = path
     @params     = params
+    @rel        = rel.to_s
     @label      = nil
   end
 
@@ -21,7 +22,7 @@ class Kiwi::Link
     @params.each do |param|
       val = param.value_from params
 
-      new_path = path.gsub %r{#{Kiwi::Route.delimiter}:#{param.name}([^\w]|$)},
+      new_path = path.gsub %r{#{Kiwi::Route.delimiter}\??:#{param.name}([^\w]|$)},
                   (Kiwi::Route.delimiter + val.to_s + '\1')
 
       path = new_path and next if path != new_path
@@ -33,7 +34,7 @@ class Kiwi::Link
 
     path << (path.include?("?") ? "&#{query}" : "?#{query}") if query
 
-    hash = {:href => path, :method => @rsc_method}
+    hash = {:href => path, :method => @rsc_method, :rel => @rel}
     hash[:label] = @label if @label
 
     hash

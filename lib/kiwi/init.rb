@@ -1,5 +1,4 @@
 Kiwi.trace       = !!(ENV['RACK_ENV'] =~ /^dev/i)
-Kiwi.route_delim = "/"
 
 Kiwi.input_types = {
   String  => :to_s,
