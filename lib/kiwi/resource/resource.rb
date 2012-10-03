@@ -12,14 +12,17 @@ class Kiwi::Resource::Resource < Kiwi::Resource
     rsc_klass = @app.find_resource(@params[:id])
     return unless rsc_klass
 
-    rsc_klass.to_hash
+    hash = rsc_klass.to_hash(@app)
+    hash.delete :details
+    hash
   end
 
 
   def list
     @app.resources.map do |rsc_klass|
-      rsc_klass.to_hash
+      hash = rsc_klass.to_hash(@app)
+      hash.delete[:actions]
+      hash
     end
   end
 end
-

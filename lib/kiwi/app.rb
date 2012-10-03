@@ -359,6 +359,21 @@ class Kiwi::App
 
 
   ##
+  # Return an Array of links for a given Resource.
+
+  def links_for rsc_klass, id=nil
+    links = []
+
+    rsc_klass.resource_methods.each do |mname|
+      link = link_for(rsc_klass, mname, id)
+      links << link
+    end
+
+    links
+  end
+
+
+  ##
   # Get the link for the given resource and method.
 
   def link_for rsc_klass, mname, id=nil
@@ -384,8 +399,11 @@ class Kiwi::App
     rel = rsc_klass.reroutes[mname] ?
             rsc_klass.reroutes[mname][:resource] : rsc_klass
 
-    Kiwi::Link.new rsc_method, href, rel,
+    link = Kiwi::Link.new rsc_method, href, rel,
       rsc_klass.params_for_method(mname)
+
+    link.label = rsc_klass.labels[mname]
+    link
   end
 
 

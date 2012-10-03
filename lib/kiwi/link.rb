@@ -30,6 +30,7 @@ class Kiwi::Link
     hash = {
       :href   => @path,
       :method => @rsc_method,
+      :rel    => @rel,
       :params => @params.map(&:to_hash)
     }
 

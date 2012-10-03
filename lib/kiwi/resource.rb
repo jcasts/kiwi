@@ -207,8 +207,13 @@ class Kiwi::Resource
       :attributes => self.view.to_a,
       :name       => self.name
     }
-    out[:desc]    = @desc if @desc
-    out[:details] = app.link_for(self, :options).build if app
+    out[:desc] = @desc if @desc
+
+    if app
+      out[:details] = app.link_for(self, :options).build
+      out[:actions] = app.links_for(self).map(&:to_hash)
+    end
+
     out
   end
 
@@ -249,18 +254,10 @@ class Kiwi::Resource
 
 
   ##
-  # Array of links for this resource.
+  # Array of links for this Resource.
 
   def links id=nil
-    links = []
-
-    self.class.resource_methods.each do |mname|
-      link = link_for(mname, id)
-      link.label = self.class.labels[mname]
-      links << link
-    end
-
-    links
+    @app.links_for self, id
   end
 
 
