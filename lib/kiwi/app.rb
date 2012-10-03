@@ -381,7 +381,10 @@ class Kiwi::App
 
     href << "?" << Kiwi::Link.build_query(map[:params]) if map && map[:params]
 
-    Kiwi::Link.new rsc_method, href, rsc_klass,
+    rel = rsc_klass.reroutes[mname] ?
+            rsc_klass.reroutes[mname][:resource] : rsc_klass
+
+    Kiwi::Link.new rsc_method, href, rel,
       rsc_klass.params_for_method(mname)
   end
 

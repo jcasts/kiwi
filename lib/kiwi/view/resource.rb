@@ -1,5 +1,7 @@
 class Kiwi::View::Resource < Kiwi::View
 
+  string :name, :desc => "Name of the resource"
+
   optional
 
   string   :desc, :desc => "Description of the resource"

@@ -10,7 +10,7 @@ class Kiwi::Resource::App < Kiwi::Resource
 
   def get
     resources = @app.resources.map do |rsc|
-      hash = rsc.to_hash.select{|k, v| FILTER.include?(k) }
+      hash = rsc.to_hash(@app).select{|k, v| FILTER.include?(k) }
       Kiwi::Resource::Resource.build hash
     end
 

@@ -22,7 +22,8 @@ class Kiwi::Link
     @params.each do |param|
       val = param.value_from params
 
-      new_path = path.gsub %r{#{Kiwi::Route.delimiter}\??:#{param.name}([^\w]|$)},
+      new_path =
+        path.gsub %r{#{Kiwi::Route.delimiter}\??:#{param.name}([^\w]|$)},
                   (Kiwi::Route.delimiter + val.to_s + '\1')
 
       path = new_path and next if path != new_path

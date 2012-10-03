@@ -204,14 +204,16 @@ class Kiwi::Resource
   ##
   # Create a hash for display purposes.
 
-  def self.to_hash
+  def self.to_hash app=nil
     out = {
       #:details    => Kiwi::Resource::Resource.link_to(:get,
       #  Kiwi::Resource::Resource.identifier => self.name).to_hash,
       #:links      => self.links.map(&:to_hash),
-      :attributes => self.view.to_a
+      :attributes => self.view.to_a,
+      :name       => self.name
     }
-    out[:desc] = @desc if @desc
+    out[:desc]    = @desc if @desc
+    out[:details] = app.link_for(self, :options).build if app
     out
   end
 
