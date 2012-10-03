@@ -69,10 +69,6 @@ class Kiwi::View
 
     subclass.string('_class', :optional => true, :collection => true) unless
       subclass.v_attributes['_class']
-
-    subclass.view '_links', "Kiwi::Resource::Link",
-      :optional => true, :collection => true unless
-        subclass.v_attributes['_links']
   end
 
 

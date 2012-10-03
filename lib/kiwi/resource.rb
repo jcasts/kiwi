@@ -192,8 +192,6 @@ class Kiwi::Resource
          data[self.identifier.to_s] ||
          opts[self.identifier]
 
-    # TODO: Revisit this when link_to is implemented
-    #data[:_links] ||= self.links(id).map(&:to_hash) if opts[:append_links]
     data[:_class]         ||= self.class_list
     data[self.identifier] ||= id if id
 
@@ -206,9 +204,6 @@ class Kiwi::Resource
 
   def self.to_hash app=nil
     out = {
-      #:details    => Kiwi::Resource::Resource.link_to(:get,
-      #  Kiwi::Resource::Resource.identifier => self.name).to_hash,
-      #:links      => self.links.map(&:to_hash),
       :attributes => self.view.to_a,
       :name       => self.name
     }
@@ -224,15 +219,6 @@ class Kiwi::Resource
   def initialize app=nil
     @app          = app
     @params       = {}
-    @append_links = false
-  end
-
-
-  ##
-  # Sets flag to add links to the response.
-
-  def append_links
-    @append_links = true
   end
 
 
@@ -247,10 +233,7 @@ class Kiwi::Resource
 
     return unless data
 
-    opts = {
-      self.class.identifier => @params[self.class.identifier],
-      :append_links         => @append_links
-    }
+    opts = {self.class.identifier => @params[self.class.identifier]}
 
     if Array === data
       data = data.map do |item|
