@@ -16,29 +16,7 @@ class Kiwi::Link
   # Builds the full link url and resource method
 
   def build params=nil
-    pvalues = {}
-    path    = @path.dup
-
-    @params.each do |param|
-      val = param.value_from params
-
-      new_path =
-        path.gsub %r{#{Kiwi::Route.delimiter}\??:#{param.name}([^\w]|$)},
-                  (Kiwi::Route.delimiter + val.to_s + '\1')
-
-      path = new_path and next if path != new_path
-
-      pvalues[param.name] = val unless val.nil? && param.optional
-    end if params
-
-    path.gsub! %r{#{Kiwi::Route.delimiter}\??:\w+([^\w]|$)},
-               Kiwi::Route.delimiter + '\1'
-
-    query = self.class.build_query(pvalues) unless pvalues.empty?
-
-    path << (path.include?("?") ? "&#{query}" : "?#{query}") if query
-
-    hash = {:href => path, :method => @rsc_method, :rel => @rel}
+    hash = {:href => build_path(params), :method => @rsc_method, :rel => @rel}
     hash[:label] = @label if @label
 
     hash
@@ -60,6 +38,34 @@ class Kiwi::Link
     hash
   end
 
+
+  ##
+  # Build and return the path of the link with given params.
+
+  def build_path params
+    pvalues = {}
+    path    = @path.dup
+
+    @params.each do |param|
+      val = param.value_from params
+
+      new_path =
+        path.gsub %r{#{Kiwi::Route.delimiter}\??:#{param.name}([^\w]|$)},
+                  (Kiwi::Route.delimiter + val.to_s + '\1')
+
+      path = new_path and next if path != new_path
+
+      pvalues[param.name] = val unless val.nil? && param.optional
+    end if params
+
+    path.gsub! %r{#{Kiwi::Route.delimiter}\??:\w+([^\w]|$)},
+               Kiwi::Route.delimiter + '\1'
+
+    query = self.class.build_query(pvalues) unless pvalues.empty?
+    path << (path.include?("?") ? "&#{query}" : "?#{query}") if query
+
+    path
+  end
 
   ##
   # Builds a nested URI query.

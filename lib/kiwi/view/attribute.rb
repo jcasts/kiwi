@@ -2,9 +2,10 @@ class Kiwi::View::Attribute < Kiwi::View
 
   string   :name,       :desc => "Name of the attribute"
   string   :type,       :desc => "Data type of the attribute"
+  string   :label,      :desc => "Label of the attribute",    :optional => true
   string   :desc,       :desc => "Attribute description",     :optional => true
   string   :default,    :desc => "Default used when omitted", :optional => true
-  boolean  :collection, :desc => "Attribute is and array",    :optional => true
+  boolean  :collection, :desc => "Attribute is an array",     :optional => true
   boolean  :optional,   :desc => "Attribute is optional",     :optional => true
 
   string   :value,      :desc => "Currently assigned value",  :optional => true

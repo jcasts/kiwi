@@ -13,7 +13,7 @@ class Kiwi::Validator::Attribute
   # :default::    VALUE - The default value to use if none is set.
   # :optional::   Bool - Required or not.
   # :values::     Array|Hash - Supported values for this attribute.
-  #               Hash must be of form {:name => "", :value => ""}
+  #               Hash must be of form {:label => "", :value => ""}
 
   def initialize name, type, opts={}
     self.name    = name
@@ -21,6 +21,7 @@ class Kiwi::Validator::Attribute
     @optional    = !!opts[:optional]
     @collection  = !!opts[:collection]
     @desc        = opts[:desc]
+    @label       = opts[:label]
 
     @has_default = opts.has_key?(:default)
     @default     = opts[:default]
@@ -28,7 +29,7 @@ class Kiwi::Validator::Attribute
     @values = nil
     if opts[:values]
       if Hash === opts[:values]
-        @values = opts[:values].map{|k, v| {:name => k, :value => v}}
+        @values = opts[:values].map{|k, v| {:label => k, :value => v}}
       else
         @values = Array(opts[:values]).map{|v| {:value => v} }
       end
@@ -68,9 +69,10 @@ class Kiwi::Validator::Attribute
       h.merge(:value => h[:value].to_s)
     end if @values
 
-    hash[:desc]       = @desc               if @desc
-    hash[:default]    = @default.to_s       if @has_default
     hash[:collection] = @collection         if @collection
+    hash[:default]    = @default.to_s       if @has_default
+    hash[:desc]       = @desc               if @desc
+    hash[:label]      = @label              if @label
     hash[:optional]   = @optional           if @optional
     hash
   end
