@@ -1,13 +1,12 @@
 class Kiwi::View::Attribute < Kiwi::View
 
   string   :name,       :desc   => "Name of the attribute"
-  string   :type,       :desc   => "Data type of the attribute",
-                        :values => %w{String Integer Float}
+  string   :type,       :desc   => "Data type of the attribute"
 
   optional
 
   string   :display,    :desc   => "Display type",
-                        :values => %w{normal hidden textarea}
+                        :values => %w{hidden textarea}
 
   string   :label,      :desc => "Display name"
   string   :desc,       :desc => "Attribute description"
