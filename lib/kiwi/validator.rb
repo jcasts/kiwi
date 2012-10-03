@@ -37,6 +37,14 @@ module Kiwi::Validator
 
 
   ##
+  # Define an Float validator attribute.
+
+  def float name, opts={}
+    v_attribute name, Float, opts
+  end
+
+
+  ##
   # Define a String validator attribute.
 
   def string name, opts={}

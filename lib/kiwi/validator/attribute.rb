@@ -22,6 +22,7 @@ class Kiwi::Validator::Attribute
     @collection  = !!opts[:collection]
     @desc        = opts[:desc]
     @label       = opts[:label]
+    @display     = opts[:display]
 
     @has_default = opts.has_key?(:default)
     @default     = opts[:default]
@@ -73,6 +74,7 @@ class Kiwi::Validator::Attribute
     hash[:default]    = @default.to_s       if @has_default
     hash[:desc]       = @desc               if @desc
     hash[:label]      = @label              if @label
+    hash[:display]    = @display            if @display
     hash[:optional]   = @optional           if @optional
     hash
   end

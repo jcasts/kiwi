@@ -1,21 +1,28 @@
 class Kiwi::View::Attribute < Kiwi::View
 
-  string   :name,       :desc => "Name of the attribute"
-  string   :type,       :desc => "Data type of the attribute"
-  string   :label,      :desc => "Label of the attribute",    :optional => true
-  string   :desc,       :desc => "Attribute description",     :optional => true
-  string   :default,    :desc => "Default used when omitted", :optional => true
-  boolean  :collection, :desc => "Attribute is an array",     :optional => true
-  boolean  :optional,   :desc => "Attribute is optional",     :optional => true
+  string   :name,       :desc   => "Name of the attribute"
+  string   :type,       :desc   => "Data type of the attribute",
+                        :values => %w{String Integer Float}
 
-  string   :value,      :desc => "Currently assigned value",  :optional => true
+  optional
 
-  collection :values, :desc => "Array of allowable values", :optional => true do |c|
-    c.string :name,  :desc => "Display name", :optional => true
+  string   :display,    :desc   => "Display type",
+                        :values => %w{normal hidden textarea}
+
+  string   :label,      :desc => "Display name"
+  string   :desc,       :desc => "Attribute description"
+
+  string   :default,    :desc => "Default used when omitted"
+  boolean  :collection, :desc => "Attribute is an array"
+  boolean  :optional,   :desc => "Attribute is optional"
+
+  string   :value,      :desc => "Currently assigned value"
+
+  collection :values, :desc => "Array of allowable values" do |c|
+    c.string :label, :desc => "Display name", :optional => true
     c.string :value, :desc => "Value of this option"
   end
 
-  resource :attributes, "Kiwi::Resource::Attribute",
-    :collection => true, :optional => true,
+  resource :attributes, "Kiwi::Resource::Attribute", :collection => true,
     :desc => "Unfolds embedded attributes for anonymous sub-views"
 end
