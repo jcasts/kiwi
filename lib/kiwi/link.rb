@@ -31,6 +31,9 @@ class Kiwi::Link
       pvalues[param.name] = val unless val.nil? && param.optional
     end if params
 
+    path.gsub! %r{#{Kiwi::Route.delimiter}\??:\w+([^\w]|$)},
+               Kiwi::Route.delimiter + '\1'
+
     query = self.class.build_query(pvalues) unless pvalues.empty?
 
     path << (path.include?("?") ? "&#{query}" : "?#{query}") if query
