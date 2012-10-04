@@ -45,9 +45,10 @@ class Kiwi::Link
   ##
   # Build and return the path of the link with given params.
 
-  def build_path params={}
-    pvalues = {}
-    path    = @path.dup
+  def build_path params=nil
+    pvalues  = {}
+    path     = @path.dup
+    params ||= {}
 
     @params.each do |param|
       val = param.value_from params
@@ -58,7 +59,7 @@ class Kiwi::Link
       key = $2.to_sym
       val = pvalues[key]
 
-      raise RequiredValueError,
+      raise Kiwi::RequiredValueError,
         "Missing path param `#{$2}' in #{@path}" unless val || $1
 
       pvalues.delete(key)

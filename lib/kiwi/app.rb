@@ -379,9 +379,8 @@ class Kiwi::App
   def link_for rsc_klass, mname, id=nil
     mname = mname.to_sym
 
-    raise Kiwi::MethodNotAllowed,
-      "Method not supported `#{mname}' for #{rsc_klass.name}" unless
-        rsc_klass.resource_methods.include?(mname) || rsc_klass.reroutes[mname]
+    return unless rsc_klass.resource_methods.include?(mname) ||
+                  rsc_klass.reroutes[mname]
 
     href = self.class.route_prefix || ""
     href << route_for(rsc_klass).path.dup
