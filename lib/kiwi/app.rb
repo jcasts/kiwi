@@ -135,8 +135,10 @@ class Kiwi::App
       end
     end
 
+    rpath = Regexp.new opath.sub(":route", "(.*?)") if opath
     request_maps[mname] =
-      {:method => omethod, :path => opath, :params => oparams}
+      {:method => omethod, :path => opath,
+       :params => oparams, :path_matcher => rpath}
   end
 
 
@@ -217,7 +219,7 @@ class Kiwi::App
 
   def initialize environment="development"
     @headers = {}
-    @env     = nil
+    @env     = {}
   end
 
 
@@ -382,18 +384,8 @@ class Kiwi::App
     return unless rsc_klass.resource_methods.include?(mname) ||
                   rsc_klass.reroutes[mname]
 
-    href = self.class.route_prefix || ""
-    href << route_for(rsc_klass).path.dup
-
-    rsc_method = mname
-    map        = request_maps[mname]
-
-    if map
-      rsc_method = map[:method] || Kiwi.default_http_verb
-      href       = map[:path].sub(":route", href) if map[:path]
-    end
-
-    href << "?" << Kiwi::Link.build_query(map[:params]) if map && map[:params]
+    href             = route_for(rsc_klass).path.dup
+    rsc_method, href = map_link!(mname, href)
 
     rel = rsc_klass.reroutes[mname] ?
             rsc_klass.reroutes[mname][:resource] : rsc_klass
@@ -402,6 +394,7 @@ class Kiwi::App
       rsc_klass.params_for_method(mname)
 
     link.label = rsc_klass.labels[mname]
+
     link
   end
 
@@ -452,9 +445,10 @@ class Kiwi::App
     @env['kiwi.app'] = self
 
     setup_mime  @env['HTTP_ACCEPT']
-    setup_route @env['REQUEST_METHOD'], @env['PATH_INFO']
 
     @env['kiwi.params'] = ::Rack::Request.new(@env).params
+    setup_route @env['REQUEST_METHOD'], @env['PATH_INFO'], @env['kiwi.params']
+
     @env['kiwi.params'].merge! @env['kiwi.route_params']
   end
 
@@ -470,15 +464,66 @@ class Kiwi::App
 
 
   ##
-  # Setup the route, method, and resource.
+  # Apply rules to add route prefix and apply route mappings.
+  # Used for creating links. Returns a new method name and path.
 
-  def setup_route mname, path
-    @env['kiwi.route_params'] = {}
+  def map_link! mname, path
+    path = "#{self.class.route_prefix}#{path}" if self.class.route_prefix
 
+    map = request_maps[mname]
+    if map
+      mname = map[:method] if map[:method]
+      path  = map[:path].sub(":route", path) if map[:path]
+      path << "?" << Kiwi::Link.build_query(map[:params]) if map[:params]
+    end
+
+    [mname, path]
+  end
+
+
+  ##
+  # Apply rules to remove route prefix and process route mappings.
+  # Used for incoming requests. Returns a new method name and path.
+
+  def map_request! mname, path, params
     if self.class.route_prefix
       return unless path.index(self.class.route_prefix) == 0
       path = path[self.class.route_prefix.length..-1]
     end
+
+    request_maps.each do |map_method, map|
+      if map[:method]
+        next unless mname == map[:method]
+      end
+
+      npath = path
+      if map[:path_matcher]
+        next unless map[:path_matcher] =~ npath
+        npath = $1
+        npath = "/#{npath}" if npath[0] != "/"
+      end
+
+      if map[:params]
+        next unless map[:params].all?{|key, val| params[key] == val}
+      end
+
+      return [map_method, npath]
+    end
+
+    [mname, path]
+  end
+
+
+  ##
+  # Setup the route, method, and resource.
+
+  def setup_route mname, path, params={}
+    @env['kiwi.route_params'] = {}
+
+    mname, path = map_request! mname, path, params
+    return unless mname && path
+
+    path.sub!(/(.)\/$/, '\1')
 
     @env['kiwi.path']   = path
     @env['kiwi.method'] = mname.downcase.to_sym

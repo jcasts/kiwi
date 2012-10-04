@@ -33,18 +33,23 @@ class Kiwi::Route
     delim         = Regexp.escape self.delimiter
 
     pattern =
-      path_str.to_str.gsub(/((:\w+)|[\*#{special_chars.join}])/) do |match|
+      path_str.to_str.gsub(/#{delim}((\??:\w+)|[\*#{special_chars.join}])/) do |match|
+        word = $2
         case match
         when "*"
           keys << 'splat'
           yield keys.last if block_given?
-          "(.*?)"
+          "#{delim}(.*?)"
         when *special_chars
-          Regexp.escape(match)
-        else
-          keys << $2[1..-1]
+          "#{delim}#{Regexp.escape(match)}"
+        when /\?(:\w+)/
+          keys << $1[1..-1]
           yield keys.last if block_given?
-          "([^#{delim}?#]+)"
+          "(?:#{delim}([^#{delim}?#]+))?"
+        else
+          keys << word[1..-1]
+          yield keys.last if block_given?
+          "#{delim}([^#{delim}?#]+)"
         end
       end
 

@@ -29,8 +29,13 @@ class Kiwi::Link
   # Hash representation of this link.
 
   def to_hash
+    req_params = {}
+    @params.each do |param|
+      req_params[param.name] = ":#{param.name}" unless param.optional
+    end
+
     hash = {
-      :href   => @path,
+      :href   => build_path(req_params).gsub(%r{/+(/|$)}, '\1'),
       :method => @rsc_method,
       :rel    => @rel,
       :params => @params.map(&:to_hash)
@@ -59,12 +64,16 @@ class Kiwi::Link
       key = $2.to_sym
       val = pvalues[key]
 
-      raise Kiwi::RequiredValueError,
-        "Missing path param `#{$2}' in #{@path}" unless val || $1
+      if val
+        pvalues.delete(key)
+        "#{val}#{$3}"
 
-      pvalues.delete(key)
+      elsif $1
+        ""
 
-      "#{val}#{$3}"
+      else
+        raise Kiwi::RequiredValueError, "Missing path param `#{$2}' in #{@path}"
+      end
     end
 
     query = self.class.build_query(pvalues) unless pvalues.empty?
