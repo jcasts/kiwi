@@ -3,7 +3,6 @@ class Kiwi
   class Error < RuntimeError
     STATUS = 'InternalServerError'
 
-
     ##
     # Error code to use. Typically a HTTP status code.
 

@@ -296,7 +296,7 @@ class Kiwi::App
 
   rescue => err
     @env['kiwi.error'] = err
-    h_err = Kiwi::Error.to_hash(err, self.class.debug)
+    h_err = err.to_hash(self.class.debug)
     h_err[:status] = STATUS_CODES[h_err[:status]] ||
                      STATUS_CODES['InternalServerError']
 
