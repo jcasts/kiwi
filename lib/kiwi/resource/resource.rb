@@ -12,7 +12,7 @@ class Kiwi::Resource::Resource < Kiwi::Resource
     rsc_klass = @app.find_resource(@params[:id])
     return unless rsc_klass
 
-    hash = rsc_klass.to_hash(@app)
+    hash = rsc_klass.new(@app).to_hash
     hash.delete :details
     hash
   end
@@ -20,7 +20,7 @@ class Kiwi::Resource::Resource < Kiwi::Resource
 
   def list
     @app.resources.map do |rsc_klass|
-      hash = rsc_klass.to_hash(@app)
+      hash = rsc_klass.new(@app).to_hash
       hash.delete[:actions]
       hash
     end

@@ -200,25 +200,6 @@ class Kiwi::Resource
 
 
   ##
-  # Create a hash for display purposes.
-
-  def self.to_hash app=nil
-    out = {
-      :attributes => self.view.to_a,
-      :name       => self.name
-    }
-    out[:desc] = @desc if @desc
-
-    if app
-      out[:details] = app.link_for(self, :options).build
-      out[:actions] = app.links_for(self).map(&:to_hash)
-    end
-
-    out
-  end
-
-
-  ##
   # New Resource instance with the app object that called it.
 
   def initialize app=nil
@@ -313,6 +294,22 @@ class Kiwi::Resource
 
   def resource_methods
     @resource_methods ||= self.class.resource_methods
+  end
+
+
+  ##
+  # Create a hash for display purposes.
+
+  def to_hash
+    out = {
+      :name       => self.name,
+      :attributes => self.view.to_a,
+      :details    => @app.link_for(self, :options).build,
+      :actions    => @app.links_for(self).map(&:to_hash)
+    }
+    out[:desc] = @desc if @desc
+
+    out
   end
 
 

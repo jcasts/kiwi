@@ -23,6 +23,7 @@
   $ kiwi test [sub-folder]
   $ kiwi server
   $ kiwi console
+  $ kiwi bundle # Tar-up with gems for easy deploy
 
 * Allow custom media types?
 
