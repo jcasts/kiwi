@@ -238,7 +238,7 @@ class Kiwi::Resource
   # Array of links for this Resource.
 
   def links id=nil
-    @app.links_for self, id
+    @app.links_for self.class, id
   end
 
 
@@ -302,10 +302,10 @@ class Kiwi::Resource
 
   def to_hash
     out = {
-      :name       => self.name,
-      :attributes => self.view.to_a,
-      :details    => @app.link_for(self, :options).build,
-      :actions    => @app.links_for(self).map(&:to_hash)
+      :name       => self.class.name,
+      :attributes => self.class.view.to_a,
+      :details    => @app.link_for(self.class, :options).build,
+      :actions    => @app.links_for(self.class).map(&:to_hash)
     }
     out[:desc] = @desc if @desc
 
