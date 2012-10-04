@@ -25,6 +25,7 @@
   $ kiwi console
   $ kiwi bundle # Tar-up with gems for easy deploy
 
+* Set default media type/format.
 * Allow custom media types?
 
 * Investigate difference between action and link.

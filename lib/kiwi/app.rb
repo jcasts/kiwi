@@ -189,10 +189,10 @@ class Kiwi::App
   # Assign a Resource to this App class and assign a path.
   # Path defaults to the underscored version of the Resource class name.
   #   resource FooResource
-  #   #=> "/foo_resource"
+  #   #=> "/foo_resource/?:id"
   #
   #   resource FooResource, "/foo/bar"
-  #   #=> "/foo/bar"
+  #   #=> "/foo/bar/?:id"
 
   def self.resource rsc_klass, path=nil
     raise ArgumentError, "Kiwi::Resource class must be given" unless
@@ -204,7 +204,7 @@ class Kiwi::App
     end
 
     route = Kiwi::Route.new(path)
-    routes.unshift [route, rsc_klass]
+    routes << [route, rsc_klass]
 
     path
   end
