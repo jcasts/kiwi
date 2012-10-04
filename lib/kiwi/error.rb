@@ -21,7 +21,7 @@ class Kiwi
   end
 
   # Error while validating input or output field.
-  class ValidationError < Error; STATUS = 'BadRequest'; end
+  class ValidationError < Error; end
 
   # Value was not valid according to requirements.
   class InvalidTypeError < ValidationError; end

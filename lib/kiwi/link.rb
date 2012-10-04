@@ -1,5 +1,7 @@
 class Kiwi::Link
 
+  PATH_PARAM_MATCHER = %r{(\?)?:(\w+)([^\w]|$)}
+
   attr_reader :params, :path, :rsc_method, :rel
   attr_accessor :label
 
@@ -43,24 +45,26 @@ class Kiwi::Link
   ##
   # Build and return the path of the link with given params.
 
-  def build_path params
+  def build_path params={}
     pvalues = {}
     path    = @path.dup
 
     @params.each do |param|
       val = param.value_from params
-
-      new_path =
-        path.gsub %r{#{Kiwi::Route.delimiter}\??:#{param.name}([^\w]|$)},
-                  (Kiwi::Route.delimiter + val.to_s + '\1')
-
-      path = new_path and next if path != new_path
-
       pvalues[param.name] = val unless val.nil? && param.optional
-    end if params
+    end
 
-    path.gsub! %r{#{Kiwi::Route.delimiter}\??:\w+([^\w]|$)},
-               Kiwi::Route.delimiter + '\1'
+    path.gsub!(PATH_PARAM_MATCHER) do |match|
+      key = $2.to_sym
+      val = pvalues[key]
+
+      raise RequiredValueError,
+        "Missing path param `#{$2}' in #{@path}" unless val || $1
+
+      pvalues.delete(key)
+
+      "#{val}#{$3}"
+    end
 
     query = self.class.build_query(pvalues) unless pvalues.empty?
     path << (path.include?("?") ? "&#{query}" : "?#{query}") if query
