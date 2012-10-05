@@ -450,7 +450,7 @@ p @env
     @env['kiwi.params'] = ::Rack::Request.new(@env).params
     setup_route @env['REQUEST_METHOD'], @env['PATH_INFO'], @env['kiwi.params']
 
-    @env['kiwi.params'].merge! @env['kiwi.route_params']
+    @env['kiwi.params'].merge! @env['kiwi.path_params']
   end
 
 
@@ -519,7 +519,7 @@ p @env
   # Setup the route, method, and resource.
 
   def setup_route mname, path, params={}
-    @env['kiwi.route_params'] = {}
+    @env['kiwi.path_params'] = {}
 
     mname, path = map_request! mname.downcase.to_sym, path, params
     return unless mname && path
@@ -532,7 +532,7 @@ p @env
     @env['kiwi.route'], @env['kiwi.resource'] =
       self.class.routes.find do |(route, rsc)|
         params = route.parse(@env['kiwi.path']) and
-          @env['kiwi.route_params'] = params
+          @env['kiwi.path_params'] = params
       end
   end
 

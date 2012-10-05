@@ -35,7 +35,7 @@ class Kiwi::Link
     end
 
     hash = {
-      :href   => build_path(req_params).gsub(%r{/+(/|$)}, '\1'),
+      :href   => build_path(req_params),
       :method => @rsc_method,
       :rel    => @rel,
       :params => @params.map(&:to_hash)
@@ -72,13 +72,14 @@ class Kiwi::Link
         ""
 
       else
-        raise Kiwi::RequiredValueError, "Missing path param `#{$2}' in #{@path}"
+        "#{key.inspect}#{$3}"
       end
     end
 
     query = self.class.build_query(pvalues) unless pvalues.empty?
     path << (path.include?("?") ? "&#{query}" : "?#{query}") if query
 
+    path.gsub!(%r{([^/])/+(/|$)}, '\1\2')
     path
   end
 
