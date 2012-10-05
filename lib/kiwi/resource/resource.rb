@@ -21,7 +21,7 @@ class Kiwi::Resource::Resource < Kiwi::Resource
   def list
     @app.resources.map do |rsc_klass|
       hash = rsc_klass.new(@app).to_hash
-      hash.delete[:actions]
+      hash.delete(:actions)
       hash
     end
   end

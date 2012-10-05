@@ -17,6 +17,7 @@ class Kiwi
     def to_hash backtrace=true
       hash = super
       hash[:status] = self.status
+      hash
     end
   end
 

@@ -135,7 +135,7 @@ class Kiwi::App
       end
     end
 
-    rpath = Regexp.new opath.sub(":route", "(.*?)") if opath
+    rpath = Regexp.new "^#{opath.sub(":route", "(.*?)")}$" if opath
     request_maps[mname] =
       {:method => omethod, :path => opath,
        :params => oparams, :path_matcher => rpath}
@@ -309,6 +309,7 @@ class Kiwi::App
 
     setup_mime self.class.mime_types.first unless accept?(@env['kiwi.mime'])
 
+p @env
     render Kiwi::Resource::Error.build(h_err)
   end
 
@@ -444,7 +445,7 @@ class Kiwi::App
   def setup_env
     @env['kiwi.app'] = self
 
-    setup_mime  @env['HTTP_ACCEPT']
+    setup_mime @env['HTTP_ACCEPT']
 
     @env['kiwi.params'] = ::Rack::Request.new(@env).params
     setup_route @env['REQUEST_METHOD'], @env['PATH_INFO'], @env['kiwi.params']
@@ -458,7 +459,7 @@ class Kiwi::App
 
   def setup_mime mime_type
     @env['kiwi.mime']       = mime_type
-    @env['kiwi.format']     = @env['kiwi.mime'].to_s.sub(%r{^\w+/\w+\+?}, '')
+    @env['kiwi.format']     = @env['kiwi.mime'].to_s.sub(%r{^\w+/[^+]+\+?}, '')
     @env['kiwi.serializer'] = Kiwi.serializers[@env['kiwi.format'].to_sym]
   end
 
@@ -498,7 +499,7 @@ class Kiwi::App
 
       npath = path
       if map[:path_matcher]
-        next unless map[:path_matcher] =~ npath
+        next unless npath =~ map[:path_matcher]
         npath = $1
         npath = "/#{npath}" if npath[0] != "/"
       end
@@ -520,13 +521,13 @@ class Kiwi::App
   def setup_route mname, path, params={}
     @env['kiwi.route_params'] = {}
 
-    mname, path = map_request! mname, path, params
+    mname, path = map_request! mname.downcase.to_sym, path, params
     return unless mname && path
 
     path.sub!(/(.)\/$/, '\1')
 
     @env['kiwi.path']   = path
-    @env['kiwi.method'] = mname.downcase.to_sym
+    @env['kiwi.method'] = mname
 
     @env['kiwi.route'], @env['kiwi.resource'] =
       self.class.routes.find do |(route, rsc)|
