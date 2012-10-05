@@ -24,7 +24,10 @@ class Kiwi::Resource::Link < Kiwi::Resource
 
     return unless rsc_klass && rsc_method
 
-    @app.link_for(rsc_klass, rsc_method.to_sym, @params[:rid]).to_hash
+    link = @app.link_for(rsc_klass, rsc_method.to_sym, @params[:rid])
+    return unless link
+
+    link.to_hash
   end
 
 

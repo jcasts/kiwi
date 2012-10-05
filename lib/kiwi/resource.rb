@@ -7,7 +7,10 @@ class Kiwi::Resource
 
   def self.init
     reroute :options, Kiwi::Resource::Resource, :get do |params|
-      params.delete_if{|key, val| @app.env['kiwi.path_params'][key] }
+      params.delete_if do |key, val|
+        @app.env['kiwi.path_params'][key] &&
+        !Kiwi::Resource::Resource.param[key]
+      end
       params[Kiwi::Resource::Resource.identifier] = self.class.name
     end
 
