@@ -38,7 +38,7 @@ end
 require 'kiwi/core_ext'
 require 'kiwi/error'
 require 'kiwi/validator'
-require 'kiwi/validator/attribute'
+require 'kiwi/attribute'
 require 'kiwi/param'
 require 'kiwi/param_set'
 require 'kiwi/view'

@@ -79,7 +79,7 @@ module Kiwi::Validator
 
   ##
   # Assign an attribute name with a type
-  # Supports any option of Kiwi::Validator::Attribute.new
+  # Supports any option of Kiwi::Attribute.new
 
   def v_attribute name, type, opts={}
     opts, type = type, nil if Hash === type

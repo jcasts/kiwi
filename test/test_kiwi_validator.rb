@@ -23,7 +23,7 @@ class TestKiwiValidator < Test::Unit::TestCase
   def test_v_attribute_name
     v_attribute = PersonValidator.v_attributes[:name]
 
-    assert_equal Kiwi::Validator::Attribute, v_attribute.class
+    assert_equal Kiwi::Attribute, v_attribute.class
     assert_equal String,                v_attribute.type
     assert_equal false,                 v_attribute.collection
     assert_equal false,                 v_attribute.optional
@@ -34,7 +34,7 @@ class TestKiwiValidator < Test::Unit::TestCase
   def test_v_attribute_gender
     v_attribute = PersonValidator.v_attributes[:gender]
 
-    assert_equal Kiwi::Validator::Attribute, v_attribute.class
+    assert_equal Kiwi::Attribute, v_attribute.class
     assert_equal String,                v_attribute.type
     assert_equal false,                 v_attribute.collection
     assert_equal true,                  v_attribute.optional
@@ -46,7 +46,7 @@ class TestKiwiValidator < Test::Unit::TestCase
   def test_v_attribute_attributes
     v_attribute = PersonValidator.v_attributes[:attributes]
 
-    assert_equal Kiwi::Validator::Attribute, v_attribute.class
+    assert_equal Kiwi::Attribute, v_attribute.class
     assert       v_attribute.type.is_a?(Kiwi::Validator)
 
     assert_equal true,                  v_attribute.collection
@@ -54,13 +54,13 @@ class TestKiwiValidator < Test::Unit::TestCase
     assert_nil                          v_attribute.default
 
     sub_attribute = v_attribute.type.v_attributes[:awesome]
-    assert_equal Kiwi::Validator::Attribute, sub_attribute.class
+    assert_equal Kiwi::Attribute, sub_attribute.class
     assert_equal false,                 sub_attribute.collection
     assert_equal true,                  sub_attribute.optional
     assert_equal false,                 sub_attribute.default
 
     sub_attribute = v_attribute.type.v_attributes[:awake]
-    assert_equal Kiwi::Validator::Attribute, sub_attribute.class
+    assert_equal Kiwi::Attribute, sub_attribute.class
     assert_equal false,                 sub_attribute.collection
     assert_equal false,                 sub_attribute.optional
     assert_equal false,                 sub_attribute.default
@@ -71,7 +71,7 @@ class TestKiwiValidator < Test::Unit::TestCase
     PersonValidator.string :foo, :optional => true
     v_attribute = PersonValidator.v_attributes[:foo]
 
-    assert_equal Kiwi::Validator::Attribute, v_attribute.class
+    assert_equal Kiwi::Attribute, v_attribute.class
     assert_equal String,                v_attribute.type
     assert_equal false,                 v_attribute.collection
     assert_equal true,                  v_attribute.optional
@@ -83,7 +83,7 @@ class TestKiwiValidator < Test::Unit::TestCase
     PersonValidator.integer :foo, :optional => true
     v_attribute = PersonValidator.v_attributes[:foo]
 
-    assert_equal Kiwi::Validator::Attribute, v_attribute.class
+    assert_equal Kiwi::Attribute, v_attribute.class
     assert_equal Integer,               v_attribute.type
     assert_equal false,                 v_attribute.collection
     assert_equal true,                  v_attribute.optional
@@ -95,7 +95,7 @@ class TestKiwiValidator < Test::Unit::TestCase
     PersonValidator.boolean :foo, :optional => true
     v_attribute = PersonValidator.v_attributes[:foo]
 
-    assert_equal Kiwi::Validator::Attribute, v_attribute.class
+    assert_equal Kiwi::Attribute, v_attribute.class
     assert_equal Boolean,               v_attribute.type
     assert_equal false,                 v_attribute.collection
     assert_equal true,                  v_attribute.optional
@@ -109,7 +109,7 @@ class TestKiwiValidator < Test::Unit::TestCase
 
     v_attribute = PersonValidator.v_attributes[:cats]
 
-    assert_equal Kiwi::Validator::Attribute, v_attribute.class
+    assert_equal Kiwi::Attribute, v_attribute.class
     assert_equal CatValidator,               v_attribute.type
     assert_equal true,                  v_attribute.collection
     assert_equal true,                  v_attribute.optional
@@ -125,7 +125,7 @@ class TestKiwiValidator < Test::Unit::TestCase
 
     v_attribute = PersonValidator.v_attributes[:cats]
 
-    assert_equal Kiwi::Validator::Attribute, v_attribute.class
+    assert_equal Kiwi::Attribute, v_attribute.class
     assert       v_attribute.type.is_a?(Kiwi::Validator)
     assert_equal true,                  v_attribute.collection
     assert_equal true,                  v_attribute.optional
@@ -141,7 +141,7 @@ class TestKiwiValidator < Test::Unit::TestCase
 
     v_attribute = PersonValidator.v_attributes[:cats]
 
-    assert_equal Kiwi::Validator::Attribute, v_attribute.class
+    assert_equal Kiwi::Attribute, v_attribute.class
     assert       v_attribute.type.is_a?(Kiwi::Validator)
     assert_equal true,                  v_attribute.collection
     assert_equal true,                  v_attribute.optional

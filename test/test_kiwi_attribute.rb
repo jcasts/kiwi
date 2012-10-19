@@ -3,23 +3,23 @@ require 'test/helper'
 class TestKiwiValidatorAttribute < Test::Unit::TestCase
 
   def setup
-    @req_attr         = Kiwi::Validator::Attribute.new :foo, Integer
-    @req_default_attr = Kiwi::Validator::Attribute.new :foo, Integer,
+    @req_attr         = Kiwi::Attribute.new :foo, Integer
+    @req_default_attr = Kiwi::Attribute.new :foo, Integer,
                           :default => 456
-    @req_coll_attr    = Kiwi::Validator::Attribute.new :foo, Integer,
+    @req_coll_attr    = Kiwi::Attribute.new :foo, Integer,
                           :collection => true
 
-    @opt_attr         = Kiwi::Validator::Attribute.new :foo, String,
+    @opt_attr         = Kiwi::Attribute.new :foo, String,
                           :optional => true
-    @opt_default_attr = Kiwi::Validator::Attribute.new :foo, String,
+    @opt_default_attr = Kiwi::Attribute.new :foo, String,
                           :default => "foo", :optional => true
 
-    @validator_attr      = Kiwi::Validator::Attribute.new :foo, Kiwi::Validator
-    @validator_coll_attr = Kiwi::Validator::Attribute.new :foo, Kiwi::Validator,
+    @validator_attr      = Kiwi::Attribute.new :foo, Kiwi::Validator
+    @validator_coll_attr = Kiwi::Attribute.new :foo, Kiwi::Validator,
                         :collection => true
 
-    @bool_attr         = Kiwi::Validator::Attribute.new :foo, Boolean
-    @bool_default_attr = Kiwi::Validator::Attribute.new :foo, Boolean,
+    @bool_attr         = Kiwi::Attribute.new :foo, Boolean
+    @bool_default_attr = Kiwi::Attribute.new :foo, Boolean,
                           :default => false
 
 
@@ -32,14 +32,14 @@ class TestKiwiValidatorAttribute < Test::Unit::TestCase
 
   def test_invalid_default
     assert_raises Kiwi::InvalidTypeError, 'Default "Hi" isn\'t a Integer' do
-      Kiwi::Validator::Attribute.new :foo, Integer, :default => "Hi"
+      Kiwi::Attribute.new :foo, Integer, :default => "Hi"
     end
   end
 
 
   def test_invalid_type
     assert_raises ArgumentError, 'Type nil must be a Class' do
-      Kiwi::Validator::Attribute.new :foo, nil
+      Kiwi::Attribute.new :foo, nil
     end
   end
 
@@ -103,7 +103,7 @@ class TestKiwiValidatorAttribute < Test::Unit::TestCase
 
 
   def test_resource_attr
-    res_attr = Kiwi::Validator::Attribute.new :rsc, FooResource
+    res_attr = Kiwi::Attribute.new :rsc, FooResource
     res_attr.value_from(:rsc => {:foo => "blah"})
 
     expected = {:foo => "blah", :_type => "FooResource"}
@@ -113,7 +113,7 @@ class TestKiwiValidatorAttribute < Test::Unit::TestCase
 
 
   def test_bad_resource_attr
-    res_attr = Kiwi::Validator::Attribute.new :rsc, FooResource
+    res_attr = Kiwi::Attribute.new :rsc, FooResource
     assert_raises Kiwi::RequiredValueError do
       res_attr.value_from(:foo => {:foo => "blah"})
     end
@@ -121,7 +121,7 @@ class TestKiwiValidatorAttribute < Test::Unit::TestCase
 
 
   def test_resource_attr_no_view
-    res_attr = Kiwi::Validator::Attribute.new :rsc, ViewlessResource
+    res_attr = Kiwi::Attribute.new :rsc, ViewlessResource
     expected = {:foo => "blah", :_type => "ViewlessResource"}
 
     assert_equal(expected, res_attr.value_from(:rsc => {:foo => "blah"}))
@@ -163,7 +163,7 @@ class TestKiwiValidatorAttribute < Test::Unit::TestCase
 
 
   def test_later_type
-    attrib = Kiwi::Validator::Attribute.new :foo, "Integer"
+    attrib = Kiwi::Attribute.new :foo, "Integer"
 
     assert_equal 123, attrib.value_from(:foo => 123)
 
@@ -180,7 +180,7 @@ class TestKiwiValidatorAttribute < Test::Unit::TestCase
     validator.string  :name
     validator.integer :age
 
-    attrib = Kiwi::Validator::Attribute.new 'thing', validator
+    attrib = Kiwi::Attribute.new 'thing', validator
 
     val = attrib.value_from :thing => {"name" => "George", "age" => 34}
     expected = {:name => "George", :age => 34}
@@ -190,7 +190,7 @@ class TestKiwiValidatorAttribute < Test::Unit::TestCase
 
 
   def test_validate_values
-    attrib = Kiwi::Validator::Attribute.new 'thing', Integer, :values => (1..3)
+    attrib = Kiwi::Attribute.new 'thing', Integer, :values => (1..3)
     assert_equal 3, attrib.value_from(:thing => 3)
 
     assert_raises Kiwi::BadValueError do
@@ -204,7 +204,7 @@ class TestKiwiValidatorAttribute < Test::Unit::TestCase
     validator.string  :name
     validator.integer :age
 
-    attrib = Kiwi::Validator::Attribute.new 'thing', validator
+    attrib = Kiwi::Attribute.new 'thing', validator
 
     expected = {
       :type => '_embedded',

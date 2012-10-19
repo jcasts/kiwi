@@ -49,7 +49,7 @@ class Kiwi::View
   # Creates a new attribute object.
 
   def self.new_attribute name, type, opts={}
-    Kiwi::Validator::Attribute.new(name, type, opts)
+    Kiwi::Attribute.new(name, type, opts)
   end
 
 

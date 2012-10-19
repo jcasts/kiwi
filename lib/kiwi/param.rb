@@ -1,4 +1,4 @@
-class Kiwi::Param < Kiwi::Validator::Attribute
+class Kiwi::Param < Kiwi::Attribute
 
   attr_reader :except, :only
 

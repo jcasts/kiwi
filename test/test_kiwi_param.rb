@@ -18,8 +18,8 @@ class TestKiwiParam < Test::Unit::TestCase
 
 
   def test_init
-    assert @param_foo.is_a?(Kiwi::Validator::Attribute),
-      "Param should inherit Kiwi::Validator::Attribute"
+    assert @param_foo.is_a?(Kiwi::Attribute),
+      "Param should inherit Kiwi::Attribute"
 
     assert_equal [:bar],        @param_foo.except
     assert_equal [:blah, :bar], @param_foo.only

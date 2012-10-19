@@ -2,7 +2,7 @@
 # Single attribute node in a validator.
 # Handles validation and value retrieval from objects.
 
-class Kiwi::Validator::Attribute
+class Kiwi::Attribute
 
   attr_reader :name, :collection, :optional, :default, :desc, :values
 
