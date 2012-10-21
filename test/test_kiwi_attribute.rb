@@ -106,7 +106,7 @@ class TestKiwiValidatorAttribute < Test::Unit::TestCase
     res_attr = Kiwi::Attribute.new :rsc, FooResource
     res_attr.value_from(:rsc => {:foo => "blah"})
 
-    expected = {:foo => "blah", :_type => "FooResource"}
+    expected = {:foo => "blah", :_class => ["FooResource", "Kiwi::Resource"]}
 
     assert_equal(expected, res_attr.value_from(:rsc => {:foo => "blah"}))
   end
@@ -122,7 +122,10 @@ class TestKiwiValidatorAttribute < Test::Unit::TestCase
 
   def test_resource_attr_no_view
     res_attr = Kiwi::Attribute.new :rsc, ViewlessResource
-    expected = {:foo => "blah", :_type => "ViewlessResource"}
+    expected = {
+      :foo    => "blah",
+      :_class => ["ViewlessResource", "Kiwi::Resource"]
+    }
 
     assert_equal(expected, res_attr.value_from(:rsc => {:foo => "blah"}))
   end
@@ -207,19 +210,14 @@ class TestKiwiValidatorAttribute < Test::Unit::TestCase
     attrib = Kiwi::Attribute.new 'thing', validator
 
     expected = {
-      :type => '_embedded',
+      :type => 'Object',
       :name => 'thing',
       :attributes => [
         {
           :type => "String",
-          :name => "_type",
-          :optional => true,
-        },
-        {
-          :type => "Kiwi::Resource::Link",
-          :name => "_links",
+          :name => "_class",
+          :collection => true,
           :optional   => true,
-          :collection => true
         },
         {
           :type => "String",
