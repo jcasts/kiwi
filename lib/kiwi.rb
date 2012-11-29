@@ -1,4 +1,5 @@
 require 'rack'
+require 'json'
 
 class Kiwi
 
@@ -9,7 +10,6 @@ class Kiwi
   class << self
     attr_accessor :trace
     attr_accessor :input_types
-    attr_accessor :default_http_verb
     attr_accessor :serializers
   end
 

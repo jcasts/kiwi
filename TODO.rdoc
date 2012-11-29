@@ -1,5 +1,26 @@
 = TODO
 
+* Should Resource be a Module that gets included in Models?
+  - API methods are on the class
+  - Difficult to hold an App instance there
+
+* Serializer loading with multi-json.
+  require 'kiwi/html'
+* Serializer should be omitable, choose a good default.
+  * Always supports json (comes mostly free out of the box)
+* Support for templating engines (erb)
+    class MyApp < Kiwi::App
+      serialize :html do |data|
+        erb(data, view, layout)
+      end
+
+      serialize_default :html do |data|
+        erb(data, view, layout)
+      end
+    end
+
+* Support for cookies.
+
 * Kiwi dir structure:
   - app_name/
     - resources/
@@ -24,6 +45,7 @@
   $ kiwi server
   $ kiwi console
   $ kiwi bundle # Tar-up with gems for easy deploy
+  $ kiwi freeze # Creates an apidoc to verify api beaking changes
 
 * Set default media type/format.
 * Allow custom media types?

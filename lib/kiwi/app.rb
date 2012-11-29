@@ -104,9 +104,30 @@ class Kiwi::App
   # Assign one or more response formats: json, xml, plist, html.
 
   def self.formats *f
-    @formats   = f unless f.empty?
-    @formats ||= [:json]
-    @formats
+    serializers.keys
+  end
+
+
+  ##
+  # Set a serializer for a given response format.
+  # The value returned by the block will be used as the http response body.
+  #   serialize :plist do |data|
+  #     data.to_plist
+  #   end
+
+  def self.serialize format, *more, &block
+    more.unshift(format)
+    more.each{|format| @serializers[format.to_s] = block }
+  end
+
+
+  ##
+  # Get the hash of serializers.
+
+  def self.serializers
+    @serializers ||= {
+      'json' => lambda{|data| data.to_json }
+    }
   end
 
 
@@ -276,6 +297,14 @@ class Kiwi::App
 
 
   ##
+  # Accessor for serializers defined on the App class.
+
+  def serializers
+    self.class.serializers
+  end
+
+
+  ##
   # Rack-compliant call method.
 
   def call env
@@ -309,7 +338,6 @@ class Kiwi::App
 
     setup_mime self.class.mime_types.first unless accept?(@env['kiwi.mime'])
 
-p @env
     render Kiwi::Resource::Error.build(h_err)
   end
 
@@ -318,6 +346,7 @@ p @env
   # Call post triggers and output the response.
 
   def render res_data
+    @env['kiwi.data'] = res_data
     trigger :postprocess, res_data
 
     body = @env['kiwi.serializer'].call res_data
@@ -460,7 +489,7 @@ p @env
   def setup_mime mime_type
     @env['kiwi.mime']       = mime_type
     @env['kiwi.format']     = @env['kiwi.mime'].to_s.sub(%r{^\w+/[^+]+\+?}, '')
-    @env['kiwi.serializer'] = Kiwi.serializers[@env['kiwi.format'].to_sym]
+    @env['kiwi.serializer'] = self.serializers[@env['kiwi.format'].to_s]
   end
 
 
