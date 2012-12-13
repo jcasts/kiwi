@@ -278,7 +278,7 @@ class Kiwi::Resource
 
     [params, args]
 
-  rescue Kiwi::InvalidParam => e
+  rescue Kiwi::ValidationError => e
     raise Kiwi::BadRequest,
       "#{e.message} for #{self.class.name}##{mname}"
   end

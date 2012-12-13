@@ -4,10 +4,8 @@
   - API methods are on the class
   - Difficult to hold an App instance there
 
-* Serializer loading with multi-json.
+* Should HTML support be optional, by default, built-in?
   require 'kiwi/html'
-* Serializer should be omitable, choose a good default.
-  * Always supports json (comes mostly free out of the box)
 * Support for templating engines (erb)
     class MyApp < Kiwi::App
       serialize :html do |data|
@@ -55,7 +53,6 @@
 
 * Investigate App configs and environments.
 
-* Implement logger
 * Implement multi-app class
   * Allow multi-app to describe all available apps
 * HTML, JSON, PLIST, XML, YAML serializers (Kiwi::App attribute)
@@ -91,6 +88,8 @@ What is a resource? A queryable interface from the outside world.
 
 == Done
 
+* Serializer should be omitable, choose a good default.
+  * Always supports json (comes mostly free out of the box)
 * Routes should be global and point to a resource.
 * Review errors raised by Resources to not be HTTP specific.
 * Implement framework-wide modable status codes

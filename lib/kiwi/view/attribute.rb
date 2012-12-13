@@ -3,10 +3,11 @@ class Kiwi::View::Attribute < Kiwi::View
   string   :name,       :desc   => "Name of the attribute"
   string   :type,       :desc   => "Data type of the attribute"
 
-  optional
+  string   :display,    :desc    => "Display type",
+                        :values  => %w{hidden textarea password file text},
+                        :default => 'text'
 
-  string   :display,    :desc   => "Display type",
-                        :values => %w{hidden textarea}
+  optional
 
   string   :label,      :desc => "Display name"
   string   :desc,       :desc => "Attribute description"

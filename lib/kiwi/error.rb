@@ -36,6 +36,9 @@ class Kiwi
   # Unexpected param was given to a ParamSet
   class InvalidParam < ValidationError; end
 
+  # Unexpected param was given to a ParamSet
+  class MissingParam < ValidationError; end
+
   # Something bad happenned with the request.
   class HTTPError < Error; end
 

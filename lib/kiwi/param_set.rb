@@ -35,19 +35,19 @@ class Kiwi::ParamSet
   def validate! mname, params
     mname = mname.to_sym
     value =
-      Hash.new{|h,k| h[k] = h[k.to_sym] if String === k && h.has_key?(k.to_sym)}
+      Hash.new{|h,k| h[k.to_sym] if String === k && h.has_key?(k.to_sym)}
 
-    params.each do |name, pvalue|
-      name = name.to_sym
-
-      param = @params[name]
-
-      if !param || !param.include?(mname)
-        raise Kiwi::InvalidParam, "Invalid param `#{name}': #{mname}"
+    for_method(mname) do |param|
+      begin
+        value[param.name.to_sym] = param.value_from params
+      rescue Kiwi::RequiredValueError
+        raise Kiwi::MissingParam, "Missing param `#{param.name}'"
       end
+    end
 
-      val = param.value_from params
-      value[name] = val unless val.nil? && param.optional
+    if value.length != params.length
+      name = params.keys.find{|k| !value.has_key?(k.to_sym) }
+      raise Kiwi::InvalidParam, "Invalid param `#{name}': #{mname}"
     end
 
     value
