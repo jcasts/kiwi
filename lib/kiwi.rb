@@ -10,7 +10,6 @@ class Kiwi
   class << self
     attr_accessor :trace
     attr_accessor :input_types
-    attr_accessor :serializers
   end
 
 
@@ -56,5 +55,7 @@ require 'kiwi/resource/link'
 require 'kiwi/resource/app'
 require 'kiwi/resource/attribute'
 require 'kiwi/resource/error'
+require 'kiwi/html_builder'
+require 'kiwi/mime'
 require 'kiwi/app'
 require 'kiwi/init'

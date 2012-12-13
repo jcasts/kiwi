@@ -101,9 +101,16 @@ class Kiwi::App
 
 
   ##
-  # Assign one or more response formats: json, xml, plist, html.
+  # Returns an Array of supported response formats, as defined by
+  # previously set serializers:
+  #   serialize :plist do |data|
+  #     data.to_plist
+  #   end
+  #
+  #   formats
+  #   #=> ["json", "plist"]
 
-  def self.formats *f
+  def self.formats
     serializers.keys
   end
 
@@ -117,7 +124,7 @@ class Kiwi::App
 
   def self.serialize format, *more, &block
     more.unshift(format)
-    more.each{|format| @serializers[format.to_s] = block }
+    more.each{|format| self.serializers[format.to_s] = block }
   end
 
 
@@ -254,7 +261,7 @@ class Kiwi::App
       matcher = %r{#{ctype}}
     end
 
-    !!self.class.mime_types.find do |mt|
+    !!mime_types.find do |mt|
       if matcher
         mt =~ matcher
       else
@@ -349,11 +356,12 @@ class Kiwi::App
     @env['kiwi.data'] = res_data
     trigger :postprocess, res_data
 
-    body = @env['kiwi.serializer'].call res_data
+    body = instance_exec(res_data, &@env['kiwi.serializer'])
     trigger :after, body
 
     content_type
-    @headers['Content-Length'] = body.bytesize if body.respond_to?(:bytesize)
+    @headers['Content-Length'] = body.bytesize.to_s if
+      body.respond_to?(:bytesize)
 
     [status, @headers, [body]]
   end
@@ -486,9 +494,12 @@ class Kiwi::App
   ##
   # Setup the mime type, format, and serializer.
 
-  def setup_mime mime_type
-    @env['kiwi.mime']       = mime_type
-    @env['kiwi.format']     = @env['kiwi.mime'].to_s.sub(%r{^\w+/[^+]+\+?}, '')
+  def setup_mime mime
+    mimes = mime.split(/\s*,\s*/).map{|m| Kiwi::Mime.new(m)}.sort
+    mime_type = mimes.find{|m1| mime_types.each{|m2| m1.includes?(m2) } }
+
+    @env['kiwi.mime']       = mime_type && mime_type.to_s
+    @env['kiwi.format']     = @env['kiwi.mime'].to_s.sub(%r{^\w+/([^+]+\+)?}, '')
     @env['kiwi.serializer'] = self.serializers[@env['kiwi.format'].to_s]
   end
 
