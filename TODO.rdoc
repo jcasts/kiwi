@@ -1,7 +1,6 @@
 = FIX
 
 * Alternate to OPTIONS for meta information
-* Refactor App serializers and mime_types to a single place.
 * Figure out when and how to render HTML
 
 = TODO
@@ -94,6 +93,7 @@ What is a resource? A queryable interface from the outside world.
 
 == Done
 
+* Refactor App serializers and mime_types to a single place.
 * Serializer should be omitable, choose a good default.
   * Always supports json (comes mostly free out of the box)
 * Routes should be global and point to a resource.

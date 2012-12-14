@@ -53,20 +53,6 @@ class Kiwi::App
 
 
   ##
-  # Read or set the name of this app's api. Used as the media-subtype.
-  # May also be used for api versionning:
-  #   api_name "vnc.company.myapp.v1"
-  #
-  # Defaults to `vnc.kiwi.[app_name]'
-
-  def self.api_name name=nil
-    @api_name ||= "vnc.kiwi.#{Kiwi.downcase_name(self.name)}"
-    @api_name   = name if name
-    @api_name
-  end
-
-
-  ##
   # Turn debug on or off.
   #   debug true
   #   debug #=> true
