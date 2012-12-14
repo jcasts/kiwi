@@ -60,7 +60,7 @@ class Kiwi::App
   # Defaults to `vnc.kiwi.[app_name]'
 
   def self.api_name name=nil
-    @api_name ||= "vnc.kiwi.#{self.name}"
+    @api_name ||= "vnc.kiwi.#{Kiwi.downcase_name(self.name)}"
     @api_name   = name if name
     @api_name
   end

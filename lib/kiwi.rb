@@ -14,6 +14,17 @@ class Kiwi
 
 
   ##
+  # Create a downcased version of a constant name.
+
+  def self.downcase_name name
+    name.gsub(/::/, '-').
+      gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
+      gsub(/([a-z\d])([A-Z])/,'\1_\2').
+      downcase
+  end
+
+
+  ##
   # Find any constant.
 
   def self.find_const consts

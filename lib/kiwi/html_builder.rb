@@ -145,10 +145,7 @@ class Kiwi::HTMLBuilder
 
 
   def css_name name
-    name.gsub(/::/, '-').
-      gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
-      gsub(/([a-z\d])([A-Z])/,'\1_\2').
-      downcase
+    Kiwi.downcase_name(name)
   end
 
 
