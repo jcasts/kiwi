@@ -1,3 +1,9 @@
+= FIX
+
+* Alternate to OPTIONS for meta information
+* Refactor App serializers and mime_types to a single place.
+* Figure out when and how to render HTML
+
 = TODO
 
 * Should Resource be a Module that gets included in Models?

@@ -16,7 +16,7 @@ class Kiwi::Resource::App < Kiwi::Resource
 
     {
       :api_name   => @app.api_name,
-      :mime_types => @app.mime_types,
+      :mime_types => @app.mime_types.map(&:to_s),
       :resources  => resources,
     }
   end

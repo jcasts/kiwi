@@ -3,12 +3,7 @@ require 'kiwi'
 
 class MyApp < Kiwi::App
 
-  mime_types "text/html", "application/json"
-
-  serializers.clear
-
-  serialize 'html' do |data|
-    content_type 'text/html'
+  serialize 'text/html' do |data|
       <<-STR
 <html>
   <head>
@@ -22,8 +17,7 @@ class MyApp < Kiwi::App
   end
 
 
-  serialize 'json' do |data|
-    content_type 'application/json'
+  serialize 'text/json', 'application/json' do |data|
     data.to_json
   end
 end

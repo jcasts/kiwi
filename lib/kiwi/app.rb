@@ -101,44 +101,6 @@ class Kiwi::App
 
 
   ##
-  # Returns an Array of supported response formats, as defined by
-  # previously set serializers:
-  #   serialize :plist do |data|
-  #     data.to_plist
-  #   end
-  #
-  #   formats
-  #   #=> ["json", "plist"]
-
-  def self.formats
-    serializers.keys
-  end
-
-
-  ##
-  # Set a serializer for a given response format.
-  # The value returned by the block will be used as the http response body.
-  #   serialize :plist do |data|
-  #     data.to_plist
-  #   end
-
-  def self.serialize format, *more, &block
-    more.unshift(format)
-    more.each{|format| self.serializers[format.to_s] = block }
-  end
-
-
-  ##
-  # Get the hash of serializers.
-
-  def self.serializers
-    @serializers ||= {
-      'json' => lambda{|data| data.to_json }
-    }
-  end
-
-
-  ##
   # Map a request to a Resource method name. Use only for routing to methods
   # that may not be supported by the client. This explicit method of routing
   # also lets Resources know how to build links for methods unsupported by
@@ -171,23 +133,38 @@ class Kiwi::App
 
 
   ##
-  # The first part of the mime_type. Defaults to 'application'.
-  # Typical values are 'application' or 'text'.
+  # Returns all the supported mime types for this App class.
 
-  def self.media_type mtype=nil
-    @media_type ||= 'application'
-    @media_type   = mtype if mtype
-    @media_type
+  def self.mime_types
+    @mime_types ||= @serializers.keys.map{|k| Kiwi::Mime.new(k) }
   end
 
 
   ##
-  # Returns all the supported mime types for this App class.
+  # Set a serializer for a given response mime type.
+  # The value returned by the block will be used as the http response body.
+  #   serialize 'application/plist' do |data|
+  #     data.to_plist
+  #   end
 
-  def self.mime_types *more
-    (@custom_mime_types ||= []).concat more
-    @custom_mime_types |
-      self.formats.map{|f| "#{media_type}/#{api_name}+#{f}" }
+  def self.serialize mime_or_format, *more, &block
+    @mime_types = nil
+
+    more.unshift(mime_or_format)
+    more.each do |m|
+      m = Kiwi::Mime.new(m, true).display
+      self.serializers[m] = block
+    end
+  end
+
+
+  ##
+  # Get the hash of serializers.
+
+  def self.serializers
+    @serializers ||= {
+      'text/json' => lambda{|data| data.to_json }
+    }
   end
 
 
@@ -374,9 +351,7 @@ class Kiwi::App
 
   def content_type ctype=nil
     @headers['Content-Type']   = ctype if ctype
-    @headers['Content-Type'] ||=
-      "#{self.class.media_type}/#{self.class.api_name}+#{@env['kiwi.format']}"
-
+    @headers['Content-Type'] ||= @env['kiwi.mime'].to_s
     @headers['Content-Type']
   end
 
@@ -496,11 +471,13 @@ class Kiwi::App
 
   def setup_mime mime
     mimes = mime.split(/\s*,\s*/).map{|m| Kiwi::Mime.new(m)}.sort
-    mime_type = mimes.find{|m1| mime_types.each{|m2| m1.includes?(m2) } }
+    mime_type = mimes.find do |m1|
+      mime_types.find{|m2| m1 === m2 } ||
+      mime_types.find{|m2| m1.matches?(m2) }
+    end
 
-    @env['kiwi.mime']       = mime_type && mime_type.to_s
-    @env['kiwi.format']     = @env['kiwi.mime'].to_s.sub(%r{^\w+/([^+]+\+)?}, '')
-    @env['kiwi.serializer'] = self.serializers[@env['kiwi.format'].to_s]
+    @env['kiwi.mime']       = mime_type
+    @env['kiwi.serializer'] = self.serializers[@env['kiwi.mime'].to_s]
   end
 
 
